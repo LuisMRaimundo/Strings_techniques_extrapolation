@@ -1,0 +1,80 @@
+# Provisional ordinary→technique density (EWSD) relative effects.
+# These produce USEFUL numeric estimates from your measured register.
+# They are NOT validated EWSD physics transforms — edit freely.
+#
+# value_kind in outputs: extrapolated
+# Always accompanied by assumptions_used, bounds, and warnings.
+
+version: "1.0.0"
+schema_version: "provisional_density_effects_v1"
+enabled: true
+
+policy: >
+  Apply technique-specific relative effects to the matched ordinary EWSD
+  for the same note/instrument/dynamic. Instrument-specific where listed.
+  Mute uses literature power-dB as a provisional proxy scale on EWSD
+  (explicit assumption: density score moves roughly with radiated-power scale).
+  Sul tasto / sul ponticello / harmonics use curated relative factors
+  consistent with literature DIRECTION, with wide bounds.
+
+default_quantity: EWSD_score_acoustic_balanced
+
+effects:
+  con_sordino:
+    mode: power_db_proxy
+    # Uses literature attenuation_db_power when available (vln 6 dB, vla 4 dB).
+    # EWSD_est = baseline * 10^(-dB/10)
+    # Bounds expand by relative_band around that central estimate.
+    relative_band: 0.15
+    fallback_db_by_instrument:
+      vln: 6.0
+      vla: 4.0
+      # vlc/cb: no fallback — NA unless you add numbers here
+    assumptions:
+      - "Provisional: EWSD scaled by radiated-power ratio from mute dB (10^(-dB/10))."
+      - "Mute dB is an indirect proxy, not a validated EWSD coefficient."
+      - "Standard/performance mute only; heavy practice mute excluded."
+    qualitative_effect: "upper_partials:decrease; level:decrease"
+
+  sul_tasto:
+    mode: relative_factor
+    # Darker / fewer upper partials → lower density tendency vs ordinary
+    factor: 0.88
+    factor_lo: 0.72
+    factor_hi: 0.98
+    assumptions:
+      - "Provisional relative factor: sul tasto tends to reduce upper-partial/density balance vs ordinary."
+      - "Bow force still dominates; factor is a register-level thumb rule, not note-invariant physics."
+    qualitative_effect: "centroid:decrease; upper_partials:decrease"
+
+  sul_ponticello:
+    mode: relative_factor
+    # Brighter / more upper partials → higher density tendency vs ordinary
+    factor: 1.18
+    factor_lo: 1.05
+    factor_hi: 1.45
+    assumptions:
+      - "Provisional relative factor: sul ponticello tends to increase upper-partial/density balance vs ordinary."
+      - "Context-dependent; wide bounds reflect that variability."
+    qualitative_effect: "centroid:increase; upper_partials:increase"
+
+  artificial_harmonic:
+    mode: relative_factor
+    # Different regime: often thinner / fewer speaking partials → lower density score tendency
+    factor: 0.55
+    factor_lo: 0.35
+    factor_hi: 0.80
+    assumptions:
+      - "Provisional only: artificial harmonics change the excitation regime; not a small ordinary tweak."
+      - "Wide bounds; replace when measured harmonic EWSD exists."
+    qualitative_effect: "regime_change; partial_structure:sparse"
+
+  natural_harmonic:
+    mode: relative_factor
+    factor: 0.50
+    factor_lo: 0.30
+    factor_hi: 0.75
+    assumptions:
+      - "Provisional only: natural harmonics are a different regime from ordinary arco."
+      - "Wide bounds; replace when measured harmonic EWSD exists."
+    qualitative_effect: "regime_change; partial_structure:sparse"

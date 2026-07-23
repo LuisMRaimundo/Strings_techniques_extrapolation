@@ -1,0 +1,1012 @@
+# Curator-supplied evidence extracts from shared specialised treatises.
+# Decibel / level figures are NOT density multipliers.
+# curator_verification_status=validated means curator-checked package entry;
+# density activation still requires the activation gate (direct mapping + verified source).
+
+version: "0.4.0-primary-source-ingestion"
+
+extracts:
+  # --- Artificial harmonics: mechanisms (qualitative) ---
+  - evidence_id: EV_MEYER_VLN_HARM_MECH_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: artificial_harmonic
+    page_start: null
+    page_end: null
+    section_title: artificial_harmonics_mechanisms
+    original_variable_name: nodal_formation
+    canonical_variable_name: nodal_formation_and_harmonic_order
+    paraphrased_claim: >
+      Artificial harmonics involve nodal formation relating harmonic order,
+      vibrating length, and resulting pitch; natural and artificial harmonics
+      must be distinguished.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    harmonic_type: artificial
+    extraction_method: curator_package
+    curator_notes: Mechanism support only; no density coefficient.
+
+  - evidence_id: EV_MEYER_VLN_HARM_MECH_002
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: artificial_harmonic
+    section_title: artificial_harmonics_bow_dependence
+    original_variable_name: bow_parameters
+    canonical_variable_name: bow_speed_force_position_dependence
+    paraphrased_claim: >
+      Harmonic production depends on bow speed, force and position; attack is
+      more critical and the usable dynamic range is narrower than ordinary stopped notes.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    harmonic_type: artificial
+    extraction_method: curator_package
+
+  - evidence_id: EV_MEYER_VLN_HARM_MECH_003
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: artificial_harmonic
+    section_title: artificial_harmonics_spectrum_character
+    original_variable_name: upper_partial_content
+    canonical_variable_name: reduced_upper_partial_content_vs_stopped
+    paraphrased_claim: >
+      Artificial harmonics tend toward lower upper-partial content than an
+      equivalent stopped note, with flute-like noise character and inharmonicity
+      from string stiffness.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    harmonic_type: artificial
+    extraction_method: curator_package
+
+  # --- Artificial harmonics: quantitative level/dynamic constraints ---
+  - evidence_id: EV_MEYER_VLN_HARMONIC_DYNAMIC_RANGE
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: artificial_harmonic
+    page_start: 108
+    page_end: 109
+    original_variable_name: dynamic_range
+    canonical_variable_name: dynamic_range
+    paraphrased_claim: >
+      Violin playing levels approximately 64–84 dB with about 20 dB dynamic range;
+      artificial harmonics have a still narrower dynamic range.
+    quantitative_or_qualitative: quantitative
+    reported_value: 20.0
+    reported_lower_bound: 64.0
+    reported_upper_bound: 84.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: direct_same_instrument_related_variable
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    harmonic_type: artificial
+    # Honest method: curator package from shared treatises; local book PDF not yet verified.
+    extraction_method: curator_package
+    curator_notes: >
+      Global level/dynamic bound; NOT a density multiplier.
+      Alias of former EV_MEYER_VLN_HARM_001. Do not claim verified-local transcription
+      until the book PDF is deposited and checked.
+
+  - evidence_id: EV_MEYER_VLA_HARM_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vla
+    technique: artificial_harmonic
+    section_title: viola_harmonic_radiation
+    original_variable_name: harmonic_radiation_vs_violin
+    canonical_variable_name: harmonic_radiation_offset_vs_violin
+    paraphrased_claim: >
+      Viola harmonic radiation is approximately 3 dB above the violin
+      (global relative comparison only).
+    quantitative_or_qualitative: quantitative
+    reported_value: 3.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: same_technique_other_instrument
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    harmonic_type: artificial
+    extraction_method: curator_package
+    curator_notes: Relative global level offset; not a density ratio.
+
+  - evidence_id: EV_MEYER_VLC_HARM_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vlc
+    technique: artificial_harmonic
+    section_title: cello_harmonic_level
+    original_variable_name: harmonic_response_floor
+    canonical_variable_name: harmonic_level_lower_bound
+    paraphrased_claim: Cello harmonics may respond below approximately 62 dB.
+    quantitative_or_qualitative: quantitative
+    reported_value: 62.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    harmonic_type: artificial
+    extraction_method: curator_package
+    curator_notes: Approximate lower level bound; does not define a density curve.
+
+  - evidence_id: EV_MEYER_CB_HARM_001
+    source_id: MEYER_ACOUSTICS
+    instrument: cb
+    technique: artificial_harmonic
+    section_title: double_bass_levels
+    original_variable_name: playing_levels_pp_ff
+    canonical_variable_name: dynamic_range
+    paraphrased_claim: >
+      Double bass approximately 74 dB at pp and 91 dB at ff; dynamic range near 17 dB.
+    quantitative_or_qualitative: quantitative
+    reported_value: 17.0
+    reported_lower_bound: 74.0
+    reported_upper_bound: 91.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    harmonic_type: artificial
+    extraction_method: curator_package
+
+  # --- Sul ponticello ---
+  - evidence_id: EV_MEYER_VLN_SP_MECH_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: sul_ponticello
+    section_title: sul_ponticello_mechanisms
+    original_variable_name: bow_bridge_distance
+    canonical_variable_name: frequency_dependent_spectral_redistribution
+    paraphrased_claim: >
+      Sul ponticello reduces bow–bridge distance, couples position/force/speed,
+      reduces stability margin, may produce multiple slips, redistributes energy
+      toward upper components, and increases instability and noise.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: curator_package
+    curator_notes: >
+      Supports physical transformation structure. Do NOT register density_ratio=1.25.
+
+  - evidence_id: EV_MEYER_GEN_SP_MECH_001
+    source_id: MEYER_ACOUSTICS
+    instrument: null
+    technique: sul_ponticello
+    evidence_scope: generic_bowed_string
+    section_title: sul_ponticello_generic
+    original_variable_name: spectral_redistribution
+    canonical_variable_name: frequency_dependent_spectral_redistribution
+    paraphrased_claim: >
+      Generic bowed-string sul ponticello physics supports high-frequency
+      redistribution without a unique numerical density curve for all four instruments.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: curator_package
+
+  # --- Sul tasto ---
+  - evidence_id: EV_MEYER_VLN_ST_MECH_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: sul_tasto
+    section_title: sul_tasto_mechanisms
+    original_variable_name: upper_partial_attenuation
+    canonical_variable_name: upper_partial_attenuation
+    paraphrased_claim: >
+      Sul tasto places the bow farther from the bridge near the fingerboard,
+      relatively reduces upper components, softens attack, increases breathy/noise
+      character, and depends on bow position. Distinct from flautando unless a
+      source equates them.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: curator_package
+    curator_notes: mechanism_supported=true; numeric_transfer_function_available=false
+
+  # --- Con sordino ---
+  - evidence_id: EV_MEYER_VLN_MUTE_MECH_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: con_sordino
+    section_title: mute_mechanisms
+    original_variable_name: bridge_added_mass
+    canonical_variable_name: bridge_mobility_and_frequency_dependent_attenuation
+    paraphrased_claim: >
+      Mutes add mass and alter bridge mobility, producing frequency-dependent
+      attenuation especially in upper components, with dependence on mute type/mass.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    mute_type: orchestral
+    extraction_method: curator_package
+
+  - evidence_id: EV_MEYER_VLN_MUTE_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: con_sordino
+    section_title: violin_mute_level_reduction
+    original_variable_name: global_level_reduction
+    canonical_variable_name: global_sound_power_change
+    paraphrased_claim: >
+      Violin mute global reductions on the order of 6 dB, up to about 10 dB with
+      heavy practice mutes.
+    quantitative_or_qualitative: quantitative
+    reported_value: 6.0
+    reported_upper_bound: 10.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    mute_type: orchestral
+    extraction_method: curator_package
+    curator_notes: Acoustic level effect; not direct density. Heavy mutes distinct.
+
+  - evidence_id: EV_MEYER_VLN_MUTE_HEAVY_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vln
+    technique: con_sordino
+    section_title: violin_heavy_mute
+    original_variable_name: heavy_mute_level_reduction
+    canonical_variable_name: global_sound_power_change
+    paraphrased_claim: Heavy practice mutes may reach approximately 10 dB global reduction.
+    quantitative_or_qualitative: quantitative
+    reported_value: 10.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    mute_type: heavy_practice
+    extraction_method: curator_package
+
+  - evidence_id: EV_MEYER_VLA_MUTE_001
+    source_id: MEYER_ACOUSTICS
+    instrument: vla
+    technique: con_sordino
+    section_title: viola_mute_level_reduction
+    original_variable_name: global_level_reduction
+    canonical_variable_name: global_sound_power_change
+    paraphrased_claim: Viola mute global reduction near approximately 4 dB.
+    quantitative_or_qualitative: quantitative
+    reported_value: 4.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: indirect_proxy
+    curator_verification_status: validated
+    mute_type: orchestral
+    extraction_method: curator_package
+
+  # --- State-of-the-art PDF (secondary synthesis; verified local PDF) ---
+  - evidence_id: EV_SOA_NONINVARIANT_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 1
+    page_end: 1
+    section_title: executive_summary_non_invariant_timbre
+    original_variable_name: timbre_invariance
+    canonical_variable_name: context_dependent_timbre
+    paraphrased_claim: >
+      The reviewed techniques do not produce invariant timbres. Harmonics, sul tasto,
+      sul ponticello, and mute effects are conditioned by instrument, string, stopped length,
+      register, dynamic, bow force, bow velocity, articulation, and recording or room context.
+      Perceptual labels such as glassy or ethereal describe tendencies, not stable acoustic definitions.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Cross-cutting executive summary; not instrument- or technique-specific.
+
+  - evidence_id: EV_SOA_HARM_MECH_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 2
+    page_end: 3
+    section_title: harmonics_natural_artificial_modal_reorganization
+    original_variable_name: harmonic_partial_selection
+    canonical_variable_name: nodal_formation_and_harmonic_order
+    paraphrased_claim: >
+      Natural and artificial harmonics reorganize the vibrational regime rather than merely
+      quieting the fundamental. Artificial-harmonic touch intervals map to partial order:
+      perfect fourth selects the fourth partial; major third, minor third, and perfect fifth
+      configurations select the fifth, sixth, and third partials respectively, with the
+      perfect-fourth configuration most idiomatic in practice.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Covers both natural and artificial harmonic regimes.
+
+  - evidence_id: EV_SOA_HARM_GLISS_HALF_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 2
+    page_end: 3
+    section_title: harmonic_glissandi_half_harmonics
+    original_variable_name: glissando_and_half_harmonic_variability
+    canonical_variable_name: harmonic_regime_variability
+    paraphrased_claim: >
+      Harmonic glissandi differ between natural and artificial regimes in continuity and control.
+      Half harmonic is not a single standardized category: notation may indicate intermediate
+      finger pressure, deliberately impure harmonics, or rapid alternation between stopped and
+      harmonic contact, with outcomes strongly dependent on setup and bowing.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    related_technique_note: natural_harmonic and artificial_harmonic regimes; half harmonic undefined in EWSD domain.
+
+  - evidence_id: EV_SOA_HARM_MULTIPHONIC_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 3
+    page_end: 4
+    section_title: bowed_string_multiphonics
+    original_variable_name: multiphonic_pitch_clusters
+    canonical_variable_name: multiple_salient_partials
+    paraphrased_claim: >
+      Bowed-string multiphonics are a single excitation yielding two or more perceptually distinct
+      harmonic pitches from one touched string. The procedure is most applicable to cello and double
+      bass because of longer strings and node separation; shorter violin and viola strings are less
+      forgiving and remain less systematically documented.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    related_technique_note: multiphonic is not a first-class EWSD technique label.
+
+  - evidence_id: EV_SOA_HARM_NOTATION_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 3
+    page_end: 4
+    section_title: harmonic_notation_systems
+    original_variable_name: harmonic_notation_conventions
+    canonical_variable_name: notation_ambiguity
+    paraphrased_claim: >
+      Harmonic notation systems distinguish touched pitch, stopped pitch, and sounding pitch in
+      competing conventions. Double-bass harmonics require explicit prefatory clarification because
+      octave transposition, treble-clef local practice, and touched-versus-sounding pitch can
+      otherwise produce octave errors.
+    quantitative_or_qualitative: qualitative
+    directness: qualitative_performance_description
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Double-bass convention called out; applies across harmonic types.
+
+  - evidence_id: EV_SOA_HARM_INSTRUMENT_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 4
+    page_end: 4
+    section_title: instrument_specific_harmonic_practicality
+    original_variable_name: harmonic_practicality_by_instrument
+    canonical_variable_name: instrument_specific_harmonic_practicality
+    paraphrased_claim: >
+      A qualitative instrument table summarizes practical profiles for natural harmonics,
+      artificial harmonics, multiphonics and glissandi, and principal limitations across violin,
+      viola, cello, and double bass. Limits are practice-oriented rather than absolute physical bounds.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Table on p.4; qualitative synthesis only.
+
+  - evidence_id: EV_SOA_ST_MECH_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: sul_tasto
+    page_start: 6
+    page_end: 7
+    section_title: sul_tasto_mechanism
+    original_variable_name: bow_bridge_distance_and_speaking_length
+    canonical_variable_name: relative_bow_bridge_distance_beta
+    paraphrased_claim: >
+      Sul tasto increases bow-bridge distance relative to speaking length, tending to reduce upper-partial
+      energy, lower spectral centroid, soften attack, and increase diffuseness. These tendencies are
+      conditional on coordinated adjustments of bow force and velocity, not on contact point alone.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_SOA_ST_FLAUTANDO_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: sul_tasto
+    page_start: 7
+    page_end: 7
+    section_title: flautando_vs_sul_tasto
+    original_variable_name: flautando_character
+    canonical_variable_name: flautando_distinct_from_sul_tasto
+    paraphrased_claim: >
+      Flautando overlaps with sul tasto but is not synonymous. Sul tasto specifies contact-point
+      displacement toward the fingerboard; flautando specifies a desired flute-like colour often
+      realized through light force and freely moving bow speed. A passage may be sul tasto without
+      achieving flautando, and flautando may be approximated without the most extreme fingerboard position.
+    quantitative_or_qualitative: qualitative
+    directness: qualitative_performance_description
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    related_technique_note: flautando is not a first-class EWSD technique label.
+
+  - evidence_id: EV_SOA_ST_TEXTURE_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: sul_tasto
+    page_start: 8
+    page_end: 8
+    section_title: sul_tasto_textural_functions
+    original_variable_name: auditory_grouping_and_texture
+    canonical_variable_name: textural_grouping_context
+    paraphrased_claim: >
+      Sul tasto textural effects such as blend, stratification, surface-texture formation, and
+      spectral contraction are conditional analytical functions that depend on grouping context,
+      register, dynamics, rhythm, and spatial placement—not intrinsic meanings of the technique alone.
+    quantitative_or_qualitative: qualitative
+    directness: qualitative_performance_description
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_SOA_SP_MECH_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: sul_ponticello
+    page_start: 9
+    page_end: 11
+    section_title: sul_ponticello_mechanism_and_categories
+    original_variable_name: multiple_slip_and_spectral_instability
+    canonical_variable_name: spectral_variance
+    paraphrased_claim: >
+      Sul ponticello narrows stable Helmholtz force-velocity ranges and can produce multiple slips
+      per period, emphasizing selected upper harmonics and noise-like components. Bow force and
+      velocity remain crucial. Distinct categories include moderate sul ponticello, extreme sul ponticello,
+      on-bridge, and behind-bridge afterlength bowing. The spectrum is often temporally unstable and
+      requires descriptors beyond a single average spectral centroid.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_SOA_MUTE_MECH_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: con_sordino
+    page_start: 12
+    page_end: 14
+    section_title: mute_bridge_mass_mechanism
+    original_variable_name: bridge_added_mass_and_mobility
+    canonical_variable_name: bridge_mobility
+    paraphrased_claim: >
+      A bridge-mounted mute adds mass and damping that alter bridge mobility and body coupling,
+      reshaping radiated spectra especially in middle and high regions. The mute acts as a mechanical
+      filter on transmission, not as a device that simply absorbs overtones.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_SOA_MUTE_MOBILITY_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: vln
+    technique: con_sordino
+    page_start: 12
+    page_end: 12
+    section_title: violin_mute_bridge_mobility_elie
+    original_variable_name: mean_bridge_mobility_reduction
+    canonical_variable_name: bridge_mobility
+    paraphrased_claim: >
+      Secondary synthesis reports violin mute measurements (Elie et al.) showing mean bridge mobility
+      reduced by approximately 5–13 dB between about 1 and 2.5 kHz, a region important for projection
+      and brilliance; exact response depends on mute mass, bridge, and bowing.
+    quantitative_or_qualitative: quantitative
+    reported_lower_bound: 5.0
+    reported_upper_bound: 13.0
+    original_unit: dB
+    canonical_unit: dB
+    amplitude_or_power: power
+    linear_or_decibel: decibel
+    frequency_range_hz: "1000-2500"
+    directness: direct_same_instrument_related_variable
+    density_mapping_status: incompatible_variable
+    numerical_activation_status: secondary_synthesis_requires_primary_verification
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    mute_type: orchestral
+    curator_notes: >
+      Numerical value cited via secondary synthesis only. Inactive for EWSD density activation;
+      requires primary Elie et al. (2013) verification.
+
+  - evidence_id: EV_SOA_MUTE_HEAVY_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: vln
+    technique: con_sordino
+    page_start: 12
+    page_end: 13
+    section_title: heavy_practice_mute_mass_threshold
+    original_variable_name: heavy_mute_mass_classification
+    canonical_variable_name: mute_mass
+    paraphrased_claim: >
+      Standard orchestral and heavy practice mutes are not acoustically interchangeable. Secondary
+      synthesis cites Evangelista and Freire (2025) classifying heavy violin practice mutes above roughly
+      35 g, with distinct spectral restructuring beyond stronger attenuation of light muting.
+    quantitative_or_qualitative: quantitative
+    reported_value: 35.0
+    original_unit: g
+    canonical_unit: g
+    directness: direct_same_instrument_related_variable
+    density_mapping_status: incompatible_variable
+    numerical_activation_status: secondary_synthesis_requires_primary_verification
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    mute_type: heavy_practice
+    curator_notes: >
+      Mass threshold cited via secondary synthesis only. Inactive for EWSD density activation;
+      requires primary Evangelista & Freire (2025) verification.
+
+  - evidence_id: EV_SOA_MUTE_NO_TRANSFER_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: vln
+    technique: con_sordino
+    page_start: 14
+    page_end: 14
+    section_title: mute_instrument_transfer_limit
+    original_variable_name: frequency_specific_violin_mute_response
+    canonical_variable_name: bridge_mobility
+    paraphrased_claim: >
+      Although bridge-mass muting principles apply across the string family, the evidence base is
+      violin-centred. A frequency-specific violin result such as attenuation between 1 and 2.5 kHz
+      must not be transferred unchanged to viola, cello, or double bass.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Transfer prohibition for violin-specific mute frequency claims.
+
+  - evidence_id: EV_SOA_CHAIN_LEVELS_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 15
+    page_end: 17
+    section_title: production_chain_and_analytical_levels
+    original_variable_name: multidimensional_bow_model
+    canonical_variable_name: relative_bow_bridge_distance_beta
+    paraphrased_claim: >
+      Techniques intervene at different points in the production chain. Bow-position outcome depends
+      on a multidimensional model T(β, bow force, bow velocity, speaking length, fundamental frequency,
+      string properties, dynamic, articulation, instrument response), not contact point alone. Analytically
+      robust accounts require four levels: production instruction, acoustic result, perceptual organization,
+      and musical-textural function, with required acoustic descriptors beyond spectral centroid alone.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_SOA_GAPS_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 17
+    page_end: 18
+    section_title: research_gaps
+    original_variable_name: literature_gaps
+    canonical_variable_name: evidence_gaps
+    paraphrased_claim: >
+      Identified gaps include cross-instrument acoustic datasets, insufficient modelling of technique
+      continua, underdeveloped mute research beyond recent violin heavy-mute work, notation
+      standardization problems, multiphonic reproducibility limits, ensemble-level behaviour, incomplete
+      technique recognition in machine listening, and thin texture-specific analytical literature.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_SOA_PROHIBITED_DENSITY_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 1
+    page_end: 20
+    section_title: secondary_synthesis_density_prohibition
+    original_variable_name: density_activation
+    canonical_variable_name: EWSD_density_parameters
+    paraphrased_claim: >
+      This secondary-synthesis state-of-the-art review must not activate EWSD density parameters or
+      density multipliers. Qualitative mechanism and conditional-tendency records are permitted;
+      numerical values require traceable primary-source verification before any density use.
+    quantitative_or_qualitative: qualitative
+    directness: unsupported_for_current_model
+    density_mapping_status: insufficient_information
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Package-level prohibition note; active_for_density_prediction must remain false.
+
+  - evidence_id: EV_SOA_PROHIBITED_NUMERICAL_001
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    instrument: null
+    technique: null
+    page_start: 12
+    page_end: 13
+    section_title: secondary_synthesis_numerical_inactivation
+    original_variable_name: cited_primary_numerical_values
+    canonical_variable_name: numerical_primary_verification_required
+    paraphrased_claim: >
+      Numerical statements relayed through this secondary synthesis—including dB mobility reductions,
+      mute mass thresholds, and implied density ratios—carry numerical_activation_status
+      secondary_synthesis_requires_primary_verification and must not enter the active parameter ledger
+      without direct primary-source extraction.
+    quantitative_or_qualitative: qualitative
+    directness: unsupported_for_current_model
+    density_mapping_status: incompatible_variable
+    curator_verification_status: validated
+    evidence_class: secondary_synthesis
+    extraction_method: pdf_page_verified
+    curator_notes: Applies to EV_SOA_MUTE_MOBILITY_001 and EV_SOA_MUTE_HEAVY_001 and any future SOA numerics.
+
+  # --- Schoonderwaldt 2009: β definition, measurement-domain separation ---
+  - evidence_id: EV_SCHOONDERWALDT_BETA_DEF_001
+    source_id: SRC_SCHOONDERWALDT_2009
+    instrument: vln
+    technique: null
+    page_start: 2
+    page_end: 4
+    section_title: relative_bow_bridge_distance_beta_definition
+    original_variable_name: relative_bow_bridge_distance_beta
+    canonical_variable_name: relative_bow_bridge_distance_beta
+    paraphrased_claim: >
+      Relative bow-bridge distance β is the ratio of bow-bridge distance to speaking
+      length (log-scaled on Schelleng diagrams). It is a primary bow-position coordinate
+      alongside bow force and bow velocity; it does not alone determine spectral centroid
+      without coordinated force and velocity.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_related_variable
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: >
+      Aligns package ontology β = bow_bridge_distance_m / speaking_length_m.
+      Standardized regression coefficients in this paper are relative-importance evidence only.
+
+  - evidence_id: EV_SCHOONDERWALDT_DOMAIN_SEP_001
+    source_id: SRC_SCHOONDERWALDT_2009
+    instrument: vln
+    technique: null
+    page_start: 2
+    page_end: 3
+    section_title: measurement_domain_spectral_centroid
+    original_variable_name: spectral_centroid_measurement_domain
+    canonical_variable_name: spectral_centroid
+    measurement_domain_id: string_velocity_at_bow
+    paraphrased_claim: >
+      Spectral centroid in this study is derived from string-velocity spectra (with
+      compensation toward bridge-force estimates), not from radiated microphone audio.
+      Bridge-force and string-velocity centroids must not be treated as interchangeable
+      with radiated-audio spectral centroid without an explicit transfer model.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_related_variable
+    density_mapping_status: incompatible_variable
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: >
+      measurement_domain_id string_velocity_at_bow; radiated_audio equivalence prohibited.
+      Do not map centroid values to EWSD density parameters.
+
+  - evidence_id: EV_SCHOONDERWALDT_STDREG_WARNING_001
+    source_id: SRC_SCHOONDERWALDT_2009
+    instrument: vln
+    technique: null
+    page_start: 6
+    page_end: 7
+    section_title: standardized_regression_relative_importance
+    original_variable_name: standardized_regression_coefficients
+    canonical_variable_name: relative_bow_bridge_distance_beta
+    paraphrased_claim: >
+      Multiple regression on z-scored variables reports standardized coefficients as
+      relative contributions of bow force, bow velocity, and β to spectral centroid.
+      These coefficients describe importance within the fitted model and must not be
+      exported as portable absolute equations or EWSD density mappings.
+    quantitative_or_qualitative: qualitative
+    directness: unsupported_for_current_model
+    density_mapping_status: insufficient_information
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: Table I standardized β; R² reported but no density activation.
+
+  # --- Evangelista & Freire 2025: nonlinear mute behaviour ---
+  - evidence_id: EV_EVANGELISTA_MASS_INSUFFICIENT_001
+    source_id: SRC_EVANGELISTA_FREIRE_2025
+    instrument: vln
+    technique: con_sordino
+    page_start: 1
+    page_end: 2
+    section_title: mute_physical_characteristics_beyond_mass
+    original_variable_name: mute_mass_and_geometry
+    canonical_variable_name: mute_mass
+    paraphrased_claim: >
+      Mute outcomes depend on mass, rigidity, shape, material, mechanism, and bridge
+      contact area—not on mass alone. Bridge mobility filtering reshapes spectra;
+      mute mass by itself is an insufficient sole predictor of timbral change.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    mute_type: heavy_practice
+
+  - evidence_id: EV_EVANGELISTA_NO_MASS_ATTENUATION_LAW_001
+    source_id: SRC_EVANGELISTA_FREIRE_2025
+    instrument: vln
+    technique: con_sordino
+    page_start: 5
+    page_end: 6
+    section_title: nonlinear_mass_attenuation_limit
+    original_variable_name: mute_mass_vs_intensity_reduction
+    canonical_variable_name: intensity_reduction
+    paraphrased_claim: >
+      Above roughly 35 g, heavy practice mutes show little proportional variation in
+      attenuation despite large mass differences (e.g. 70 g vs 168 g). Bridge coupling
+      and spectral restructuring impose a functional limit; attenuation is not a universal
+      function of added mass alone.
+    quantitative_or_qualitative: qualitative
+    directness: direct_same_instrument_same_technique
+    density_mapping_status: incompatible_variable
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    mute_type: heavy_practice
+    curator_notes: >
+      Tab. 1 mass vs % intensity reduction cited qualitatively; no attenuation=f(mass) law.
+      Loudness (sones) and LTAS are radiated_audio descriptors, not EWSD.
+
+  - evidence_id: EV_EVANGELISTA_NO_EWSD_001
+    source_id: SRC_EVANGELISTA_FREIRE_2025
+    instrument: vln
+    technique: con_sordino
+    page_start: 3
+    page_end: 4
+    section_title: ltas_loudness_not_density
+    original_variable_name: LTAS_and_loudness_sones
+    canonical_variable_name: loudness_sones
+    measurement_domain_id: radiated_audio
+    paraphrased_claim: >
+      LTAS and loudness (sones) characterize radiated-audio spectral and psychoacoustic
+      change under heavy practice mutes. These descriptors must not be mapped to EWSD
+      density parameters or treated as density multipliers.
+    quantitative_or_qualitative: qualitative
+    directness: unsupported_for_current_model
+    density_mapping_status: incompatible_variable
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: active_for_density_prediction must remain false for all Evangelista numerics.
+
+  # --- Fallowfield TEMPO: multiphonics distinct from harmonics ---
+  - evidence_id: EV_FALLOWFIELD_MULTIPHONIC_DEF_001
+    source_id: SRC_FALLOWFIELD_TEMPO_MULTIPHONICS
+    instrument: vlc
+    technique: null
+    evidence_scope: multiphonic
+    page_start: 1
+    page_end: 1
+    section_title: multiphonic_definition_vs_harmonics
+    original_variable_name: string_multiphonic_definition
+    canonical_variable_name: multiphonic_excitation
+    paraphrased_claim: >
+      A string multiphonic is a single bowed excitation yielding two or more harmonics
+      sounding distinctly and simultaneously on a touched string. Multiphonics are not
+      equivalent to natural harmonics, artificial harmonics, half harmonics, or double stops.
+    quantitative_or_qualitative: qualitative
+    directness: qualitative_performance_description
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    related_technique_note: multiphonic is outside the legacy 4×4 evidence matrix.
+
+  - evidence_id: EV_FALLOWFIELD_SCHEMA_PTR_001
+    source_id: SRC_FALLOWFIELD_TEMPO_MULTIPHONICS
+    instrument: vlc
+    technique: null
+    evidence_scope: multiphonic
+    page_start: 1
+    page_end: 6
+    section_title: multiphonic_schema_and_repository_pointer
+    original_variable_name: touching_position_ratio_and_partials
+    canonical_variable_name: touching_position_ratio
+    paraphrased_claim: >
+      Cello multiphonic research supports compositional schema fields (touching position,
+      bow side, expected partial clusters) via smartphone charts and Cello Map repository;
+      fingerings and pitch sets must not be invented without verified primary transcription.
+    quantitative_or_qualitative: qualitative
+    directness: qualitative_performance_description
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    related_technique_note: >
+      Package schema pointer: production.MultiphonicInstruction; configs/datasets not
+      populated with invented fingerings.
+
+  # --- Lostanlen et al. 2018: recognition only ---
+  - evidence_id: EV_LOSTANLEN_RECOGNITION_ONLY_001
+    source_id: SRC_LOSTANLEN_ANDEN_LAGRANGE_2018
+    instrument: null
+    technique: null
+    page_start: 1
+    page_end: 8
+    section_title: ipt_recognition_not_acoustic_certainty
+    original_variable_name: extended_playing_technique_recognition
+    canonical_variable_name: technique_recognition_labels
+    paraphrased_claim: >
+      Extended playing technique recognition (query-by-example on SOL dataset) supplies
+      taxonomy and retrieval labels for sul ponticello, sul tasto, multiphonics, mutes, etc.
+      Classification confidence is not acoustic certainty and must never map to EWSD coefficients.
+    quantitative_or_qualitative: qualitative
+    directness: unsupported_for_current_model
+    density_mapping_status: insufficient_information
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: Use recognition.TechniqueRecognitionResult; claims_ewsd must remain false.
+
+  # --- Stowell Cambridge excerpt: terminology only ---
+  - evidence_id: EV_STOWELL_TERMINOLOGY_001
+    source_id: SRC_STOWELL_CAMBRIDGE_TECHNIQUE_PERFORMING_PRACTICE
+    instrument: vln
+    technique: null
+    page_start: 16
+    page_end: 16
+    section_title: historical_terminology_sul_pont_tasto
+    original_variable_name: sul_ponticello_sul_tasto_terminology
+    canonical_variable_name: terminology
+    paraphrased_claim: >
+      Nineteenth-century violin treatises document specialised bowings including tremolo,
+      col legno, sul ponticello, and sulla tastiera as increasingly employed expressive
+      categories. This source supports historical terminology and performance-practice labels
+      only, not numerical acoustic parameters.
+    quantitative_or_qualitative: qualitative
+    directness: qualitative_performance_description
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    evidence_class: historical_source
+    extraction_method: pdf_page_verified
+    curator_notes: Partial Cambridge Companion excerpt; mislabelled filename resolved in source registry.
+
+  # --- Fletcher & Rossing 1991: bowed-string chapter (qualitative) ---
+  - evidence_id: EV_FLETCHER_ROSSING_CH10_BOWED_001
+    source_id: SRC_FLETCHER_ROSSING_1991
+    instrument: null
+    technique: null
+    evidence_scope: generic_bowed_string
+    page_start: 235
+    page_end: 283
+    section_title: chapter_10_bowed_string_instruments
+    original_variable_name: bowed_string_motion_and_violin_body
+    canonical_variable_name: bowed_string_motion
+    paraphrased_claim: >
+      Chapter 10 surveys bowed-string Helmholtz motion, bridge mechanics, body modes,
+      sound radiation, and bow–string interaction for violin family instruments. It provides
+      generic bowed-string physics context only; no technique-specific EWSD coefficients.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: Book TOC verified; sul ponticello/tasto not technique-indexed in this chapter.
+
+  - evidence_id: EV_FLETCHER_ROSSING_HELMHOLTZ_001
+    source_id: SRC_FLETCHER_ROSSING_1991
+    instrument: null
+    technique: null
+    evidence_scope: generic_bowed_string
+    page_start: 45
+    page_end: 47
+    section_title: section_2_10_bowed_string_preview
+    original_variable_name: helmholtz_motion
+    canonical_variable_name: stable_helmholtz_motion
+    paraphrased_claim: >
+      Ideal bowed-string motion forms a travelling corner (Helmholtz motion) with stick-slip
+      alternation; envelope shape and harmonic content depend on bow position relative to
+      bridge and nut, bow force, and bow speed. Multiple-slip regimes lie outside stable Helmholtz.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+
+  # --- Rossing 2010 edited volume: bowed-string chapters (qualitative) ---
+  - evidence_id: EV_ROSSING2010_CH12_BOWED_001
+    source_id: SRC_ROSSING_SCIENCE_STRING_INSTRUMENTS_2010
+    instrument: null
+    technique: null
+    evidence_scope: generic_bowed_string
+    page_start: 197
+    page_end: 208
+    section_title: chapter_12_bowed_strings
+    original_variable_name: bowed_strings_overview
+    canonical_variable_name: bowed_string_motion
+    paraphrased_claim: >
+      Chapter 12 (Bowed Strings) reviews bowed-string physics and measurement traditions
+      across the violin family. Deposit supports mechanism-level qualitative constraints only;
+      no EWSD density activation from chapter scope alone.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+
+  - evidence_id: EV_ROSSING2010_CH13_VIOLIN_001
+    source_id: SRC_ROSSING_SCIENCE_STRING_INSTRUMENTS_2010
+    instrument: vln
+    technique: null
+    page_start: 209
+    page_end: 244
+    section_title: chapter_13_violin
+    original_variable_name: violin_acoustics_modal_radiation
+    canonical_variable_name: violin_body_modes
+    paraphrased_claim: >
+      Chapter 13 (Violin) covers construction, body modes, bridge, sound radiation, and
+      tonal quality. Useful for bridge–body coupling and radiation context; technique-specific
+      sul ponticello/sul tasto/con sordino coefficients require separate page-level curation.
+    quantitative_or_qualitative: qualitative
+    directness: generic_bowed_string_physics
+    density_mapping_status: qualitative_constraint_only
+    curator_verification_status: validated
+    extraction_method: pdf_page_verified
+    curator_notes: Edited volume; deposit identity verified, numerical extracts inactive by default.

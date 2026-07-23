@@ -1,0 +1,74 @@
+version: "1.0.0"
+package: acoustics_stress
+default_tier: fast
+
+tiers:
+  fast:
+    markers: "acoustics_stress and not slow and not benchmark"
+    description: Default CI-safe acoustics stress suite
+  extended:
+    markers: "acoustics_stress"
+    description: Full acoustics stress including slow cases
+  benchmark:
+    markers: "benchmark"
+    description: Named Benchmark A–J cases
+
+categories:
+  - mathematical_exact
+  - unit_consistency
+  - domain_boundary
+  - literature_bounded
+  - literature_directional
+  - measurement_domain
+  - physical_plausibility
+  - metamorphic
+  - adversarial
+  - regression
+  - performance
+  - reproducibility
+  - provenance
+  - assumption_isolation
+  - unsupported_extrapolation
+
+worked_benchmarks:
+  - id: A
+    name: beta_exact
+    status: implemented
+  - id: B
+    name: artificial_harmonic_sounding_frequency
+    status: physics_oracle_only_production_api_absent
+  - id: C
+    name: interval_order_contradiction
+    status: implemented
+  - id: D
+    name: spectral_centroid_sine
+    status: implemented
+  - id: E
+    name: spectral_centroid_two_tone
+    status: implemented
+  - id: F
+    name: hnr_monotonicity
+    status: implemented
+  - id: G
+    name: mute_categories_distinct
+    status: implemented_scope
+  - id: H
+    name: measurement_domain_mismatch
+    status: implemented_scope
+  - id: I
+    name: evidence_only_ewsd_na
+    status: implemented
+  - id: J
+    name: user_assumption_mode
+    status: implemented_with_empty_default_registry
+
+real_audio_validation: absent
+reporting_totals:
+  - scope_safeguard_tests
+  - numerical_descriptor_tests
+  - literature_alignment_tests
+  - real_audio_tests
+notes: >
+  Synthetic signals are numerical fixtures, not bowed-string perceptual equivalents.
+  No silent external downloads. Scope-safeguard passes for unimplemented descriptors
+  are not counted as numerical acoustic validation.

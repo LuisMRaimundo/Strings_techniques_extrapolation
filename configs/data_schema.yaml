@@ -1,0 +1,36 @@
+# Descriptive documentation of the canonical imported record.
+# collection_id is open-ended — never restricted to iowa/orchidea/pooled.
+
+canonical_fields:
+  record_id: {type: string, required: true}
+  collection_id: {type: string, required: true, notes: "Any registered collection_id"}
+  collection_display_name: {type: string, nullable: true}
+  source_file: {type: string, nullable: true}
+  source_row: {type: integer, nullable: true}
+  instrument: {type: string, required: true}
+  technique: {type: string, required: true}
+  pitch_name_written: {type: string, nullable: true}
+  pitch_midi_written: {type: number, nullable: true}
+  pitch_name_sounding: {type: string, nullable: true}
+  pitch_midi_sounding: {type: number, nullable: true}
+  fundamental_hz: {type: number, nullable: true}
+  string_name: {type: string, nullable: true}
+  dynamic: {type: string, nullable: true}
+  articulation: {type: string, nullable: true}
+  density_value: {type: number, nullable: true, missing_policy: missing_by_design_not_zero}
+  density_unit: {type: string, nullable: true}
+  metric_definition_id: {type: string, required: true}
+  metric_version: {type: string, nullable: true}
+  analysis_window_id: {type: string, nullable: true}
+  normalisation_id: {type: string, nullable: true}
+  frequency_range_id: {type: string, nullable: true}
+  measured_or_estimated: {type: string, nullable: true}
+  provenance: {type: string, nullable: true}
+
+# Illustrative source-column maps only. Live mappings live in configs/schemas/*.yaml.
+example_source_column_maps:
+  generic_flat_table:
+    note: pitch_name_sounding
+    dynamic columns or dyn field: dynamic
+    density column: density_value
+    instrument field: instrument

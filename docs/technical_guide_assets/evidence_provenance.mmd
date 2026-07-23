@@ -1,0 +1,10 @@
+flowchart TB
+  F[Filename claim] --> V[Internal title/author/year/DOI]
+  V --> H[SHA-256]
+  H --> S{validation_status}
+  S -->|verified_identity| R[Register source]
+  S -->|duplicate/reject| X[Do not ingest as claimed]
+  R --> EX[Page extracts]
+  EX --> G[Activation gate]
+  G -->|fail| Q[Qualitative only / inactive]
+  G -->|pass| N[Numerical density param]

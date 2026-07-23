@@ -1,0 +1,220 @@
+# Literature benchmark cases — verified sources only.
+# Filenames are not authority. Identity from configs/source_identity_validation.yaml.
+# No invented experimental reference values.
+
+version: "1.0.0"
+
+cases:
+  - benchmark_case_id: BM_SCHOONDERWALDT_BETA_DEFINITION
+    source_id: SRC_SCHOONDERWALDT_2009
+    citation: "Schoonderwaldt, E. (2009). The violinist's sound palette… Acta Acustica."
+    DOI: "10.3813/AAA.918221"
+    page_or_figure: "extract EV_SCHOONDERWALDT_BETA_DEF_001"
+    source_type: primary_experimental_evidence
+    instrument: vln
+    string: null
+    technique: null
+    measurement_domain: string_velocity_at_bow
+    recording_or_measurement_setup: "bowing machine / monochord context (article)"
+    input_variables:
+      definition: "beta = bow_bridge_distance / speaking_length"
+    expected_output_type: exact
+    expected:
+      relation: "beta_equals_distance_over_speaking_length"
+    tolerance_id: TOL_FLOAT64_ABS
+    transferability: violin_bowing_parameter_definition_only
+    direct_numerical_comparison_allowed: true
+    known_limitations: "Definitional; not a timbre predictor. Domain is not radiated_audio."
+
+  - benchmark_case_id: BM_SCHOONDERWALDT_DOMAIN_NONEQUIV
+    source_id: SRC_SCHOONDERWALDT_2009
+    citation: "Schoonderwaldt (2009)"
+    DOI: "10.3813/AAA.918221"
+    page_or_figure: "extract EV_SCHOONDERWALDT_DOMAIN_SEP_001"
+    source_type: primary_experimental_evidence
+    instrument: vln
+    string: null
+    technique: null
+    measurement_domain: string_velocity_at_bow
+    recording_or_measurement_setup: null
+    input_variables:
+      descriptor: spectral_centroid
+      domains: [string_velocity_at_bow, radiated_audio]
+    expected_output_type: non_equivalence
+    expected:
+      relation: "centroids_not_automatically_equivalent_across_domains"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: none
+    direct_numerical_comparison_allowed: false
+    known_limitations: "No absolute centroid equation activated in this repository."
+
+  - benchmark_case_id: BM_SCHOONDERWALDT_STDREG_NOT_PORTABLE
+    source_id: SRC_SCHOONDERWALDT_2009
+    citation: "Schoonderwaldt (2009)"
+    DOI: "10.3813/AAA.918221"
+    page_or_figure: "extract EV_SCHOONDERWALDT_STDREG_WARNING_001"
+    source_type: primary_experimental_evidence
+    instrument: vln
+    string: null
+    technique: null
+    measurement_domain: string_velocity_at_bow
+    recording_or_measurement_setup: null
+    input_variables: {}
+    expected_output_type: unsupported_for_numerical_test
+    expected:
+      relation: "standardized_regression_coefficients_are_relative_importance_only"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: none
+    direct_numerical_comparison_allowed: false
+    known_limitations: "Must not become universal causal EWSD coefficients."
+
+  - benchmark_case_id: BM_EVANGELISTA_MUTE_CATEGORIES
+    source_id: SRC_EVANGELISTA_FREIRE_2025
+    citation: "Evangelista & Freire (2025). Heavy violin practice mutes. Acta Acustica."
+    DOI: "10.1051/aacus/2025029"
+    page_or_figure: "extract EV_EVANGELISTA_MASS_INSUFFICIENT_001"
+    source_type: primary_experimental_evidence
+    instrument: vln
+    string: null
+    technique: con_sordino
+    measurement_domain: radiated_audio
+    recording_or_measurement_setup: "article LTAS/loudness protocol; Zenodo external_unresolved"
+    input_variables:
+      mute_categories: [performance_mute, light_practice, heavy_practice]
+    expected_output_type: categorical_distinction
+    expected:
+      relation: "mute_categories_remain_distinct; mass_alone_insufficient"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: violin_only_unless_explicit_transfer
+    direct_numerical_comparison_allowed: false
+    known_limitations: "No attenuation=f(mass). Table rows not inventively filled."
+
+  - benchmark_case_id: BM_EVANGELISTA_NO_MASS_ATTENUATION_LAW
+    source_id: SRC_EVANGELISTA_FREIRE_2025
+    citation: "Evangelista & Freire (2025)"
+    DOI: "10.1051/aacus/2025029"
+    page_or_figure: "extract EV_EVANGELISTA_NO_MASS_ATTENUATION_LAW_001"
+    source_type: primary_experimental_evidence
+    instrument: vln
+    string: null
+    technique: con_sordino
+    measurement_domain: radiated_audio
+    recording_or_measurement_setup: null
+    input_variables: {}
+    expected_output_type: unsupported_for_numerical_test
+    expected:
+      relation: "no_universal_attenuation_equals_f_mass"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: none
+    direct_numerical_comparison_allowed: false
+    known_limitations: "Construction, coupling, material, geometry matter."
+
+  - benchmark_case_id: BM_FALLOWFIELD_MULTIPHONIC_DISTINCT
+    source_id: SRC_FALLOWFIELD_TEMPO_MULTIPHONICS
+    citation: "Fallowfield, E. (2019). Cello multiphonics… TEMPO 74(291)."
+    DOI: "10.1017/S0040298219000974"
+    page_or_figure: "extract EV_FALLOWFIELD_MULTIPHONIC_DEF_001"
+    source_type: performance_practice_source
+    instrument: vlc
+    string: null
+    technique: multiphonic
+    measurement_domain: unresolved
+    recording_or_measurement_setup: null
+    input_variables: {}
+    expected_output_type: categorical_distinction
+    expected:
+      relation: "multiphonic_distinct_from_single_harmonic_and_double_stop"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: cello_not_auto_generalised
+    direct_numerical_comparison_allowed: false
+    known_limitations: "No invented fingering charts in this repository."
+
+  - benchmark_case_id: BM_LOSTANLEN_RECOGNITION_NOT_EWSD
+    source_id: SRC_LOSTANLEN_ANDEN_LAGRANGE_2018
+    citation: "Lostanlen et al. (2018). Extended playing techniques… DLfM."
+    DOI: "10.1145/3273024.3273036"
+    page_or_figure: "extract EV_LOSTANLEN_RECOGNITION_ONLY_001"
+    source_type: secondary_synthesis
+    instrument: null
+    string: null
+    technique: null
+    measurement_domain: radiated_audio
+    recording_or_measurement_setup: "SOL dataset taxonomy (recognition)"
+    input_variables: {}
+    expected_output_type: unsupported_for_numerical_test
+    expected:
+      relation: "recognition_confidence_is_not_ewsd"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: none
+    direct_numerical_comparison_allowed: false
+    known_limitations: "MIR benchmark only."
+
+  - benchmark_case_id: BM_STOWELL_TERMINOLOGY_ONLY
+    source_id: SRC_STOWELL_CAMBRIDGE_TECHNIQUE_PERFORMING_PRACTICE
+    citation: "Stowell (1992). Technique and performing practice (Cambridge Companion)."
+    DOI: "10.1017/CCOL9780521390330.008"
+    page_or_figure: "extract EV_STOWELL_TERMINOLOGY_001"
+    source_type: historical_source
+    instrument: vln
+    string: null
+    technique: null
+    measurement_domain: unresolved
+    recording_or_measurement_setup: null
+    input_variables: {}
+    expected_output_type: applicability_only
+    expected:
+      relation: "historical_terminology_not_numerical_acoustics"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: none
+    direct_numerical_comparison_allowed: false
+    known_limitations: "Partial identity match vs archive filename."
+
+  - benchmark_case_id: BM_SOA_SECONDARY_NO_EWSD_ACTIVATION
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    citation: "Local secondary synthesis SOA PDF"
+    DOI: null
+    page_or_figure: "reports PDF / extracts"
+    source_type: secondary_synthesis
+    instrument: null
+    string: null
+    technique: null
+    measurement_domain: unresolved
+    recording_or_measurement_setup: null
+    input_variables: {}
+    expected_output_type: unsupported_for_numerical_test
+    expected:
+      relation: "secondary_synthesis_must_not_activate_ewsd"
+    tolerance_id: TOL_NO_NUMERICAL_COMPARISON
+    transferability: none
+    direct_numerical_comparison_allowed: false
+    known_limitations: "Author/year unresolved; not a substitute for primaries."
+
+  - benchmark_case_id: BM_PHYSICS_ORACLE_HARMONIC_P4
+    source_id: null
+    citation: "First-principles harmonic-series identity (analytical)"
+    DOI: null
+    page_or_figure: null
+    source_type: analytical_identity
+    oracle_type: analytical_identity
+    provenance_type: first_principles
+    source_required: false
+    instrument: null
+    string: null
+    technique: artificial_harmonic
+    measurement_domain: unresolved
+    recording_or_measurement_setup: null
+    input_variables:
+      f_stopped_hz: 220
+      harmonic_order: 4
+    expected_output_type: exact
+    expected:
+      relation: "f_n = n * f_0"
+      f_n_hz: 880
+      production_api_auto_compute: false
+    tolerance_id: TOL_FLOAT64_ABS
+    transferability: none
+    direct_numerical_comparison_allowed: true
+    known_limitations: >
+      Analytical identity for stress/oracle checks only.
+      ProductionInstruction does not auto-fill sounding frequency.
+      Must not invent an EWSD coefficient from this relation.

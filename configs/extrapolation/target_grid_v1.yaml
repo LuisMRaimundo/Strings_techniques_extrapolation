@@ -1,0 +1,41 @@
+# Target cells for first-priority narrow extrapolation.
+version: "1.0.0"
+schema_version: "extrapolation_target_grid_v1"
+
+baseline_technique: ordinary
+excluded_techniques:
+  - multiphonic
+  - heavy_practice_mute
+  - flautando
+  - on_bridge
+  - afterlength
+  - artificial_harmonic  # second priority — not in this grid
+  - natural_harmonic
+
+instruments: [vln, vla, vlc, cb]
+dynamics: [pp, mf, ff]
+
+techniques:
+  - technique_id: sul_tasto
+    mute_state: "off"
+    transformation: ordinario_to_sul_tasto
+  - technique_id: sul_ponticello
+    mute_state: "off"
+    transformation: ordinario_to_sul_ponticello
+  - technique_id: con_sordino
+    mute_state: standard_performance_orchestral
+    transformation: ordinario_to_standard_con_sordino
+
+# Quantities emitted for every instrument×technique×dynamic cell
+target_quantities:
+  - EWSD_score_acoustic_balanced
+  - spectral_centroid
+  - spectral_slope
+  - HNR
+  - spectral_flux
+  - frame_centroid_variance
+  - upper_partial_energy_ratio
+  - attenuation_db_power
+
+# Ordinary baseline EWSD is also reported as measured reference rows
+emit_baseline_measured_ewsd: true

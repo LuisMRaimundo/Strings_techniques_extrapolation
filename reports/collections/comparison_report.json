@@ -1,0 +1,89 @@
+{
+  "target_metric_definition_id": "ewsd_v1",
+  "collections": [
+    {
+      "collection_id": "iowa",
+      "n_records": 576,
+      "instruments": [
+        "cb",
+        "vla",
+        "vlc",
+        "vln"
+      ],
+      "techniques": [
+        "ordinary"
+      ],
+      "metric_definition_ids": [
+        "ewsd_v1"
+      ],
+      "metric_compatibility_status": "identical",
+      "compatibility_reason": "All records use the target metric definition."
+    },
+    {
+      "collection_id": "orchidea",
+      "n_records": 576,
+      "instruments": [
+        "cb",
+        "vla",
+        "vlc",
+        "vln"
+      ],
+      "techniques": [
+        "ordinary"
+      ],
+      "metric_definition_ids": [
+        "ewsd_v1"
+      ],
+      "metric_compatibility_status": "identical",
+      "compatibility_reason": "All records use the target metric definition."
+    },
+    {
+      "collection_id": "custom_test_collection",
+      "n_records": 8,
+      "instruments": [
+        "vla",
+        "vlc",
+        "vln"
+      ],
+      "techniques": [
+        "ordinary",
+        "sul_ponticello",
+        "sul_tasto"
+      ],
+      "metric_definition_ids": [
+        "ewsd_v1"
+      ],
+      "metric_compatibility_status": "identical",
+      "compatibility_reason": "All records use the target metric definition."
+    }
+  ],
+  "pairwise": [
+    {
+      "collection_a": "iowa",
+      "collection_b": "orchidea",
+      "direct_status": "identical",
+      "direct_reason": "Same metric_definition_id.",
+      "can_pool_against_target": true,
+      "a_vs_target": "identical",
+      "b_vs_target": "identical"
+    },
+    {
+      "collection_a": "iowa",
+      "collection_b": "custom_test_collection",
+      "direct_status": "identical",
+      "direct_reason": "Same metric_definition_id.",
+      "can_pool_against_target": true,
+      "a_vs_target": "identical",
+      "b_vs_target": "identical"
+    },
+    {
+      "collection_a": "orchidea",
+      "collection_b": "custom_test_collection",
+      "direct_status": "identical",
+      "direct_reason": "Same metric_definition_id.",
+      "can_pool_against_target": true,
+      "a_vs_target": "identical",
+      "b_vs_target": "identical"
+    }
+  ]
+}

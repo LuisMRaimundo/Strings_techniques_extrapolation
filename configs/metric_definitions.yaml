@@ -1,0 +1,97 @@
+# Compatibility is determined only by these definitions — never by collection name
+# or source-column name. Do not invent an EWSD formula if it is not verified here.
+metric_definitions:
+  ewsd_v1:
+    metric_definition_id: ewsd_v1
+    name: "Equivalent Weighted Spectral Density (acoustic-balanced scalar)"
+    version: "1.0"
+    exact_formula: unresolved
+    formula_implementation: null
+    mathematical_domain: positive
+    unit: dimensionless
+    input_representation: scalar_metric
+    normalisation: unresolved
+    frequency_min_hz: null
+    frequency_max_hz: null
+    temporal_window: unresolved
+    window_function: null
+    fft_size: null
+    hop_length: null
+    amplitude_or_power_convention: unresolved
+    threshold_type: null
+    threshold_value: null
+    temporal_aggregation: sustained_note_summary
+    # Aliases for comparability helpers
+    normalisation_id: unresolved
+    analysis_window_id: unresolved
+    frequency_range_id: unresolved
+    amplitude_convention: unresolved
+    thresholding: null
+    aggregation_method: sustained_note_summary
+    formula_reference: "configs/density_metric.yaml"
+    compatible_with:
+      - ewsd_v1
+    notes: >
+      Exact EWSD formula implementation is not verified in this repository snapshot.
+      Existing scalar density values are preserved and imported as-is.
+      Spectrum-derived recomputation is prohibited until formula_implementation is resolved.
+
+  ewsd_v1_percent:
+    metric_definition_id: ewsd_v1_percent
+    name: "EWSD acoustic-balanced as percent of reference score"
+    version: "1.0"
+    exact_formula: "percent = 100 * D_ewsd_v1 / reference_score"
+    formula_implementation: null
+    mathematical_domain: positive
+    unit: percent
+    input_representation: scalar_metric
+    normalisation: unresolved
+    frequency_min_hz: null
+    frequency_max_hz: null
+    temporal_window: unresolved
+    window_function: null
+    fft_size: null
+    hop_length: null
+    amplitude_or_power_convention: unresolved
+    threshold_type: null
+    threshold_value: null
+    temporal_aggregation: sustained_note_summary
+    normalisation_id: unresolved
+    analysis_window_id: unresolved
+    frequency_range_id: unresolved
+    amplitude_convention: unresolved
+    thresholding: null
+    aggregation_method: sustained_note_summary
+    compatible_with:
+      - ewsd_v1_percent
+    notes: "Convertible to ewsd_v1 only via an explicit metric_conversions.yaml rule."
+
+  spectral_centroid_proxy_v1:
+    metric_definition_id: spectral_centroid_proxy_v1
+    name: "Spectral centroid proxy (not EWSD)"
+    version: "1.0"
+    exact_formula: "centroid_hz = sum(f * amp(f)) / sum(amp(f))"
+    formula_implementation: null
+    mathematical_domain: positive
+    unit: hertz
+    input_representation: scalar_metric
+    normalisation: none
+    frequency_min_hz: null
+    frequency_max_hz: null
+    temporal_window: unspecified
+    window_function: null
+    fft_size: null
+    hop_length: null
+    amplitude_or_power_convention: unknown
+    threshold_type: null
+    threshold_value: null
+    temporal_aggregation: unknown
+    normalisation_id: none
+    analysis_window_id: unspecified
+    frequency_range_id: unspecified
+    amplitude_convention: unknown
+    thresholding: unknown
+    aggregation_method: unknown
+    compatible_with:
+      - spectral_centroid_proxy_v1
+    notes: "Incompatible with ewsd_v1 for pooling/combination."

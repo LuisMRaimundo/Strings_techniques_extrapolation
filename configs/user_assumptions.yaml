@@ -1,0 +1,66 @@
+# User numerical-assumption registry (SEPARATE from literature evidence).
+#
+# Default: inactive. Assumptions never activate unless BOTH:
+#   1. global activation is explicitly enabled for the run
+#      (CLI --activate-user-assumptions OR prediction.yaml user_assumptions.activation_enabled)
+#   2. the individual assumption has active_for_density_prediction: true
+#
+# Results that use these assumptions MUST be labelled assumption-based and
+# MUST NEVER be presented as literature-validated or evidence-based.
+
+version: "0.3.0-user-assumptions"
+schema_version: "user_assumption_v1"
+registry_kind: user_numerical_assumptions
+literature_validated: false
+
+# Global default — keep false. Enabling here alone is not enough; each
+# assumption must also set active_for_density_prediction: true.
+default_active_for_density_prediction: false
+
+# Example (INACTIVE). Copy and edit; do not invent values you have not chosen.
+# Optional provenance and human-readable fields supported on each entry:
+#   created_by: name or identifier of the person supplying it
+#   created_at: ISO-8601 timestamp
+#   model_version: model version for which it was created
+#   supersedes: earlier assumption_id replaced by this entry
+#   label: short display label
+#   description: longer explanation
+#   parameter: alias name used by external workflow/documentation
+# - assumption_id: UA_VLN_SUL_PONT_MF_RATIO_EXAMPLE
+#   name: example_violin_sul_ponticello_mf_ratio
+#   instrument: vln
+#   technique: sul_ponticello
+#   operation_type: multiplicative_ratio
+#   reported_value: null          # YOU must set; null keeps inactive
+#   unit: dimensionless_ratio
+#   numerical_scale: density_ratio
+#   compatible_links: [log, identity]
+#   source_space: density
+#   target_space: density
+#   uncertainty_sd: null
+#   uncertainty_distribution: null
+#   applicable_dynamic: mf
+#   applicable_register: null
+#   applicable_pitch_min: null
+#   applicable_pitch_max: null
+#   applicable_string: null
+#   applicable_mute_type: null
+#   applicable_harmonic_type: null
+#   applicable_harmonic_order: null
+#   applicable_metric_definition_id: ewsd_v1
+#   scope_note: "Example only — not activated."
+#   operationalisation: >
+#     State how the ratio was chosen (personal listening, unpublished lab note, etc.).
+#   provenance: "user-supplied; not from curated literature package"
+#   citation_or_rationale: null
+#   active_for_density_prediction: false
+#   curator_status: draft
+#   created_by: null
+#   created_at: null
+#   model_version: null
+#   supersedes: null
+#   label: null
+#   description: null
+#   parameter: null
+
+assumptions: []

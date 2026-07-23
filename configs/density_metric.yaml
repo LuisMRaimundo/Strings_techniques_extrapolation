@@ -1,0 +1,41 @@
+name: EWSD_score_acoustic_balanced
+short_name: CDM_TD
+status: located_from_upstream_textural_density_pipeline
+
+formula: |
+  Canonical metric definition (collection-agnostic):
+      Phi(D) = D
+  where D is a precomputed EWSD acoustic-balanced scalar score for
+  (instrument, technique, sounding pitch, dynamic).
+
+  Historical provenance only (not a runtime branch): some ordinary baselines
+  in this repository were previously curated as midpoints of two source
+  collections. Midpoint aggregation, when used, must be declared as an
+  explicit registered collection or conversion — never as a hidden pipeline
+  special case.
+
+mathematical_domain: "real, non-negative (empirically observed ~0-100 in current corpora)"
+units: "dimensionless EWSD acoustic-balanced score (Stage-3)"
+input_representation: "precomputed scalar EWSD_score_acoustic_balanced; spectrum-aware backend accepts band/partial energy vectors when present"
+frequency_range: "as defined in upstream SSA/EWSD pipeline (not recomputed here)"
+time_window: "sustained-note excerpts per collection curation"
+fft_size: null
+window_function: null
+hop_size: null
+amplitude_or_power_convention: "EWSD Stage-3 acoustic-balanced score; weight_function=log in upstream export metadata"
+threshold: null
+normalisation: "identity_v1 — no silent rescaling"
+temporal_aggregation: "sustained-note summary per note x dynamic"
+treatment_of_noise: "inherited from upstream EWSD pipeline; not redefined"
+treatment_of_silence: "missing-by-design remains missing; never coerced to zero"
+
+upstream_identifiers:
+  - "SSA_CANONICAL_PIPELINE_2026_06_STAGE1_STAGE2_STAGE3_EWSD_v18_1_UQ"
+  - "Textural_Density-git instrumentos/* spectral_data CDM midpoint"
+
+placeholder: false
+notes: |
+  This repository does NOT invent a new density metric for special techniques.
+  Legacy Stage-1 column named Combined Density Metric in research workbooks
+  is explicitly NOT Phi.
+  Collection names must not be used as metric-compatibility evidence.

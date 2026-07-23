@@ -1,0 +1,86 @@
+generated_at_utc: '2026-07-23T17:35:49.978693+00:00'
+scan:
+  corpus_root: literature/corpus
+  n_files_found: 11
+  n_registered_with_file: 11
+  n_unregistered_files: 0
+  n_registered_missing_file: 1
+  files:
+  - path: literature/corpus/articles/evangelista_freire_2025_heavy_violin_practice_mutes.pdf
+    sha256: 354091dc9296e39ed870a7d52e2b9054527a75dccc45ec6682a01928ab941a58
+    size_bytes: 811934
+    page_count: 7
+    associated_source_id: SRC_EVANGELISTA_FREIRE_2025
+    registration_status: registered
+  - path: literature/corpus/articles/fallowfield_2020_cello_multiphonics_tempo.pdf
+    sha256: 47fd44cd265ffd570fb5ba6e75839f6d8928150d86c10ef76c9dea515fa0a5f5
+    size_bytes: 888373
+    page_count: 19
+    associated_source_id: SRC_FALLOWFIELD_TEMPO_MULTIPHONICS
+    registration_status: registered
+  - path: literature/corpus/articles/lostanlen_anden_lagrange_2018_extended_playing_techniques.pdf
+    sha256: 88e3d9d60e2181750e747f38bd8291e3e257967bfded947fc1046c3d1a5ea9a6
+    size_bytes: 2990582
+    page_count: 10
+    associated_source_id: SRC_LOSTANLEN_ANDEN_LAGRANGE_2018
+    registration_status: registered
+  - path: literature/corpus/articles/schoonderwaldt_2009_violinists_sound_palette.pdf
+    sha256: afe670ac94fb8d8da65798e0a55873a39b28cafd38f89edbbedbf45e34b86144
+    size_bytes: 436254
+    page_count: 14
+    associated_source_id: SRC_SCHOONDERWALDT_2009
+    registration_status: registered
+  - path: literature/corpus/books/fletcher_rossing_1991_physics_of_musical_instruments.pdf
+    sha256: b784c3251102bead11f39a30a506441eb8833bd00c4e4b3628c22d60d9833675
+    size_bytes: 13429614
+    page_count: 628
+    associated_source_id: SRC_FLETCHER_ROSSING_1991
+    registration_status: registered
+  - path: literature/corpus/books/meyer_2009_acoustics_and_the_performance_of_music.pdf
+    sha256: 4e58860f92b357de28856768d1eef67222bd06cc5b092afdcd2f436009867b70
+    size_bytes: 9740198
+    page_count: 446
+    associated_source_id: MEYER_ACOUSTICS
+    registration_status: registered
+  - path: literature/corpus/books/rossing_2010_science_of_string_instruments.pdf
+    sha256: d40e5018d6d2a917125f0daa586252246ff0d21878800095c347bc149d853084
+    size_bytes: 12392090
+    page_count: 466
+    associated_source_id: SRC_ROSSING_SCIENCE_STRING_INSTRUMENTS_2010
+    registration_status: registered
+  - path: literature/corpus/books/stowell_cambridge_companion_technique_performing_practice.pdf
+    sha256: adc5ec9aab4bedebae3d293986bde8d9136e8885a105aecec488284fe96090e0
+    size_bytes: 1517335
+    page_count: 21
+    associated_source_id: SRC_STOWELL_CAMBRIDGE_TECHNIQUE_PERFORMING_PRACTICE
+    registration_status: registered
+  - path: literature/corpus/metadata/meyer_acoustics_curator_extraction.md
+    sha256: b62c50d52d698c83f9b709d145d12c4c5b9c5cc8b42586928d6984dd233ebbae
+    size_bytes: 961
+    page_count: null
+    associated_source_id: MEYER_ACOUSTICS
+    registration_status: registered
+  - path: literature/corpus/metadata/string_timbral_articulatory_state_of_art_extracted.txt
+    sha256: bb1b0c1cba7133abd80ccb3dd3afa102c67848b6677cb91fc3845c4d16e6f3ae
+    size_bytes: 61191
+    page_count: null
+    associated_source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    registration_status: registered
+  - path: literature/corpus/reports/string_timbral_articulatory_state_of_art.pdf
+    sha256: 8adcc93b6ea340e987004b396ce727f0454856c0c25d9b87b2ba403aafa0efb3
+    size_bytes: 135125
+    page_count: 20
+    associated_source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    registration_status: registered
+  - path: ''
+    sha256: ''
+    size_bytes: 0
+    page_count: null
+    associated_source_id: SRC_SCHELLENG_1973
+    registration_status: missing_for_registered_source
+  notes:
+  - File presence does not create evidence extracts or change evidence grades.
+  - Scientific activation requires validated extracts via literature add-extract with
+    curator_verification_status=validated, then matrix rebuild.
+scientific_note: This manifest records file presence and checksums only. It does not
+  constitute verified scientific evidence.

@@ -1,0 +1,44 @@
+# Column-based request I/O for note-level technique extrapolation.
+version: "1.0.0"
+schema_version: "extrapolation_request_io_v1"
+
+# Sheet "Measured" — notes you already have (ordinary registry)
+measured_columns:
+  required:
+    - note                 # e.g. A4, G3
+    - value                # measured quantity (usually EWSD_score_acoustic_balanced)
+  optional_metadata:
+    - instrument           # vln / vla / vlc / cb (or Violin, Viola, ...)
+    - dynamic              # pp / mf / ff
+    - technique            # default ordinary / ordinario / arco
+    - quantity             # default EWSD_score_acoustic_balanced
+    - source
+    - notes
+    - midi
+    - string_name
+
+# Sheet "Requests" — what you need
+request_columns:
+  required:
+    - note                 # target note name
+    - technique            # sul_tasto | sul_ponticello | con_sordino | artificial_harmonic | natural_harmonic
+  optional_metadata:
+    - instrument           # if omitted, taken from Measured metadata / run defaults
+    - dynamic
+    - quantity             # default EWSD_score_acoustic_balanced
+
+aliases:
+  note: [Note, note_name, pitch, pitch_name, target_note]
+  value: [EWSD_score_acoustic_balanced, ewsd, density, measured_value, Value]
+  instrument: [Instrument, inst]
+  dynamic: [Dynamic, dyn]
+  technique: [Technique, tech, target_technique]
+  quantity: [Quantity, target_quantity, metric]
+
+technique_aliases:
+  ordinary: [ordinario, arco, arco_normal, normal, ordinario_arco]
+  sul_tasto: [sultasto, sul-tasto, ST]
+  sul_ponticello: [sulponticello, sul-ponticello, ponticello, SP]
+  con_sordino: [sordina, sordino, con_sordina, mute, muted, standard_mute]
+  artificial_harmonic: [harmonics_artificial, art_harmonic, AH]
+  natural_harmonic: [harmonics_natural, nat_harmonic, NH]

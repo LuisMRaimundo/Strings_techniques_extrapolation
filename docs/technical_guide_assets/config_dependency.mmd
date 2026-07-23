@@ -1,0 +1,9 @@
+flowchart TB
+  ONT[technique_ontology.yaml] --> PROD[production]
+  SRC[literature_sources.yaml] --> LIT[literature]
+  EV[literature_evidence_extracts.yaml] --> LIT
+  PAR[literature_parameters.yaml] --> ACT[activation]
+  DM[density_metric.yaml] --> PRED[prediction]
+  ML[model_links.yaml] --> PRED
+  UA[user_assumptions.yaml] --> PRED
+  QC[qualitative_acoustic_constraints.yaml] --> ENG[constraints]

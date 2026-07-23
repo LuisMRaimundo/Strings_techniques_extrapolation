@@ -1,0 +1,105 @@
+# Legacy specialised instrument–technique model configurations.
+# Scientifically authoritative ontology: configs/technique_ontology.yaml
+# Mechanism support ≠ numerical density activation.
+
+version: "0.3.0-pdf-soa-models"
+
+artificial_harmonic:
+  require_explicit_harmonic_order: true
+  # Sixth partial included for minor-third configurations (PDF); not equally practical.
+  allowed_orders: [2, 3, 4, 5, 6]
+  allow_order_inference: false
+  distinguish_natural_vs_artificial: true
+  required_metadata:
+    - string_name
+    - stopped_pitch_name
+    - stopped_pitch_midi
+    - harmonic_order
+    - sounding_pitch_name
+    - sounding_pitch_midi
+    - dynamic
+  optional_metadata:
+    - touched_pitch_name
+    - touched_interval
+    - register
+    - notation_represents
+    - double_bass_pitch_convention
+  instruments:
+    vln: { enabled: true, artificial_harmonic_passagework: facilitated }
+    vla: { enabled: true, artificial_harmonic_passagework: facilitated }
+    vlc: { enabled: true, idiomatic_positions: [thumb_position] }
+    cb:
+      enabled: true
+      require_written_and_sounding_distinction: true
+      artificial_harmonic: considerably_more_restricted
+      principal_contexts: [thumb_position, upper_strings]
+
+sul_ponticello:
+  require_explicit_harmonic_order: false
+  required_metadata:
+    - dynamic
+  optional_metadata:
+    - relative_bow_bridge_distance_beta
+    - bow_position_ratio  # deprecated alias
+    - bow_bridge_distance_m
+    - speaking_length_m
+    - excitation_region
+    - motion_regime
+    - bow_force_n
+    - bow_velocity_m_s
+    - string_name
+    - register
+    - pitch_midi_sounding
+  allow_universal_density_increase_assumption: false
+  distinguish_on_bridge_and_afterlength: true
+  instruments:
+    vln: { enabled: true }
+    vla: { enabled: true }
+    vlc: { enabled: true }
+    cb: { enabled: true }
+
+sul_tasto:
+  require_explicit_harmonic_order: false
+  equate_flautando: false
+  required_metadata:
+    - dynamic
+  optional_metadata:
+    - relative_bow_bridge_distance_beta
+    - bow_position_ratio  # deprecated alias
+    - bow_bridge_distance_m
+    - speaking_length_m
+    - timbre_execution_target
+    - bow_force_n
+    - bow_velocity_m_s
+    - string_name
+    - register
+    - pitch_midi_sounding
+  allow_universal_density_decrease_assumption: false
+  instruments:
+    vln: { enabled: true }
+    vla: { enabled: true }
+    vlc: { enabled: true }
+    cb: { enabled: true }
+
+con_sordino:
+  require_mute_type: true
+  allow_silent_mute_choice: false
+  distinguish_practice_vs_orchestral: true
+  required_metadata:
+    - mute_type
+    - dynamic
+  optional_metadata:
+    - mute_category
+    - mute_material
+    - mute_mass_g
+    - mute_mass  # legacy; prefer mute_mass_g
+    - mute_geometry
+    - string_name
+    - register
+    - pitch_midi_sounding
+  allow_constant_density_multiplier_only: false
+  instruments:
+    vln: { enabled: true }
+    vla: { enabled: true }
+    vlc: { enabled: true }
+    cb: { enabled: true }

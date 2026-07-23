@@ -1,0 +1,259 @@
+# Qualitative acoustic / mechanism constraints from secondary synthesis.
+# Never emit EWSD numbers from this layer.
+
+version: "0.3.0-pdf-soa-constraints"
+schema_version: "qualitative_constraint_v1"
+numerical_prediction_allowed_default: false
+source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+
+constraints:
+  - constraint_id: QC_ST_UPPER_PARTIAL_DEC
+    production_condition:
+      bow_contact_category_any_of: [sul_tasto, poco_sul_tasto, molto_sul_tasto]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: upper_partial_energy_ratio
+    tendency: decrease
+    strength: recurrent_tendency
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s, speaking_length_m, dynamic, articulation, instrument]
+    exceptions_or_limitations: >
+      Result depends on coordinated force, velocity, speaking length, instrument,
+      dynamic, articulation, and context; not position alone.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_ST_MECH_001]
+    page_start: 6
+    page_end: 7
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_ST_CENTROID_DEC
+    production_condition:
+      bow_contact_category_any_of: [sul_tasto, poco_sul_tasto, molto_sul_tasto]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: spectral_centroid
+    tendency: decrease
+    strength: recurrent_tendency
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s, speaking_length_m, dynamic, articulation, instrument]
+    exceptions_or_limitations: Conditional under typical coordinated conditions; bow force often dominates centroid.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_ST_MECH_001]
+    page_start: 6
+    page_end: 7
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_ST_ATTACK_DEC
+    production_condition:
+      bow_contact_category_any_of: [sul_tasto, poco_sul_tasto, molto_sul_tasto]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: attack_time
+    tendency: increase
+    strength: context_dependent
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s, articulation, dynamic]
+    exceptions_or_limitations: Softer attack is a recurrent tendency, not universal; forceful articulations may counteract.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_ST_MECH_001]
+    page_start: 6
+    page_end: 8
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_ST_BOW_NOISE_INC
+    production_condition:
+      bow_contact_category_any_of: [sul_tasto, poco_sul_tasto, molto_sul_tasto]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: harmonic_to_noise_ratio
+    tendency: decrease
+    strength: context_dependent
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s, dynamic]
+    exceptions_or_limitations: Greater relative prominence of bow noise under typical coordinated conditions.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_ST_MECH_001]
+    page_start: 6
+    page_end: 7
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_SP_UPPER_PARTIAL_INC
+    production_condition:
+      bow_contact_category_any_of: [poco_sul_ponticello, sul_ponticello, molto_sul_ponticello]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: upper_partial_energy_ratio
+    tendency: increase
+    strength: recurrent_tendency
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s, excitation_region, dynamic]
+    exceptions_or_limitations: >
+      Sufficient force near the bridge can retain fuller tone; extreme low-force regimes differ.
+      On-bridge and afterlength are separate techniques.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_SP_MECH_001]
+    page_start: 9
+    page_end: 10
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_SP_FUNDAMENTAL_SAL_DEC
+    production_condition:
+      bow_contact_category_any_of: [molto_sul_ponticello]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: fundamental_salience
+    tendency: decrease
+    strength: context_dependent
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s]
+    exceptions_or_limitations: May decrease at extremes; not automatic for moderate sul ponticello.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_SP_MECH_001]
+    page_start: 9
+    page_end: 9
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_SP_SPECTRAL_VAR_INC
+    production_condition:
+      bow_contact_category_any_of: [sul_ponticello, molto_sul_ponticello]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: frame_level_spectral_variance
+    tendency: increase
+    strength: recurrent_tendency
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s]
+    exceptions_or_limitations: Temporal instability common; centroid alone inadequate.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_SP_MECH_001]
+    page_start: 9
+    page_end: 11
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_SP_NOISE_INC_UNSTABLE
+    production_condition:
+      bow_contact_category_any_of: [molto_sul_ponticello]
+      motion_regime: unstable_multiple_slip
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: harmonic_to_noise_ratio
+    tendency: decrease
+    strength: mechanism
+    required_contextual_variables: [bow_force_n, bow_velocity_m_s]
+    exceptions_or_limitations: Applies to extreme low-force / multiple-slip regimes, not all bridge-oriented Helmholtz motion.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_SP_MECH_001]
+    page_start: 9
+    page_end: 10
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_MUTE_BRIDGE_MOBILITY_DEC
+    production_condition:
+      mute_category: standard_performance_orchestral
+    instrument_scope: [vln]
+    descriptor: bridge_mobility
+    tendency: decrease
+    strength: instrument_specific_tendency
+    required_contextual_variables: [mute_mass_g, mute_material, instrument]
+    exceptions_or_limitations: >
+      PDF cites ~5–13 dB mean mobility reduction ~1–2.5 kHz for violin measurements;
+      must not transfer unchanged to viola/cello/bass; numerical activation requires primary verification.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_MUTE_MOBILITY_001]
+    page_start: 12
+    page_end: 12
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+    numerical_status: secondary_synthesis_requires_primary_verification
+
+  - constraint_id: QC_MUTE_BRILLIANCE_DEC
+    production_condition:
+      mute_category: standard_performance_orchestral
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: upper_partial_energy_ratio
+    tendency: decrease
+    strength: recurrent_tendency
+    required_contextual_variables: [mute_category, mute_mass_g, dynamic, instrument]
+    exceptions_or_limitations: Frequency-dependent redistribution; not simply absorbing overtones.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_MUTE_MECH_001]
+    page_start: 12
+    page_end: 14
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_MUTE_ATTACK_DEC
+    production_condition:
+      mute_category: standard_performance_orchestral
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: attack_time
+    tendency: increase
+    strength: recurrent_tendency
+    required_contextual_variables: [mute_category, articulation, dynamic]
+    exceptions_or_limitations: Softened attack is a tendency, not a universal constant.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_MUTE_MECH_001]
+    page_start: 12
+    page_end: 12
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_HEAVY_MUTE_LOUDNESS_DEC
+    production_condition:
+      mute_category: heavy_practice_hotel
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: loudness
+    tendency: decrease
+    strength: mechanism
+    required_contextual_variables: [mute_category, mute_mass_g]
+    exceptions_or_limitations: >
+      Extensive spectral/response restructuring; not equivalent to a stronger standard mute.
+      ~35 g heavy-violin threshold in PDF requires primary verification.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_MUTE_HEAVY_001]
+    page_start: 12
+    page_end: 13
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+    numerical_status: secondary_synthesis_requires_primary_verification
+
+  - constraint_id: QC_HARM_MODAL_REORG
+    production_condition:
+      left_hand_regime_any_of: [natural_harmonic, artificial_harmonic]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: partial_salience
+    tendency: redistribute
+    strength: mechanism
+    required_contextual_variables: [harmonic_order, string_name, bow_force_n, bow_velocity_m_s]
+    exceptions_or_limitations: Modal participation reorganized rather than merely attenuated; no universal loudness/density direction.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_HARM_MECH_001]
+    page_start: 2
+    page_end: 3
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_HARM_HIGH_ORDER_MARGIN
+    production_condition:
+      left_hand_regime_any_of: [natural_harmonic, artificial_harmonic]
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: fundamental_salience
+    tendency: variable
+    strength: context_dependent
+    required_contextual_variables: [harmonic_order, bow_contact_category, bow_force_n]
+    exceptions_or_limitations: High-order stability margin narrower; depends on node/bow placement.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_HARM_MECH_001]
+    page_start: 2
+    page_end: 5
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false
+
+  - constraint_id: QC_MULTIPHONIC_COMPONENTS
+    production_condition:
+      left_hand_regime: multiphonic
+    instrument_scope: [vln, vla, vlc, cb]
+    descriptor: pitch_component_count
+    tendency: increase
+    strength: mechanism
+    required_contextual_variables: [finger_position_ratio, relative_bow_bridge_distance_beta, instrument]
+    exceptions_or_limitations: Multiple salient pitch components possible; do not invent pitch sets; longer strings more forgiving.
+    source_ids: [SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART]
+    evidence_ids: [EV_SOA_HARM_MULTIPHONIC_001]
+    page_start: 3
+    page_end: 4
+    curator_status: validated_secondary_synthesis
+    numerical_prediction_allowed: false

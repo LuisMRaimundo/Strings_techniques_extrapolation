@@ -1,0 +1,56 @@
+collection_id: custom_test_collection
+schema_mapping_version: "1.0"
+
+columns:
+  record_id: sample_code
+  instrument: source_instrument
+  technique: execution_mode
+  pitch_name_sounding: note_label
+  pitch_midi_sounding: midi_number
+  dynamic: dyn_label
+  density_value: acoustic_density_result
+  metric_definition_id: metric_code
+  recording_condition_id: room_tag
+
+constants:
+  measured_or_estimated: measured
+  density_unit: dimensionless
+  metric_version: "1.0"
+
+value_maps:
+  instrument:
+    Violin: vln
+    Viola: vla
+    Cello: vlc
+    Contrabass: cb
+  technique:
+    normale: ordinary
+    ponticello: sul_ponticello
+    tastiera: sul_tasto
+    muted: con_sordino
+    artificial harmonics: artificial_harmonic
+  dynamic:
+    pianissimo: pp
+    mezzo-forte: mf
+    fortissimo: ff
+
+required_fields:
+  - instrument
+  - technique
+  - pitch_name_sounding
+  - dynamic
+  - metric_definition_id
+
+missing_by_design_fields:
+  - density_value
+
+missing_value_markers:
+  - ""
+  - "NA"
+  - "NaN"
+  - "null"
+
+validation:
+  allowed_instruments: [vln, vla, vlc, cb]
+  allowed_techniques: [ordinary, artificial_harmonic, sul_ponticello, sul_tasto, con_sordino]
+  allowed_dynamics: [pp, p, mp, mf, f, ff]

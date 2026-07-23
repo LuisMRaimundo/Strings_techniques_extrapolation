@@ -1,0 +1,33 @@
+........................................................................ [ 33%]
+........................................................................ [ 66%]
+........................................................................ [ 99%]
+..                                                                       [100%]
+============================== warnings summary ===============================
+tests/test_phase2_ordinary_baseline.py::test_06_several_collections_build_baseline
+tests/test_phase2_ordinary_baseline.py::test_19_weights_recorded_in_provenance
+tests/test_phase2_ordinary_baseline.py::test_35_baseline_contains_no_special_technique_prediction
+  C:\Users\lmr20\Desktop\ExtrapolaþÒo de ponticelo, sord, suþ tasto\src\string_technique_model\collections\service.py:380: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+    out = pd.concat(frames, ignore_index=True)
+
+tests/test_phase4_prediction_engine.py::test_07_additive_and_multiplicative_not_confused
+  C:\Users\lmr20\Desktop\ExtrapolaþÒo de ponticelo, sord, suþ tasto\tests\test_phase4_prediction_engine.py:172: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    assert abs(float(np.exp(eta_m)) - 20.0) < 1e-9
+
+tests/test_phase4_prediction_engine.py::test_07_additive_and_multiplicative_not_confused
+  C:\Users\lmr20\Desktop\ExtrapolaþÒo de ponticelo, sord, suþ tasto\tests\test_phase4_prediction_engine.py:173: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    assert abs(float(d_m) - 20.0) < 1e-9
+
+tests/test_phase4_prediction_engine.py::test_07_additive_and_multiplicative_not_confused
+  C:\Users\lmr20\Desktop\ExtrapolaþÒo de ponticelo, sord, suþ tasto\tests\test_phase4_prediction_engine.py:175: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    assert abs(float(d_a) - 12.0) < 1e-9
+
+tests/test_phase4_prediction_engine.py::test_07_additive_and_multiplicative_not_confused
+  C:\Users\lmr20\Desktop\ExtrapolaþÒo de ponticelo, sord, suþ tasto\tests\test_phase4_prediction_engine.py:176: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    assert abs(float(np.exp(eta_a)) - 12.0) < 1e-9
+
+tests/test_phase4_prediction_engine.py::test_07_additive_and_multiplicative_not_confused
+  C:\Users\lmr20\Desktop\ExtrapolaþÒo de ponticelo, sord, suþ tasto\tests\test_phase4_prediction_engine.py:177: DeprecationWarning: Conversion of an array with ndim > 0 to a scalar is deprecated, and will error in future. Ensure you extract a single element from your array before performing this operation. (Deprecated NumPy 1.25.)
+    assert abs(float(eta_a) - (np.log(10.0) + 2.0)) > 1e-6  # not the old incorrect shortcut
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+218 passed, 8 warnings in 21.68s

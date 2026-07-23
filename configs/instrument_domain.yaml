@@ -1,0 +1,35 @@
+# Strict orchestral bowed-string domain. No other instruments are in scope.
+allowed_instruments:
+  - vln
+  - vla
+  - vlc
+  - cb
+
+instrument_aliases:
+  vln:
+    - vln
+    - vn
+    - violin
+    - violino
+    - violon
+  vla:
+    - vla
+    - va
+    - viola
+  vlc:
+    - vlc
+    - vc
+    - cello
+    - violoncello
+    - violoncelo
+  cb:
+    - cb
+    - db
+    - double bass
+    - double_bass
+    - double-bass
+    - contrabass
+    - contrabasso
+    - contrabaixo
+
+exclusion_reason_unsupported: instrument_outside_project_scope

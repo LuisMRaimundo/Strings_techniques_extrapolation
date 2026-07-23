@@ -1,0 +1,28 @@
+# Example / schema reference for prediction requests.
+# Unavailable non-required fields may remain null.
+
+version: "0.1.0-phase4"
+
+requests: []
+# Example (inactive until filled by user):
+# - baseline_cell_id: null
+#   instrument: vln
+#   target_technique: artificial_harmonic
+#   pitch_name_written: null
+#   pitch_midi_written: null
+#   pitch_name_sounding: A5
+#   pitch_midi_sounding: 81
+#   dynamic: mf
+#   string_name: E
+#   articulation: arco
+#   harmonic_order: 4
+#   stopped_pitch: A4
+#   touched_pitch: E5
+#   touched_interval: P4   # P4 → fourth partial; do not pair P5 with order 4
+#   mute_type: null
+#   mute_material: null
+#   mute_mass_g: null
+#   relative_bow_bridge_distance_beta: null
+#   bow_position_ratio: null  # deprecated alias of beta; ambiguous historically
+#   requested_backend: metric-only
+#   target_metric_definition_id: ewsd_v1

@@ -1,0 +1,114 @@
+model_version: "0.3.0-pdf-soa"
+literature_parameter_version: "0.3.0-pdf-soa-package"
+schema_version: "production_instruction_v1"
+prediction_version: "0.3.0-pdf-soa-prediction"
+random_seed: 20250723
+n_draws: 5000
+
+# Phase 2: ordinary-bowing baseline engine configuration.
+# No special-technique acoustic modelling is performed in this phase.
+run:
+  target_metric_definition_id: ewsd_v1
+
+  baseline_collection_ids:
+    - legacy_iowa_orchidea_midpoint
+    - custom_lab_01
+
+  calibration_collection_ids: []
+  validation_collection_ids:
+    - violin_technique_holdout
+
+  instruments:
+    - vln
+    - vla
+    - vlc
+    - cb
+
+  allowed_techniques:
+    - ordinary
+
+  dynamics:
+    - pp
+    - p
+    - mp
+    - mf
+    - f
+    - ff
+
+  baseline:
+    alignment_key:
+      - metric_definition_id
+      - instrument
+      - technique
+      - pitch_midi_sounding
+      - dynamic
+      - articulation
+      - string_name
+
+    pooling_method: hierarchical_collection
+    within_collection_aggregation: no_aggregation
+
+    require_exact_metric_compatibility: true
+    allow_declared_metric_conversion: false
+    allow_interpolation: false
+    allow_extrapolation: false
+    allow_missing_dynamic: false
+
+    accepted_metric_compatibility:
+      - identical
+
+    allowed_value_statuses:
+      - measured
+      - pooled_derived
+      - derived
+
+    collection_weights: {}
+
+    write_wide_exports: true
+
+  # Legacy alias retained for older estimate/run entry points.
+  pooling:
+    enabled: true
+    method: hierarchical_collection
+    weights: {}
+
+instruments: [vln, vla, vlc, cb]
+techniques: [artificial_harmonic, sul_ponticello, sul_tasto, con_sordino]
+
+modelling_backend: auto
+
+validation:
+  use_target_technique_data: false
+  run_external_validation: false
+
+sensitivity:
+  enabled: true
+  prior_width_factors: [0.5, 1.0, 2.0]
+
+artificial_harmonic:
+  default_order: 4
+  order_inference_allowed: false
+
+paths:
+  collections_registry: configs/collections.yaml
+  metric_definitions: configs/metric_definitions.yaml
+  metric_conversions: configs/metric_conversions.yaml
+  baselines_dir: data/baselines
+  validation_holdout_dir: data/validation_holdout/measured_techniques
+  literature_parameters: configs/literature_parameters.yaml
+  literature_sources: configs/literature_sources.yaml
+  literature_evidence_extracts: configs/literature_evidence_extracts.yaml
+  literature_dir: outputs/literature
+  density_metric: configs/density_metric.yaml
+  instruments: configs/instruments.yaml
+  data_schema: configs/data_schema.yaml
+  imported_dir: outputs/imported
+  rejected_dir: outputs/rejected
+  baseline_dir: outputs/baseline
+  outputs_dir: outputs
+  reports_dir: reports
+  figures_dir: figures
+
+# Prefer predict --activate-user-assumptions / prediction.yaml user_assumptions.
+# Kept false: user assumptions never silently activate.
+allow_user_assumptions: false

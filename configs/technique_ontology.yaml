@@ -1,0 +1,151 @@
+# Versioned technique ontology (replaces hard-coded sixteen-cell assumption
+# as the scientific domain authority). Legacy 4×4 matrix remains available
+# as an explicitly labeled compatibility view.
+
+version: "0.3.0-pdf-soa-ontology"
+schema_version: "production_instruction_v1"
+
+instruments:
+  - vln
+  - vla
+  - vlc
+  - cb
+
+legacy_technique_labels:
+  - ordinary
+  - artificial_harmonic
+  - sul_tasto
+  - sul_ponticello
+  - con_sordino
+
+# Legacy evidence / model grid: four specialised techniques × four instruments.
+legacy_evidence_matrix:
+  label: legacy_four_by_four_specialised_techniques
+  techniques:
+    - artificial_harmonic
+    - sul_ponticello
+    - sul_tasto
+    - con_sordino
+  expected_cell_count: 16
+  note: >
+    Compatibility view only. Scientifically relevant structure is the
+    compositional production ontology below, not a fixed 16-cell grid.
+
+left_hand_regimes:
+  - ordinary_stopped
+  - natural_harmonic
+  - artificial_harmonic
+  - half_harmonic
+  - multiphonic
+  - natural_harmonic_glissando
+  - artificial_harmonic_glissando
+
+bow_contact_categories:
+  - molto_sul_tasto
+  - sul_tasto
+  - poco_sul_tasto
+  - ordinario
+  - poco_sul_ponticello
+  - sul_ponticello
+  - molto_sul_ponticello
+
+# Verbal categories only — no arbitrary beta thresholds.
+bow_contact_beta_thresholds: null
+
+excitation_regions:
+  - speaking_string
+  - directly_on_bridge
+  - afterlength_behind_bridge
+
+# Not mapped onto the tasto–ponticello continuum.
+excitation_regions_outside_continuum:
+  - directly_on_bridge
+  - afterlength_behind_bridge
+
+timbre_execution_targets:
+  - flautando
+  - ordinary_colour
+  - unresolved
+
+mute_categories:
+  - standard_performance_orchestral
+  - heavy_practice_hotel
+  - historical_metal
+  - historical_or_modern_wood
+  - adjustable_partial
+  - other_explicitly_described
+  - none
+  - unresolved
+
+artificial_harmonic_interval_order_relations:
+  # PDF pp. 2–3; inference disabled unless explicitly enabled per request/config.
+  allow_order_inference: false
+  relations:
+    - touched_interval: P4
+      aliases: [perfect_fourth, "4", "P4"]
+      harmonic_order: 4
+      practicality: standard
+    - touched_interval: M3
+      aliases: [major_third, "M3"]
+      harmonic_order: 5
+      practicality: specialized
+    - touched_interval: m3
+      aliases: [minor_third, "m3"]
+      harmonic_order: 6
+      practicality: specialized
+    - touched_interval: P5
+      aliases: [perfect_fifth, "5", "P5"]
+      harmonic_order: 3
+      practicality: specialized
+
+harmonic_orders:
+  allowed: [2, 3, 4, 5, 6]
+  note: >
+    Sixth partial included for minor-third artificial-harmonic configurations
+    discussed in the PDF. Inclusion does not imply equal practicality.
+
+notation_represents:
+  - touched_pitch
+  - sounding_pitch
+  - both
+  - unresolved
+
+double_bass_pitch_conventions:
+  - written_transposed
+  - sounding
+  - unresolved
+
+instrument_harmonic_applicability:
+  vln:
+    artificial_harmonic_passagework: facilitated
+    multiphonics: possible_less_forgiving_short_strings
+  vla:
+    artificial_harmonic_passagework: facilitated
+    multiphonics: research_limited
+  vlc:
+    artificial_harmonic_idiomatic_positions: [thumb_position]
+    multiphonics: comparatively_favourable_long_strings
+    natural_harmonics: respond_strongly
+  cb:
+    artificial_harmonic: considerably_more_restricted
+    artificial_harmonic_principal_contexts: [thumb_position, upper_strings]
+    multiphonics: comparatively_favourable_long_strings
+    natural_harmonics: particularly_effective
+
+relative_bow_bridge_distance_beta:
+  field_name: relative_bow_bridge_distance_beta
+  numerator: bow_bridge_distance_m
+  denominator: speaking_length_m
+  units: dimensionless_ratio
+  expected_domain: "(0, 1) for speaking-string contact; null if excitation region is not speaking_string"
+  larger_means: farther_from_bridge
+  deprecated_alias: bow_position_ratio
+  contradiction_tolerance_abs: 1.0e-6
+
+multidimensional_timbre_relation:
+  conceptual: >
+    T = f(beta, bow_force, bow_velocity, speaking_length,
+    fundamental_frequency, string_properties, dynamic,
+    articulation, instrument_response)
+  numerical_fit: unavailable
+  note: Schema and constraints must not imply a one-variable brightness model.

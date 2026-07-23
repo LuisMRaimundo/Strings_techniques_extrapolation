@@ -1,0 +1,41 @@
+# LTAS analysis profile stub for Evangelista & Freire (2025) mute study.
+# Source-specific profile: create comparable AnalysisProfile only when settings match
+# the verified paper. Until then, literature LTAS comparisons return source_data_insufficient.
+
+profile_id: evangelista_freire_2025_ltas
+status: metadata_stub
+schema_version: evangelista_ltas_profile_v1
+oracle_type: literature_bounded
+provenance_type: primary_experimental_evidence
+source_required: true
+source_id: SRC_EVANGELISTA_FREIRE_2025
+comparability: not_comparable_until_analysis_parameters_verified
+
+source:
+  citation: "Evangelista, G., & Freire, S. (2025). Audio analysis of the effects of heavy violin practice mutes."
+  local_pdf: literature/corpus/articles/evangelista_freire_2025_heavy_violin_practice_mutes.pdf
+  DOI: "10.1051/aacus/2025029"
+
+distinct_quantities:
+  - ltas
+  - loudness_sones
+  - intensity_reduction
+  - mute_metadata
+
+analysis_parameters:
+  sample_rate_hz: null
+  bit_depth: null
+  channel_count: null
+  window_type: null
+  window_length_s: null
+  hop_length_s: null
+  fft_size: null
+  frequency_range_hz: null
+  level_reference: null
+  averaging_method: null
+  normalization: null
+  measurement_domain: radiated_audio
+  provenance_notes: >
+    Identity verified; analysis parameters unresolved against the primary PDF.
+    Do not claim LTAS comparability with PROFILE_DEFAULT_DESCRIPTOR_V1.
+    Loudness in sones is distinct from intensity/SPL dB and from mute metadata.

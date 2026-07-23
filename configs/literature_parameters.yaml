@@ -1,0 +1,219 @@
+# Curated parameter ledger.
+# Bibliographically valid ≠ active for density prediction.
+# active_for_density_prediction remains false for all indirect_proxy entries.
+
+version: "0.2.0-curated-meyer-package"
+
+parameters:
+  - parameter_id: MEYER_VLN_HARMONIC_DYNAMIC_RANGE
+    parameter_name: violin_artificial_harmonic_dynamic_range
+    instrument: vln
+    technique: artificial_harmonic
+    model_component: global_dynamic_constraint
+    parameter_role: validity_bound
+    operation_type: validity_bound
+    numerical_scale: decibel_power
+    reported_value: 20.0
+    proposed_distribution: null
+    distribution_parameters: null
+    unit: dB
+    applicable_pitch_min: null
+    applicable_pitch_max: null
+    applicable_frequency_min_hz: null
+    applicable_frequency_max_hz: null
+    applicable_register: null
+    applicable_dynamic: null
+    applicable_string: null
+    applicable_temporal_region: null
+    applicable_harmonic_type: artificial
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLN_HARMONIC_DYNAMIC_RANGE]
+    page_reference: "108-109"
+    direct_or_transferred: direct
+    transfer_source_instrument: null
+    transfer_equation: null
+    transfer_uncertainty: null
+    evidence_grade: B
+    parameter_status: interval_constrained
+    confidence_level: moderate
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+    notes: "Global dynamic/level constraint; not D_harm = r * D_ord."
+
+  - parameter_id: MEYER_VLN_HARMONIC_LEVEL_BAND
+    parameter_name: violin_playing_level_band
+    instrument: vln
+    technique: artificial_harmonic
+    model_component: global_level_constraint
+    parameter_role: validity_bound
+    operation_type: validity_bound
+    numerical_scale: decibel_power
+    reported_value: null
+    reported_lower_bound: 64.0
+    reported_upper_bound: 84.0
+    unit: dB
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLN_HARMONIC_DYNAMIC_RANGE]
+    page_reference: "108-109"
+    direct_or_transferred: direct
+    evidence_grade: B
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+    notes: "Approximate SPL band; not a density multiplier."
+
+  - parameter_id: MEYER_VLA_HARMONIC_RADIATION_OFFSET
+    parameter_name: viola_harmonic_radiation_offset_vs_violin
+    instrument: vla
+    technique: artificial_harmonic
+    model_component: relative_level_comparison
+    parameter_role: comparative_constraint
+    operation_type: decibel_gain
+    numerical_scale: decibel_power
+    reported_value: 3.0
+    unit: dB
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLA_HARM_001]
+    direct_or_transferred: transferred
+    transfer_source_instrument: vln
+    transfer_equation: null
+    evidence_grade: C
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+    notes: "Relative global radiation offset; not a density ratio."
+
+  - parameter_id: MEYER_VLC_HARMONIC_LEVEL_FLOOR
+    parameter_name: cello_harmonic_level_lower_bound
+    instrument: vlc
+    technique: artificial_harmonic
+    model_component: global_level_constraint
+    parameter_role: validity_bound
+    operation_type: validity_bound
+    numerical_scale: decibel_power
+    reported_value: 62.0
+    unit: dB
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLC_HARM_001]
+    direct_or_transferred: direct
+    evidence_grade: C
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+
+  - parameter_id: MEYER_CB_HARMONIC_DYNAMIC_RANGE
+    parameter_name: double_bass_dynamic_range
+    instrument: cb
+    technique: artificial_harmonic
+    model_component: global_dynamic_constraint
+    parameter_role: validity_bound
+    operation_type: validity_bound
+    numerical_scale: decibel_power
+    reported_value: 17.0
+    reported_lower_bound: 74.0
+    reported_upper_bound: 91.0
+    unit: dB
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_CB_HARM_001]
+    direct_or_transferred: direct
+    evidence_grade: C
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+
+  - parameter_id: MEYER_VLN_MUTE_GLOBAL_REDUCTION
+    parameter_name: violin_orchestral_mute_global_reduction
+    instrument: vln
+    technique: con_sordino
+    model_component: global_sound_power_change
+    parameter_role: level_effect
+    operation_type: decibel_gain
+    numerical_scale: decibel_power
+    reported_value: 6.0
+    reported_upper_bound: 10.0
+    unit: dB
+    applicable_mute_type: orchestral
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLN_MUTE_001]
+    direct_or_transferred: direct
+    evidence_grade: B
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+    notes: "Acoustic level effect; heavy mute tracked separately."
+
+  - parameter_id: MEYER_VLN_MUTE_HEAVY_REDUCTION
+    parameter_name: violin_heavy_practice_mute_global_reduction
+    instrument: vln
+    technique: con_sordino
+    model_component: global_sound_power_change
+    parameter_role: level_effect
+    operation_type: decibel_gain
+    numerical_scale: decibel_power
+    reported_value: 10.0
+    unit: dB
+    applicable_mute_type: heavy_practice
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLN_MUTE_HEAVY_001]
+    direct_or_transferred: direct
+    evidence_grade: B
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+
+  - parameter_id: MEYER_VLA_MUTE_GLOBAL_REDUCTION
+    parameter_name: viola_orchestral_mute_global_reduction
+    instrument: vla
+    technique: con_sordino
+    model_component: global_sound_power_change
+    parameter_role: level_effect
+    operation_type: decibel_gain
+    numerical_scale: decibel_power
+    reported_value: 4.0
+    unit: dB
+    applicable_mute_type: orchestral
+    source_ids: [MEYER_ACOUSTICS]
+    evidence_ids: [EV_MEYER_VLA_MUTE_001]
+    direct_or_transferred: direct
+    evidence_grade: B
+    parameter_status: interval_constrained
+    density_mapping_status: indirect_proxy
+    active_for_density_prediction: false
+
+  # Explicitly unresolved sul-pont density multiplier (prohibited placeholder)
+  - parameter_id: PROHIBITED_SUL_PONT_DENSITY_RATIO_1_25
+    parameter_name: sul_ponticello_density_ratio
+    instrument: vln
+    technique: sul_ponticello
+    model_component: density_transform
+    parameter_role: effect_size
+    operation_type: multiplicative_ratio
+    numerical_scale: dimensionless_ratio
+    reported_value: 1.25
+    unit: dimensionless
+    source_ids: []
+    evidence_ids: []
+    direct_or_transferred: unresolved
+    evidence_grade: NA
+    parameter_status: prohibited
+    density_mapping_status: insufficient_information
+    active_for_density_prediction: false
+    notes: "Explicitly prohibited: no curated evidence for density_ratio=1.25."
+
+inactive_parameter_candidates: []
+
+unsupported_requested_parameters:
+  - parameter_name: technique_to_ordinary_cdm_log_ratio
+    instruments: [vln, vla, vlc, cb]
+    techniques: [artificial_harmonic, sul_ponticello, sul_tasto, con_sordino]
+    reason: "No curated direct EWSD/CDM effect sizes; level dB values are indirect_proxy only."
+  - parameter_name: sul_ponticello_density_ratio
+    instruments: [vln, vla, vlc, cb]
+    techniques: [sul_ponticello]
+    reason: "Spectral redistribution supported; density_ratio 1.25 prohibited without evidence."
+  - parameter_name: artificial_vs_natural_harmonic_correction
+    instruments: [vln, vla, vlc, cb]
+    techniques: [artificial_harmonic]
+    reason: "Natural-harmonic data must not activate artificial-harmonic density parameters."
+
+transfer_rules: []

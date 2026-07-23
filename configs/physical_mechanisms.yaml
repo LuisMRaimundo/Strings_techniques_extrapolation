@@ -1,0 +1,195 @@
+# Physical mechanisms supported by curated shared-treatise extracts.
+# Mechanism support ≠ numerical density coefficient.
+
+version: "0.2.0-curated-meyer-package"
+
+instrument_technique_models:
+  vln:
+    artificial_harmonic:
+      mechanisms:
+        nodal_formation_and_harmonic_order:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_HARM_MECH_001]
+          reason: "Nodal formation / order / sounding pitch relation documented."
+        natural_vs_artificial_distinction:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_HARM_MECH_001]
+          reason: "Natural and artificial harmonics must remain distinct."
+        bow_speed_force_position_dependence:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_HARM_MECH_002]
+        critical_attack_and_narrow_dynamic_range:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_HARM_MECH_002, EV_MEYER_VLN_HARMONIC_DYNAMIC_RANGE]
+        reduced_upper_partials_vs_stopped:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_HARM_MECH_003]
+        universal_density_ratio_vs_ordinary:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+          reason: "No D_harm = r * D_ord coefficient is supplied by the curated extracts."
+        numerical_parameter_status: unresolved
+    sul_ponticello:
+      mechanisms:
+        bow_bridge_distance_reduction:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_SP_MECH_001]
+        frequency_dependent_spectral_redistribution:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_SP_MECH_001, EV_MEYER_GEN_SP_MECH_001]
+          numerical_parameter_status: unresolved
+        universal_density_increase:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+          reason: "Do not register density_ratio: 1.25 without additional evidence."
+        multiple_slips_and_instability:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_SP_MECH_001]
+    sul_tasto:
+      mechanisms:
+        upper_partial_attenuation:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_ST_MECH_001]
+        soft_attack_and_breathy_noise:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_ST_MECH_001]
+        numeric_transfer_function:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+          reason: "mechanism_supported true; numeric_transfer_function_available false."
+        sul_tasto_equals_flautando:
+          supported: false
+          status: contradicted
+          evidence_ids: []
+          reason: "Remain distinct unless a source explicitly equates them."
+    con_sordino:
+      mechanisms:
+        bridge_added_mass_and_mobility:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_MUTE_MECH_001]
+        frequency_dependent_attenuation:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLN_MUTE_MECH_001, EV_MEYER_VLN_MUTE_001]
+        constant_amplitude_only:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+          reason: "Mute effects are frequency-dependent; not a single density gain."
+        practice_mute_equals_orchestral_mute:
+          supported: false
+          status: contradicted
+          evidence_ids: [EV_MEYER_VLN_MUTE_001, EV_MEYER_VLN_MUTE_HEAVY_001]
+          reason: "Heavy practice and orchestral mutes remain distinct."
+
+  vla:
+    artificial_harmonic:
+      mechanisms:
+        relative_radiation_vs_violin:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: [EV_MEYER_VLA_HARM_001]
+          reason: "Global ~3 dB relative level offset; not a density ratio."
+        universal_density_ratio_vs_ordinary:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+    sul_ponticello:
+      mechanisms:
+        frequency_dependent_spectral_redistribution:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: [EV_MEYER_GEN_SP_MECH_001]
+          reason: "Generic bowed-string physics; no viola-specific numeric curve."
+          numerical_parameter_status: unresolved
+    sul_tasto:
+      mechanisms:
+        upper_partial_attenuation:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: []
+          reason: "Qualitative/generic only in curated package."
+    con_sordino:
+      mechanisms:
+        global_level_reduction:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLA_MUTE_001]
+          reason: "~4 dB global level; indirect_proxy for density."
+
+  vlc:
+    artificial_harmonic:
+      mechanisms:
+        level_lower_bound:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_VLC_HARM_001]
+        universal_density_ratio_vs_ordinary:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+    sul_ponticello:
+      mechanisms:
+        frequency_dependent_spectral_redistribution:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: [EV_MEYER_GEN_SP_MECH_001]
+          numerical_parameter_status: unresolved
+    sul_tasto:
+      mechanisms:
+        upper_partial_attenuation:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: []
+    con_sordino:
+      mechanisms:
+        bridge_mute_physics:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: []
+          reason: "Mechanism class supported generically; no cello-specific dB extract in package."
+
+  cb:
+    artificial_harmonic:
+      mechanisms:
+        dynamic_range_bounds:
+          supported: true
+          status: supported
+          evidence_ids: [EV_MEYER_CB_HARM_001]
+        universal_density_ratio_vs_ordinary:
+          supported: false
+          status: unsupported
+          evidence_ids: []
+    sul_ponticello:
+      mechanisms:
+        frequency_dependent_spectral_redistribution:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: [EV_MEYER_GEN_SP_MECH_001]
+          numerical_parameter_status: unresolved
+    sul_tasto:
+      mechanisms:
+        upper_partial_attenuation:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: []
+    con_sordino:
+      mechanisms:
+        bridge_mute_physics:
+          supported: partially_supported
+          status: partially_supported
+          evidence_ids: []

@@ -1,0 +1,36 @@
+version: "1.0.0"
+schema_version: nonlinear_extrapolation_diagnostics_v1
+
+convergence:
+  rhat_threshold: 1.01
+  ess_bulk_threshold: 400
+  ess_tail_threshold: 400
+  max_divergences: 0
+
+frequentist:
+  outside_range_action: widen_uncertainty_and_flag
+  prior_dominated_label: prior_dominated
+  approximate_interval_kind: approximate_interval_from_penalized_fit
+
+sensitivity:
+  flags:
+    - stable
+    - prior_sensitive
+    - data_limited
+    - outside_baseline_range
+    - not_evaluated
+
+comparison:
+  min_holdout_notes: 3
+  metrics:
+    - rmse
+    - mae
+    - coverage
+  coverage_note: placeholder_interval_coverage_check
+
+evidence_tiers:
+  LEVEL_0_UNSUPPORTED: No supported numeric inference.
+  LEVEL_1_BIBLIOGRAPHIC_QUALITATIVE: Literature direction / qualitative only.
+  LEVEL_2_METADATA_CONSTRAINED: Config or metadata-constrained weak prior.
+  LEVEL_3_PARTIAL_EMPIRICAL: Sparse technique observations.
+  LEVEL_4_MATCHED_EMPIRICAL: Matched ordinary + technique observations with spline fit.

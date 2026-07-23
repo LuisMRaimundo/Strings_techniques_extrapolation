@@ -1,0 +1,1050 @@
+===== PAGE 1 =====
+State of the Art on String Timbral and
+Articulatory Techniques: Harmonics, Sul Tasto, 
+Sul Ponticello, and Con Sordino
+Executive summary
+Four principal conclusions emerge from the literature.
+First, the techniques considered here do not produce invariant timbres. Harmonics operate primarily by
+changing the vibrational regime of the string through nodal constraint; sul tasto and sul ponticello alter
+the excitation point and the range of viable bowing parameters; and the mute modifies the mechanical
+transmission between string, bridge, and body. Their acoustical effects are therefore conditioned by
+instrument, string, stopped length, register , dynamic, bow force, bow velocity, articulation, and room or
+recording conditions. Descriptions such as “glassy,” “veiled,” “metallic,” or “ethereal” identify recurrent
+perceptual tendencies but do not constitute stable acoustic definitions.
+Second, the conventional account according to which bow position alone controls spectral brightness is
+incomplete. Bow–bridge distance interacts with bow force and bow velocity within a bounded region of
+stable Helmholtz motion. In controlled violin experiments, bow force was found to be the dominant
+predictor of spectral centroid, while bow–bridge distance and velocity constrained the playable force
+range. Extreme sul ponticello can additionally produce multiple slips during each nominal string period,
+reinforcing selected high partials and introducing irregular or noise-like components. Sul tasto generally
+reduces the relative energy of upper partials, but its result is likewise dependent on coordinated
+reductions or adjustments of force and velocity (Askenfelt, 1988; Guettler , 2002; Schoonderwaldt, 2009). 
+Third, instrument-specific differences are substantial. The longer strings of the cello and double bass
+increase the physical separation between harmonic nodes and can favour controllable multiphonics. At
+the same time, their larger left-hand distances restrict artificial-harmonic fingerings in low positions.
+Natural harmonics respond particularly well on cello and double bass, whereas artificial harmonics on
+double bass are concentrated principally in thumb position and on the upper strings. The shorter
+strings of violin and viola facilitate rapid artificial-harmonic passagework but make small errors in node
+placement proportionally more consequential for multiphonics (Fallowfield, 2020; Guettler & Thelin,
+2012; Vienna Symphonic Library, n.d.-a, n.d.-b). 
+Fourth, the acoustical literature is unevenly distributed. Violin bowing parameters and violin mutes have
+been investigated experimentally, and cello and double-bass multiphonics have received some
+systematic attention. Equivalent controlled studies of viola, cello, and double-bass mutes, cross-
+instrument sul tasto–ordinario–sul ponticello continua, and ensemble-level textural effects remain scarce.
+The analytical literature on texture consequently relies mainly on general theories of timbre, auditory
+grouping, orchestral blend, stratification, and spectromorphology rather than on technique-specific
+perceptual experiments (Goodchild & McAdams, 2021; McAdams et al., 2022; Smalley, 1997). 
+1
+
+===== PAGE 2 =====
+1. Harmonics
+1.1 Acoustics and timbre
+Natural and artificial harmonics
+A natural harmonic is obtained by touching an open string lightly at a nodal point. The touch inhibits
+modes for which that point would undergo substantial displacement and permits modes possessing a
+node at, or sufficiently close to, the contact point. A touch at one half of the string favours the second
+partial; a touch at one third favours the third partial; and analogous integer divisions select higher
+members of the harmonic series. The string fundamental is not merely “made quieter”: the vibrational
+regime is reorganized so that a higher mode becomes the lowest strongly sustained component.
+An artificial harmonic applies the same principle to a stopped string. One finger first creates a new
+effective string length; another lightly touches a node of the harmonic series belonging to that stopped
+fundamental. The conventional perfect-fourth configuration selects the fourth partial and therefore
+sounds two octaves above the stopped pitch. Major-third, minor-third, and perfect-fifth configurations
+are physically possible, producing respectively the fifth, sixth, and third partials, but are less uniformly
+practical because they require more exact node placement, weaker high-order excitation, or wider hand
+extensions. The perfect fourth has consequently become the standard artificial-harmonic configuration
+in orchestral and solo writing (ConductIT, n.d.; Vienna Symphonic Library, n.d.-c). 
+The audible result is not a body-independent sinusoid. The selected string partials are filtered by the
+bridge and body response, and their relative radiation varies with frequency. The strength, stability,
+onset, and noise component of the harmonic are also controlled through bow position, force, and
+velocity. Higher harmonics generally require a sounding point nearer the bridge because the relevant
+vibration segments are shorter and because a more favourable excitation geometry must be
+maintained. Bowing too far toward the fingerboard may prevent a high harmonic from speaking clearly;
+excessive force may restore competing components or produce a crushed attack (Lloyd, n.d.;
+Schoonderwaldt, 2009). 
+The commonplace assertion that harmonics are always weak requires qualification. Natural harmonics
+can resonate strongly when the selected partial coincides with favourable bridge and body resonances,
+especially on the cello and double bass. Nevertheless, their attack is normally less immediate than that
+of a firmly stopped note, and high-order harmonics have a narrower margin of successful finger and
+bow placement. Orchestration treatises therefore tend to warn against covering harmonics with dense
+or highly projected material. Rimsky-Korsakov’s characterization of harmonics as transparent, brilliant,
+and relatively lacking in carrying power records an influential late-Romantic orchestral judgement, but it
+should not be treated as an acoustically universal law (Rimsky-Korsakov, 1912/1922). 
+Harmonic glissandi
+In a natural-harmonic glissando, a lightly touching finger is moved continuously along an open string.
+As it intersects zones capable of sustaining different modes, successive or partially overlapping
+members of the open-string harmonic series emerge. The sounding result is therefore not a continuous
+pitch glissando in the ordinary sense. It consists of a discontinuous, often unstable traversal through
+harmonic nodes, interspersed with noise and transitional components.
+An artificial-harmonic glissando normally maintains an approximately constant interval—most
+commonly a perfect fourth—between the stopping finger and the touching finger while both are
+2
+
+===== PAGE 3 =====
+displaced. This produces a more continuously directed pitch trajectory, nominally two octaves above the
+stopped fundamental. Intonation and timbral continuity depend on preserving the proportional
+relationship between the two fingers as their physical separation contracts in higher positions. Natural-
+harmonic glissandi are generally more indeterminate and spectrally discontinuous; artificial-harmonic
+glissandi permit stronger directional control but impose greater technical demands (Messina, 2009;
+Timbre and Orchestration Resource, n.d.). 
+Half harmonics and multiphonics
+“Half harmonic” is not a single, acoustically standardized category. In contemporary notation it may
+indicate intermediate finger pressure between a fully stopped note and a lightly touched harmonic, a
+deliberately impure harmonic with residual fundamental and noise, or a rapid alternation between
+ordinary and harmonic contact. These procedures can produce unstable mixtures of pitched and noisy
+components, but their outcomes vary strongly with string, finger compliance, bowing conditions, and
+instrument response. A verbal definition or notation key should therefore be supplied; a special
+notehead alone is insufficient.
+Bowed-string multiphonics are more precisely defined as a single bowed excitation producing two or
+more perceptually distinct harmonic pitches from one touched string. They differ both from ordinary
+harmonics, in which one partial or pitch identity predominates, and from notated double stops, which
+use two strings. Guettler and Thelin identified two principal configurations according to the ordering of
+bow and finger positions. Carefully chosen rational relationships among bow position, finger position,
+and string length produce clusters of reinforced partials. The radiated aggregate is then reshaped by
+the instrument body. Their experiments found the procedure most applicable to double bass and cello
+and less practical on shorter strings (Guettler & Thelin, 2012). 
+Fallowfield subsequently demonstrated that cello multiphonics should not be treated as isolated
+curiosities. Their constituent pitch sets, mutation points, thresholds of perceptual separation, and
+sensitivity to string length can be catalogued, although performer , string, setup, and bowing variability
+remain significant. The literature is substantially less developed for violin and viola, despite recent
+performer-led cataloguing projects (Fallowfield, 2020). 
+1.2 Notation and performance practice
+Three principal systems coexist for natural harmonics:
+A normal notehead with a small circle may identify the sounding pitch or , in some traditions, the
+pitch that would be fingered normally.
+A diamond notehead may identify the touched node.
+The touched pitch and the sounding pitch may both be shown, the latter normally as a smaller ,
+parenthesized, or stemless notehead.
+These systems are not semantically interchangeable. A diamond alone normally indicates finger
+location, whereas a normal notehead with a harmonic circle often indicates the intended sounding
+pitch. Because multiple nodes may produce the same partial, sounding-pitch notation grants fingering
+discretion; touch-pitch notation specifies the physical solution. The string should be identified whenever
+more than one interpretation is possible (ConductIT, n.d.; Vienna Symphonic Library, n.d.-c). 
+Artificial harmonics are conventionally written as a stopped pitch with a normal notehead and a
+touched pitch with a diamond notehead on the same stem. The resulting pitch may additionally be
+supplied above. This fuller notation is advisable in complex contemporary textures because it
+1. 
+2. 
+3. 
+3
+
+===== PAGE 4 =====
+distinguishes physical fingering from acoustic result. Double-bass harmonics require particular care: the
+instrument’s normal octave transposition, local conventions for treble clef, and the distinction between
+touched and sounding pitches can otherwise produce octave errors. A prefatory note should establish
+whether double-bass harmonics are written at sounding or transposed pitch (ConductIT, n.d.; Vienna
+Symphonic Library, n.d.-b). 
+Instrument-specific practical profile
+InstrumentNatural harmonicsArtificial
+harmonics
+Multiphonics
+and glissandi
+Principal
+limitations
+Violin
+Standard through
+the lower and
+middle partials;
+higher partials
+increasingly
+sensitive to node
+and bow placement
+Perfect-fourth
+harmonics are
+idiomatic and can
+sustain rapid
+passagework;
+major-third and
+fifth
+configurations are
+specialized
+Harmonic
+glissandi are
+effective; stable
+multiphonics
+are possible but
+less forgiving
+than on longer
+strings
+Very short node
+spacing in upper
+positions;
+exposure of
+intonation and
+attack noise
+Viola
+Mechanically
+analogous to violin,
+with a darker body
+response and
+somewhat larger
+left-hand distances
+Perfect-fourth
+harmonics are
+standard; rapid
+chromatic
+passagework
+remains feasible
+Similar
+repertorial
+possibilities to
+violin, though
+systematic
+multiphonic
+research is
+limited
+Instrument-size
+variability and
+less standardized
+setup complicate
+generalization
+Cello
+Natural harmonics
+respond strongly;
+conventional use
+extends
+approximately
+through the eighth
+partial, with still
+higher modes
+physically available
+Perfect-fourth
+artificial
+harmonics are
+idiomatic,
+especially in
+thumb position
+Particularly
+suitable for
+harmonic
+glissandi and
+documented
+multiphonics
+Wider finger
+spacing in low
+positions; high-
+register work
+requires
+coordinated
+thumb-position
+technique
+Double
+bass
+Particularly effective
+because of long
+strings;
+approximately the
+sixth partial is
+commonly used on
+the lowest strings
+and the eighth on
+the upper strings,
+with higher
+harmonics in solo
+practice
+Much more
+restricted; perfect-
+fourth harmonics
+are principally
+available in thumb
+positions and
+commonly on the
+G string
+Long string
+length favours
+separated
+nodes,
+harmonic
+glissandi, and
+multiphonics
+Artificial
+harmonics in low
+positions may fail
+to speak; setup,
+string type,
+mensur , and
+tuning system
+vary considerably
+4
+
+===== PAGE 5 =====
+The tabulated limits are practice-oriented rather than absolute. Cello sources distinguish between
+harmonics conventionally used and still higher modes physically obtainable; double-bass sources
+explicitly identify a much narrower artificial-harmonic domain than that of the higher strings (Vienna
+Symphonic Library, n.d.-a, n.d.-b). 
+Harmonics combine effectively with bow tremolo, measured repetition, glissando, trills between
+stopped and harmonic contact, and certain double stops. Their combination with extreme sul tasto is
+less reliable because the high-frequency excitation needed for clear harmonic speech may be
+weakened. Sul ponticello can increase brilliance but may also destabilize the selected mode or introduce
+competing high partials. Pizzicato harmonics are possible, especially as natural harmonics, but their
+amplitude and decay differ markedly from bowed harmonics. Rimsky-Korsakov regarded pizzicato
+harmonics as especially successful on cello, although that observation reflects historical orchestral
+practice rather than a controlled comparison (Rimsky-Korsakov, 1912/1922). 
+1.3 Analytical and theoretical literature: texture
+Within texture, harmonics can perform at least four analytically distinguishable functions.
+Spectral differentiation occurs when harmonic sonorities are separated from ordinary stopped-string
+sound. Because the fundamental and low-order spectral distribution are reorganized, a harmonic layer
+can become perceptually segregated even when its register and rhythm resemble those of adjacent
+strings.
+Timbral fusion occurs when harmonics approximate or merge with flutes, piccolos, high woodwinds,
+glass-like percussion, or other sounds dominated by relatively sparse high-frequency components. The
+historical orchestration literature repeatedly identifies a link between string harmonics and flute timbre.
+The claim should be understood as an orchestral affinity rather than spectral identity (Rimsky-Korsakov,
+1912/1922). 
+Registral extension and de-corporealization occur when a string section is projected beyond its
+ordinary stopped-register identity. The reduction or displacement of low-frequency energy can weaken
+the perceptual association between sounding pitch and the physical scale of the instrument. A cello or
+double bass may consequently contribute to a high, apparently source-ambiguous stratum.
+Textural transformation occurs when ordinary sound is converted gradually into harmonic, harmonic-
+glissando, half-harmonic, or multiphonic sound. Such processes change not merely tone colour but also
+pitch definiteness, internal spectral multiplicity, attack clarity, and the perceived number of concurrent
+components.
+These functions can be described through the Taxonomy of Orchestral Grouping Effects. Increased
+timbral similarity may facilitate fusion or sequential integration; increased difference may promote
+segregation, stratification, or formal segmentation. Multiphonics are particularly ambiguous because
+several pitch components may be heard as one complex source, as a fused chord, or as unstable
+internal streams. Spectromorphological terminology is useful for describing the resulting spectral
+trajectories and transformations, although Smalley’s framework was devised primarily for
+electroacoustic listening and does not itself establish the instrumental production mechanism
+(Goodchild & McAdams, 2021; McAdams et al., 2022; Smalley, 1997). 
+5
+
+===== PAGE 6 =====
+1.4 Treatises and representative repertoire
+Harmonics were systematized in eighteenth-century violin pedagogy, notably in L’Abbé le fils’s Principes
+du violon of 1761, where both natural and artificial harmonics were addressed. Their subsequent
+development in virtuoso violin playing, particularly through Paganini and nineteenth-century
+successors, transformed them from special effects into an extended melodic technique (Hann, 2015;
+Stowell, 1978). 
+Nineteenth- and early twentieth-century orchestration treatises commonly emphasized three uses:
+sustained high sonorities, tremolando, and the mediation of string and woodwind colour . Modern
+treatises place greater emphasis on precise fingering, alternative touch intervals, glissandi, and
+extended harmonic techniques. This historical shift reflects both improved performance standards and
+a conceptual movement from “colouristic exception” to parametrically controlled sound production.
+Representative modern and contemporary applications include harmonic fields and glissandi in
+Stravinsky’s orchestral writing; harmonics as a means of timbral and registral continuity in Ravel;
+multiphonic-like string effects in Ligeti’s Apparitions; the systematic exploitation of natural-harmonic
+tuning in Ligeti’s later works; and harmonic glissandi, multiphonics, and transitions between pitch and
+noise in works by Xenakis, Scelsi, Lachenmann, Scodanibbio, and later performer-composers. In such
+repertoire, harmonics often cease to function as ornamental high notes and become constitutive of a
+texture’s spectral identity or transformation. Guettler and Thelin identify effects resembling later
+multiphonic practice in Ligeti’s Apparitions, while Fallowfield documents the subsequent technical
+stabilization of cello multiphonics (Fallowfield, 2020; Guettler & Thelin, 2012). 
+2. Sul tasto and flautando
+2.1 Acoustics and timbre
+Sul tasto directs the bow away from the bridge and toward, or over , the fingerboard. This increases the
+bow–bridge distance relative to the speaking length of the string. Under typical performance
+conditions, the resulting tone contains less relative high-partial energy, a lower spectral centroid, a
+softer attack, and a greater proportion of bow noise relative to strongly radiated upper harmonics. It is
+commonly perceived as veiled, diffuse, soft-edged, or flute-like.
+This result does not arise from position alone. Stable bowed-string motion permits different ranges of
+bow force at different bowing points. As the bow is moved away from the bridge, the usable maximum
+force falls; performers normally compensate through force, velocity, hair inclination, and contact area.
+Schoonderwaldt’s experiments showed that bow force dominated measured spectral-centroid variation,
+while bow–bridge distance and velocity conditioned the available force range. Sul tasto should therefore
+be described as a coordinated bowing regime rather than as a geometrical location with an automatic
+timbral output (Schoonderwaldt, 2009). 
+The relative, rather than absolute, bow position is decisive. Bowing five centimetres from the bridge
+does not have the same acoustic significance on an open cello C string, a stopped violin E-string note,
+and a high artificial harmonic. The operative variable is the bowing distance as a proportion of the
+current speaking length. As the left hand ascends, the string is shortened and the bowing point must
+generally move toward the bridge to preserve a comparable ratio. Consequently, literal bowing “over
+the fingerboard” may be acoustically or physically unsuitable in very high positions.
+6
+
+===== PAGE 7 =====
+Flautando overlaps with sul tasto but should not automatically be treated as its synonym. Sul tasto
+specifies or implies contact-point displacement. Flautando specifies a desired flute-like, low-resistance,
+lightly articulated colour and is commonly realized through a combination of bow placement toward the
+fingerboard, relatively light force, and freely moving bow speed. A passage can therefore be played sul
+tasto without achieving a convincing flautando character , and a player may approximate flautando
+without moving to the most extreme fingerboard position. Historical and contemporary sources are
+inconsistent on this distinction, so the intended degree and character should be clarified when
+compositionally important.
+2.2 Notation and performance practice
+The standard verbal indications include sul tasto, sulla tastiera, sur la touche, am Griffbrett, flautando, and
+the abbreviation s.t. Return to the conventional sounding point may be indicated by ordinario, ord., 
+normale, or nat. Because naturale can also concern harmonics, mute state, vibrato, or another preceding
+technique, an explicit “normal bow position” indication is preferable in dense contemporary notation.
+Degrees may be specified as poco sul tasto, sul tasto, molto sul tasto, or “as far over the fingerboard as
+possible.” Gradual transitions are represented through arrows, dashed extension lines, verbal
+instructions such as gradualmente al tasto, or graphic contact-point staves. A contemporary notation key
+should state whether the endpoints describe literal locations or perceptual target colours. Sekulić’s
+notation handbook emphasizes that gradual timbral changes require coordination of contact point,
+pressure, bow division, and speed rather than simple lateral movement (Sekulić, n.d.). 
+Most ordinary bowed articulations—legato, détaché, tremolo, trill, measured repetition, double stops,
+and many harmonics—can be combined with sul tasto. The degree of successful combination is not
+uniform. Rapid, lightly bowed tremolo may reinforce the diffuse colour , whereas forceful martelé and
+accented attacks tend to counteract it. High natural or artificial harmonics can lose pitch clarity when
+played too far from the bridge. Double stops may require different compromises because the two
+strings and sounding lengths do not respond identically. Pizzicato cannot literally be sul tasto as a bow-
+position technique, although plucking location may be independently specified.
+Instrument-specific considerations
+On violin and viola, sul tasto is rapidly accessible and can be sustained over broad melodic and tremolo
+textures. Very high left-hand positions reduce the available space over the fingerboard and alter the
+appropriate relative sounding point. The viola’s greater variation in body and string length makes
+standardized absolute-position instructions particularly unreliable.
+On cello, the long speaking length allows a broad perceptual gradient between ordinary and
+fingerboard-oriented bowing. In high thumb positions, however , the left hand may occupy the same
+physical region in which an extreme sul tasto bow would normally operate. Bow placement must then
+be adjusted or interpreted perceptually rather than literally.
+On double bass, the long strings permit a wide contact-point continuum, and sul tasto can produce a
+strongly differentiated diffuse low-register spectrum. The effect is nevertheless conditioned by string
+construction, mensur , bow type, tuning, and the relatively high proportion of mechanical and bow
+noise. Very soft low-register sul tasto can lose pitch definition more readily than the equivalent violin
+texture.
+7
+
+===== PAGE 8 =====
+2.3 Analytical and theoretical literature: texture
+The principal textural effect of sul tasto is usually not simple attenuation but spectral convergence. By
+reducing salient upper partials and attack definition, it can decrease the perceptual separability of
+individual instruments and voices. In homogeneous rhythmic writing, this can encourage section-level
+fusion and produce a continuous background stratum. Where only one section or voice adopts the
+technique, a contrast may instead be established between a diffuse layer and more sharply articulated
+ordinary or sul ponticello material.
+Within the auditory-grouping framework, sul tasto can contribute to:
+blend, by reducing spectral distinctions among string instruments;
+stratification, by placing a low-salience sustained layer behind brighter material;
+surface-texture formation, when individual lines become difficult to track but collective activity
+remains audible;
+segmental articulation, when entry into or departure from sul tasto marks a boundary;
+timbral augmentation, when a subdued string layer colours another instrumental source
+without becoming separately prominent.
+These are conditional analytical functions, not meanings intrinsic to the technique. A solo sul tasto line
+in a sparse register may remain foregrounded, while a louder or rhythmically differentiated sul tasto
+layer may resist fusion. Timbre operates together with onset synchrony, register , spatial placement,
+dynamics, and voice leading (Goodchild & McAdams, 2021; McAdams et al., 2022). 
+Gradual movement toward the fingerboard can also function as a process of spectral contraction. In
+spectromorphological terms, the sound’s high-frequency occupation and attack profile may be
+progressively reduced while pitch and rhythmic identity remain stable. Such a process can be used to
+dissolve a foreground line into a textural field without changing its notated pitches.
+2.4 Treatises and representative repertoire
+Early discussions of varying bow contact point, including Ganassi’s sixteenth-century viol technique, do
+not necessarily document the modern, explicitly differentiated categories of sul tasto and sul ponticello.
+Later historical claims should therefore distinguish general advice about sounding point from a notated
+special effect. Farina’s Capriccio stravagante of 1627 constitutes stronger evidence of deliberate
+colouristic bow-position manipulation, although its imitative and theatrical aims differ from modern
+parametric treatment (Bonner , 2018). 
+By the late nineteenth and early twentieth centuries, orchestration treatises presented sul tasto as a
+recognized means of producing a veiled or flute-like string sonority. Rimsky-Korsakov paired sul tasto
+and flautando and contrasted their “dull, veiled” quality with the metallic colour of sul ponticello. Such
+language has remained influential but compresses a continuous acoustic field into two categorical
+effects (Rimsky-Korsakov, 1912/1922). 
+In twentieth-century quartet and orchestral repertory, sul tasto is frequently placed in direct opposition
+to ordinary and sul ponticello bowing. Berg’s Lyric Suite, Bartók’s quartets, Janáček’s Intimate Letters,
+Ligeti’s string writing, Crumb’s chamber music, and later works by Xenakis, Saariaho, and Lachenmann
+use contact-point contrasts to separate layers, alter continuity, or transform an apparently stable pitch
+configuration. In Janáček’s Intimate Letters, for example, simultaneous differentiated techniques among
+• 
+• 
+• 
+• 
+• 
+8
+
+===== PAGE 9 =====
+the four instruments contribute to heterogeneity and role separation rather than to a unified quartet
+sonority. 
+3. Sul ponticello
+3.1 Acoustics and timbre
+Sul ponticello places the bow closer to the bridge than in ordinary playing. In its moderate form, upper
+partials become more prominent and the tone is commonly perceived as bright, nasal, glassy, or
+metallic. In more extreme forms, the fundamental may become perceptually weak, selected upper
+harmonics may dominate, and the sound may acquire beating, squealing, intermittent, or noise-rich
+components.
+The mechanism should not be reduced to the claim that bowing near a node “removes the
+fundamental.” A normally bowed string is a nonlinear stick–slip system. Moving the bow toward the
+bridge narrows the range of force–velocity combinations that sustain stable Helmholtz motion. When
+bow force is insufficient for that position, several slips can occur during one nominal period. Guettler
+documented extreme sul ponticello signals containing multiple slips and a consequent emphasis on
+corresponding upper harmonics. Thus, the characteristic spectrum can arise both from the excitation
+geometry and from a changed motion regime (Guettler , 2002; Guettler , 2004). 
+Bow force remains crucial. A player can bow near the bridge with sufficient force and coordinated
+velocity while retaining a comparatively full, projecting tone; conversely, a deliberately low-force bridge-
+adjacent stroke produces a more fragile and overtone-dominated result. The labels sul ponticello, molto
+sul ponticello, and “on the bridge” therefore describe different and partly overlapping acoustic regimes.
+Bowing directly on the bridge is a separate extended technique and should not be conflated with
+ordinary sul ponticello.
+The spectrum of sul ponticello is often temporally unstable. Slight movement of bow position changes
+which partials are reinforced; irregular friction and torsional string motion add modulated noise; and
+body resonances selectively radiate the resulting components. A single average spectral centroid
+cannot adequately represent these changes. Spectral slope, harmonic-to-noise ratio, partial salience,
+temporal modulation, attack irregularity, and frame-level variance are also required.
+3.2 Notation and performance practice
+Standard indications include sul ponticello, sul pont., s.p., au chevalet, and am Steg. Intensification may be
+written as molto sul ponticello, estremamente sul ponticello, or “as close to the bridge as possible.” Return
+is indicated by ordinario, normale, or an explicit “normal bow position.”
+A distinction should be maintained among:
+poco sul ponticello: a moderate brightening while retaining a stable pitch core;
+sul ponticello: clearly bridge-oriented, overtone-rich playing;
+molto sul ponticello: an extreme position with reduced fundamental stability;
+on the bridge: bow hair contacting the bridge itself;
+behind/sub ponticello: bowing the afterlength between bridge and tailpiece.
+• 
+• 
+• 
+• 
+• 
+9
+
+===== PAGE 10 =====
+These techniques are physically and acoustically different. They should not be represented by an
+undifferentiated abbreviation.
+Gradual contact-point changes can be written by verbal arrows, extension lines, or a dedicated graphic
+staff. Where timbral trajectory is structurally important, endpoint definitions and the expected relation
+between movement and duration should be given. Because the performer must continually coordinate
+force and speed, a graphic line specifying position alone does not fully determine the result.
+Most bowed articulations combine readily with sul ponticello. Unmeasured tremolo is especially
+common because it sustains an active, fluctuating upper spectrum while minimizing the need for long
+stable strokes. Trills and finger tremolos can create dense modulation between pitch, partial, and
+friction noise. Harmonics can be brightened or destabilized; a carefully controlled bridge-oriented bow
+may support them, whereas extreme multiple-slip behaviour can obscure their pitch. Forceful double
+stops are possible but demanding because both strings require viable friction conditions. Again,
+pizzicato is not literally combinable as a bow-position technique, although bridge-adjacent plucking
+constitutes a related but separate colour .
+Instrument-specific considerations
+The violin produces a highly exposed and rapidly changing high-partial spectrum. Small contact-point
+movements have large proportional effects, especially in upper positions. This makes violin sul ponticello
+agile but also sensitive to differences among performers.
+On viola, the technique can counteract the instrument’s relatively darker ordinary spectrum and
+produce marked separation from violin or cello layers. The result depends strongly on instrument
+dimensions and string choice.
+The cello offers a broad range from mild nasal coloration to complex, whistle-like or adjacent-harmonic
+phenomena. Messina describes controllable transitions between very high partials as the bow is
+displaced close to the bridge, although such control is virtuosic and instrument-dependent (Messina,
+2009). 
+On double bass, high partials may become clearly detached from the low nominal fundamental, and the
+long string facilitates spatially differentiated excitation points. The result can possess considerable
+projection despite the weakening of low-frequency pitch identity. Mechanical and friction noise are
+correspondingly prominent, and section playing introduces substantial inter-player spectral dispersion.
+3.3 Analytical and theoretical literature: texture
+Sul ponticello is especially effective in creating timbral heterogeneity. When assigned to one layer
+against ordinary or muted strings, it can prevent fusion even where rhythm, register , and pitch content
+remain similar . Conversely, when applied to an entire section, it can establish a coherent collective
+timbre whose internal fluctuations produce a dense surface texture.
+Its principal textural functions include:
+differentiation of simultaneous layers;
+intensification of internal activity without increased note density;
+conversion of pitch-defined sound into spectrally distributed or noise-adjacent material;
+creation of foreground salience through high-frequency energy;
+• 
+• 
+• 
+• 
+10
+
+===== PAGE 11 =====
+construction of unstable or “shimmering” sustained masses;
+marking of formal boundaries through abrupt contact-point change;
+gradual transformation along a tasto–ordinario–ponticello continuum.
+The distinction between event density and spectral activity is analytically important. A sustained sul
+ponticello tone may have one notated onset but contain rapid fluctuations among partials, friction
+events, and noise bands. In textural analysis it should not automatically be classified as internally static
+merely because its pitch and notation are sustained.
+The Taxonomy of Orchestral Grouping Effects explains how the increased timbral contrast of sul
+ponticello can produce segregation or foregrounding, while a whole-section application can create an
+integrated surface texture. Spectromorphology is useful for describing the transition from stable
+harmonic spectrum toward fluctuating, granular , or turbulent behaviour , but the instrumental bowing
+variables should remain analytically distinct from their perceptual consequences (McAdams et al., 2022;
+Smalley, 1997). 
+3.4 Treatises and representative repertoire
+Farina’s Capriccio stravagante is frequently cited as an early documented example of bridge-oriented
+bowing. The work’s instructions and imitative programme demonstrate deliberate exploitation of
+unconventional string colour , although modern terminology should not be projected uncritically onto all
+earlier sounding-point advice (Bonner , 2018). 
+Later orchestration treatises typically associated sul ponticello with tremolo and metallic colour . Rimsky-
+Korsakov’s account reflects its late-Romantic orchestral use but already recognizes bow position as a
+radical modifier of section timbre. In his own Legend of the Invisible City of Kitezh, a solo violin is placed
+over a harmonic background of sul ponticello strings and woodwinds, showing that the technique had
+acquired a stratifying rather than merely ornamental function (Rimsky-Korsakov, 1912/1922). 
+In the early twentieth century, sul ponticello was increasingly used as a structural contrast in chamber
+music. It participates in extended timbral trajectories in works by Schoenberg, Bartók, Berg, and
+Janáček. Penderecki’s early string works, including Threnody to the Victims of Hiroshima, place it within
+large-scale fields of tremolo, clusters, glissandi, harmonics, approximate pitch, and behind-the-bridge
+sound. The techniques collectively reorganize the orchestra into changing sound masses rather than
+stable instrumental choirs.
+Ligeti’s string writing similarly employs bow-position differentiation as one parameter within textures
+characterized by internal transformation, superposition, and changing degrees of fusion. Lachenmann’s
+Pression and subsequent works move beyond a binary opposition between normal and special timbre:
+contact point, pressure, friction regime, and bodily gesture become components of the musical material
+itself. Recent scholarship on Pression has attempted to classify these techniques according to their
+production and perceptual characteristics, confirming the analytical inadequacy of treating them merely
+as isolated “effects.” 
+• 
+• 
+• 
+11
+
+===== PAGE 12 =====
+4. Con sordino
+4.1 Acoustics and timbre
+A bridge-mounted string mute changes both loudness and timbre. Its primary physical action is to add
+mass and, depending on construction and contact, damping to the bridge. The bridge’s mobility and its
+coupling to the instrument body are consequently altered. High-frequency transmission is generally
+reduced, resonant peaks are shifted or reshaped, and the radiated spectrum becomes less brilliant. The
+mute should therefore be understood as a mechanical filter attached to the bridge rather than as a
+device that simply “absorbs the overtones.”
+Gough explains that the added mass lowers the bridge’s high-frequency filtering action, producing a
+softer and less intense radiated sound. In violin measurements by Elie, Gautier , and David, mute
+application produced relatively little change in the lowest measured region but reduced mean bridge
+mobility by approximately 5–13 dB between about 1 and 2.5 kHz. This region includes a substantial part
+of the violin’s projection and brilliance characteristics. The exact response depends on mute mass,
+placement, bridge, instrument, string, and bowing (Elie et al., 2013; Gough, 2016). 
+A standard orchestral mute and a heavy practice or hotel mute are not acoustically interchangeable. A
+performance mute is intended principally to modify orchestral colour while preserving usable response,
+projection, and intonation. A heavy practice mute is intended to achieve substantially greater sound-
+level reduction. Evangelista and Freire’s 2025 study of heavy violin practice mutes used long-term
+average spectra and loudness measures and found characteristic spectral changes that could not be
+described merely as a stronger version of light muting. In particular , heavy mutes produced different
+patterns of energy redistribution, including reduced energy transfer into lower-frequency regions in
+some configurations. The mass, material, geometry, and bridge contact all contributed to the result
+(Evangelista & Freire, 2025). 
+Mute types
+Type Typical construction and
+purpose
+Principal acoustic
+tendency
+Repertorial
+implication
+Light
+orchestral or
+performance
+mute
+Small wood, rubber ,
+plastic, leather , or
+composite device attached
+to the bridge; some
+models remain on the
+strings and slide into
+position
+Moderate attenuation;
+reduced bridge mobility
+in important middle/
+high-frequency regions;
+softened attack and
+reduced brilliance
+Appropriate when the
+unqualified indication
+con sordino is used
+Heavy practice
+or hotel mute
+Substantially heavier
+rubber , metal, composite,
+or lead-like device covering
+a larger part of the bridge;
+recent research classified
+heavy violin mutes above
+roughly 35 g
+Large sound-level
+reduction and extensive
+spectral restructuring;
+altered response and
+player feedback
+Must be specified
+explicitly; should not
+be assumed from
+ordinary con sordino
+12
+
+===== PAGE 13 =====
+Type Typical construction and
+purpose
+Principal acoustic
+tendency
+Repertorial
+implication
+Historical
+metal mute
+Silver , copper , lead, brass,
+tin, steel, or related forms
+documented in
+seventeenth- and
+eighteenth-century
+sources
+Material-dependent
+attenuation, buzzing,
+nasal coloration,
+whistling, or strong
+damping
+Historically informed
+performance requires
+source- and
+repertory-specific
+decisions
+Historical or
+modern
+wooden mute
+Light bridge-mounted
+wood; eventually became a
+dominant orchestral type
+Moderate damping and
+timbral alteration; effect
+varies with density and
+geometry
+Often associated with
+eighteenth- and
+nineteenth-century
+practice, but no single
+historical model was
+universal
+Adjustable or
+partial mute
+Devices allowing varying
+bridge contact or vertical
+position
+Continuously variable
+amount of damping
+Suitable for
+controlled transitions,
+but the intended
+device should be
+named
+The category “mute” was historically heterogeneous. Loughridge shows that seventeenth- and
+eighteenth-century materials, terminology, function, and perceived meaning were not standardized.
+Metal remained common well into the eighteenth century, while commentators disagreed over whether
+the principal function was reduced loudness, changed timbre, imitation, or affective characterization.
+Modern synthetic performance mutes should therefore not automatically be treated as neutral
+substitutes for historical devices (Loughridge, 2016). 
+4.2 Notation and performance practice
+The standard instructions are con sordino or con sord. for application and senza sordino, senza sord., or 
+via sordino for removal. French and German equivalents include avec sourdine/sans sourdine and mit
+Dämpfer/ohne Dämpfer. The mute remains in use until an explicit removal instruction is given.
+If a heavy practice mute, metal mute, historical mute, adjustable mute, or partial muting device is
+required, the type must be named. The unqualified con sordino instruction will normally be interpreted
+as a standard performance mute. A pictogram or verbal specification should be included in both score
+and parts for an unfamiliar device.
+Time must be allowed for application and removal. Mutes that remain attached to the strings below the
+bridge can often be engaged quickly, but loose, rigid, heavy, historical, or bass mutes may require
+appreciably more time and may produce incidental handling noise. The required interval is therefore
+device- and instrument-specific rather than a universal number of seconds. The orchestration should
+also provide acoustic cover if a completely silent change is expected (Goss, 2012). 
+The mute can be combined with ordinary bowed articulations, tremolo, trills, glissandi, harmonics, sul
+tasto, and sul ponticello. These combinations are not acoustically additive. A mute may reduce the high-
+frequency distinction expected from sul ponticello, although sufficiently extreme bridge bowing can
+restore substantial upper-partial activity. Muted harmonics may lose projection because both the string
+13
+
+===== PAGE 14 =====
+excitation and bridge transfer reduce lower-energy components. Muted sul tasto can produce a very
+low-salience layer but may also become pitch-indistinct. The combined result should therefore be tested
+rather than inferred by summing verbal timbre labels.
+Instrument-specific considerations
+The same bridge-mass principle applies to violin, viola, cello, and double bass, but the evidence base is
+heavily violin-centred. Bridge mass, bridge dimensions, body modes, string impedance, and radiating
+efficiency differ substantially among the four instruments. It cannot be assumed that a frequency-
+specific violin result—for example, attenuation between 1 and 2.5 kHz—will transfer unchanged to cello
+or double bass.
+Violin and viola performance mutes are generally light and quickly accessible. On cello, the larger
+bridge and lower modal distribution produce a distinct muted response, often retaining considerable
+low-register body while reducing projection and upper-frequency definition. Double-bass mutes are
+larger , and both bridge and setup vary extensively; physical handling and sound-level consequences
+may therefore differ among instruments and orchestras. Controlled comparative data across all four
+remain absent.
+4.3 Analytical and theoretical literature: texture
+Con sordino frequently promotes blend by reducing high-frequency cues that distinguish individual
+sources. A muted string section can consequently be heard as a more homogeneous spectral field. This
+does not imply that all muted instruments fuse automatically: differences of register , onset, articulation,
+spatial position, and pitch trajectory can preserve separate streams.
+In orchestral texture the technique may serve:
+to lower the perceptual salience of an accompaniment;
+to differentiate foreground and background without changing pitch or rhythm;
+to transform a conventional string choir into a source-ambiguous colour;
+to soften attacks and reduce local segmentation;
+to unify divided parts into a spectral layer;
+to create a distinct formal region;
+to establish contrast between muted and unmuted subsections;
+to mediate between strings and other subdued instrumental families.
+A heavy practice mute can produce a more radical change. Because instrumental response and
+performer feedback are substantially altered, it may affect articulation, bow compensation, dynamic
+scaling, and perceived distance. In Berio’s Sequenza VIII, the replacement of the ordinary mute by a
+practice mute near the end is therefore not merely a further dynamic reduction. It creates a different
+physical and spectral condition and contributes to the work’s progressive redefinition of violin gesture
+and resonance (Berio, 1976; Haffner , 2016). 
+The historical meanings of muted colour should not be universalized. Loughridge demonstrates that
+eighteenth-century muted violins could signify murmuring water , grief, sleep, magic, distance, or
+practical softness, depending on context. The later critical vocabulary of the “ethereal” or “otherworldly”
+represents only part of that history (Loughridge, 2016). 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+• 
+14
+
+===== PAGE 15 =====
+4.4 Treatises and representative repertoire
+Secure evidence for purpose-made violin mutes emerges around the later seventeenth century,
+although earlier descriptions of placing objects on the bridge do not necessarily document
+standardized musical practice. Loughridge identifies approximately 1680 as a point at which the violin
+mute can be established with greater confidence as both a named device and a material object. Lully,
+Purcell, Charpentier , Vivaldi, and later Haydn belong to a repertory in which terminology and materials
+remained variable. Vivaldi’s con piombi directions are particularly significant, but their exact physical
+realization remains unresolved (Loughridge, 2016). 
+By the nineteenth century, muting was established as an orchestral colour in instrumentation treatises.
+Berlioz described small wooden devices, while later authors increasingly associated muted strings with
+distance, mystery, subdued expression, or altered projection. Rimsky-Korsakov characterized muted
+strings as reduced in volume, dull in soft dynamics, and potentially hiss-like in loud dynamics. That
+description remains useful as a historical observation but overstates uniformity across instruments,
+mute types, and performance conditions (Rimsky-Korsakov, 1912/1922). 
+Important repertorial contexts include muted slow movements and scene-painting in eighteenth-
+century opera and symphony; Berlioz, Wagner , and later Romantic orchestration; extended muted
+passages and rapid mute-state contrasts in Debussy, Ravel, Bartók, Berg, and Shostakovich; and the
+explicit use of non-standard mutes in later twentieth-century music. Berio’s Sequenza VIII is a
+particularly clear instance in which a heavy practice mute is compositionally differentiated from an
+ordinary performance mute.
+5. Cross-cutting synthesis
+5.1 The techniques intervene at different points in the sound-
+production chain
+Technique Principal physical
+intervention
+Primary acoustic
+consequences Typical textural potential
+Natural/
+artificial
+harmonic
+Left-hand nodal
+constraint and
+redefinition of
+effective vibrating
+length
+Suppression of
+incompatible modes;
+dominance of selected
+higher partials; altered
+attack and radiation
+Registral extension,
+spectral thinning, fusion
+with winds, source
+ambiguity
+Harmonic
+glissando/
+multiphonic
+Moving nodal
+constraint or
+carefully related
+bow/finger positions
+Successive mode
+selection, multiple salient
+partials, instability, noise–
+pitch transitions
+Internal spectral motion,
+pitch multiplicity,
+transformation of a line
+into a sound field
+Sul tasto
+Bow excitation
+farther from bridge
+relative to speaking
+length
+Usually reduced upper-
+partial energy, softer
+articulation, lower
+centroid, increased
+diffuseness
+Blend, background
+formation, spectral
+contraction, dissolution
+15
+
+===== PAGE 16 =====
+Technique Principal physical
+intervention
+Primary acoustic
+consequences Typical textural potential
+Sul ponticello
+Bow excitation close
+to bridge, often
+near limits of stable
+Helmholtz motion
+Increased upper-partial
+prominence, multiple-slip
+regimes, fluctuating or
+noise-rich spectrum
+Stratification,
+foregrounding, spectral
+intensification, unstable
+sustained masses
+Standard con
+sordino
+Added bridge mass
+and damping
+Reduced bridge mobility
+and projection, especially
+in significant middle/high
+regions; softened attack
+Homogenization, reduced
+salience, distance, sectional
+contrast
+Heavy practice
+mute
+Large added mass
+and damping
+Major sound-level
+reduction, extensive
+spectral and response
+changes
+Radical timbral
+displacement, physicalized
+attenuation, separation
+from ordinary muted
+sound
+Harmonics and mute application are not points on the same dimension as bow position. Harmonics
+alter the string’s modal participation; bow position alters excitation and motion regime; muting alters
+transmission and radiation. The techniques can therefore be combined, but their interactions are
+nonlinear .
+5.2 The sul tasto–ordinario–sul ponticello continuum
+The bow-position continuum is frequently represented as a one-dimensional progression from dark to
+bright:
+This is useful as a first approximation but insufficient as an acoustic model. The perceptual outcome
+depends on at least:
+where  is relative bow–bridge distance,  bow force,  bow velocity,  speaking length, 
+fundamental frequency,  string properties,  dynamic,  articulation, and  instrument response.
+A notated contact-point trajectory therefore specifies only one component of a multidimensional
+performance path. Two performers can follow the same geometrical bow movement while producing
+different centroid trajectories, noise levels, and dynamic envelopes. Schoonderwaldt’s results are
+particularly important here because they disprove a simple one-to-one relation between proximity to
+the bridge and spectral brightness (Schoonderwaldt, 2009). 
+5.3 Implications for texture analysis
+An analytically robust account should separate four levels:
+Production instruction: harmonic, contact point, mute, bow force, bow speed, articulation.
+sul tasto→ordinario→sul ponticello.
+T =f(β,F ,v ,L,f ,s,d,a,I),b b 0
+β F 
+b v 
+b L f 
+0
+s d a I
+1. 
+16
+
+===== PAGE 17 =====
+Acoustic result: partial distribution, spectral centroid, slope, noise ratio, attack time,
+modulation, loudness, radiation.
+Perceptual organization: fusion, segregation, streaming, stratification, source identification,
+salience.
+Musical-textural function: foreground/background, layer differentiation, transformation,
+continuity, formal segmentation, accumulation, or dissolution.
+The notation does not guarantee a fixed acoustic result, and an acoustic descriptor does not by itself
+determine a textural function. For example, increased spectral centroid may distinguish a sul ponticello
+line from muted strings, but the line may still fuse with high winds because of common register and
+synchronized onset. Conversely, a low-centroid sul tasto layer may segregate because of rhythmic
+independence.
+For quantitative work, spectral centroid should be supplemented by measures of spectral slope,
+harmonic energy distribution, harmonic-to-noise ratio, spectral flux, temporal modulation, attack
+characteristics, loudness, and inter-player variability. For harmonics and multiphonics, the number and
+salience of perceptually distinct pitch components should also be represented. For mutes,
+measurements should distinguish absolute attenuation from redistribution of spectral energy.
+6. Open questions and gaps
+6.1 Lack of cross-instrument acoustic datasets
+Most controlled studies concern violin. Comparable measurements of viola, cello, and double bass
+under standardized sul tasto, sul ponticello, harmonic, and mute conditions are lacking. A systematic
+dataset should control pitch, written and sounding register , string, dynamic, bow force, velocity, contact-
+point ratio, articulation, mute mass, and recording geometry.
+6.2 Insufficient modelling of technique continua
+Published datasets frequently classify samples into discrete labels such as ordinario, sul tasto, and sul
+ponticello. The underlying variables are continuous. Research is required on how measured acoustic
+descriptors evolve along controlled contact-point trajectories and whether perceptual category
+boundaries correspond to physical thresholds.
+6.3 Underdeveloped mute research
+The 2025 study by Evangelista and Freire substantially improves the evidence on heavy violin practice
+mutes, but the literature remains sparse. No consensual classification links mute mass, material,
+geometry, contact area, bridge mobility, radiated spectrum, loudness, and performer feedback across
+the violin family. Viola, cello, and double-bass data are especially deficient. 
+6.4 Lack of notation standardization
+Natural-harmonic notation remains ambiguous between touched and sounding pitch. Double-bass
+transposition introduces further uncertainty. Half harmonic, multiphonic, degree of sul tasto or sul
+ponticello, and non-standard mute indications lack universally accepted conventions. Explanatory
+legends and performer consultation remain necessary.
+2. 
+3. 
+4. 
+17
+
+===== PAGE 18 =====
+6.5 Multiphonic reproducibility
+The physical basis of bowed-string multiphonics has been established, but instrument-to-instrument
+and performer-to-performer reproducibility remains incompletely characterized. Relevant variables
+include scale length, string construction, torsional response, finger compliance, bow hair , rosin, body
+radiation, and listening threshold. The cello and double bass are better documented than violin and
+viola (Fallowfield, 2020; Guettler & Thelin, 2012). 
+6.6 Ensemble and section-level behaviour
+Most measurements use isolated solo notes. Orchestral texture involves multiple players whose bow
+positions, partial amplitudes, intonation, and transients are not identical. Such dispersion may either
+broaden a fused spectral mass or increase perceptual heterogeneity. The relation between solo-
+instrument measurements and section-level texture has not been adequately quantified.
+6.7 Technique recognition remains incomplete
+Machine-listening research confirms that playing-technique identification is substantially harder than
+ordinary instrument recognition. In the Studio On Line dataset, a system incorporating time-frequency
+scattering and metric learning achieved substantially lower performance for technique recognition than
+for instrument recognition. This difference reflects the large within-class variability of instrumental
+techniques and the acoustic overlap among nominal categories (Lostanlen et al., 2018). 
+6.8 Texture-specific analytical literature remains thin
+A considerable amount has been written on how to produce and notate these techniques, but
+comparatively little scholarship directly analyses their role in constructing musical texture across a
+representative corpus. The relationship between technique, spectral result, auditory grouping, and
+formal function is frequently asserted rather than empirically tested. Existing orchestration and timbre
+frameworks provide a strong conceptual basis, but targeted score, performance, and listening studies
+remain necessary.
+References
+Askenfelt, A. (1988). Measurement of the bowing parameters in violin playing. STL-QPSR, 29(1), 1–30. 
+Berio, L. (1976). Sequenza VIII for violin. Universal Edition. 
+Bonner , A. (2018). “Curious inventions”: Carlo Farina’s Capriccio stravagante [Doctoral dissertation, Duke
+University]. 
+ConductIT. (n.d.). String harmonics. University of Stavanger . 
+Elie, B., Gautier , F., & David, B. (2013). Analysis of bridge mobility of violins. In Proceedings of the
+Stockholm Music Acoustics Conference 2013 (pp. 54–59). 
+18
+
+===== PAGE 19 =====
+Elie, B., Gautier , F., & David, B. (2014). Acoustic signature of violins based on bridge transfer mobility
+measurements. The Journal of the Acoustical Society of America, 136(3), 1385–1393. 
+Evangelista, M. V. da S., & Freire, S. (2025). Audio analysis of the effects of heavy violin practice mutes:
+Spectral and loudness changes. Acta Acustica, 9, Article 45. doi:10.1051/aacus/2025029. 
+Fallowfield, E. (2009). Cello map: A handbook of cello technique for performers and composers [Doctoral
+dissertation, University of Birmingham]. 
+Fallowfield, E. (2020). Cello multiphonics: Technical and musical parameters. Tempo, 74(291), 51–69. 
+Goodchild, M., & McAdams, S. (2021). Perceptual processes in orchestration. In E. I. Dolan and A.
+Rehding (Eds.), The Oxford handbook of timbre (pp. 496–524). Oxford University Press. doi:10.1093/
+oxfordhb/9780190637224.013.10. 
+Gough, C. E. (2016). Violin acoustics. Acoustics Today, 12(2), 22–30. 
+Guettler , K. (2002). On the creation of the Helmholtz motion in bowed strings. Acta Acustica united with
+Acustica, 88, 970–985. 
+Guettler , K. (2004). The violin bow in action: A sound-sculpturing wand. In Proceedings of the International
+Symposium on Musical Acoustics. 
+Guettler , K., & Thelin, H. (2012). Bowed-string multiphonics analyzed by use of impulse response and the
+Poisson summation formula. The Journal of the Acoustical Society of America, 131(1), 766–772. doi:
+10.1121/1.3651251. 
+Haffner , I. (2016). Berio: Sequenza VIII—Annotated score. 
+Hann, H. C. (2015). The influence of historic violin treatises on modern teaching and performance
+practices. Undergraduate Research Journal at the University of Northern Colorado. 
+Lloyd, E. J. (n.d.). PhD appendix: Bow technique analysis. 
+Lostanlen, V., Andén, J., & Lagrange, M. (2018). Extended playing techniques: The next milestone in
+musical instrument recognition. In Proceedings of the International Conference on Digital Libraries for
+Musicology. 
+Loughridge, D. (2016). Muted violins from Lully to Haydn. Early Music, 44(3), 427–447. doi:10.1093/em/
+caw061. 
+McAdams, S. (2013). Musical timbre perception. In D. Deutsch (Ed.), The psychology of music (3rd ed.).
+Academic Press. 
+McAdams, S., Goodchild, M., & Soden, K. (2022). A taxonomy of orchestral grouping effects derived from
+principles of auditory perception. Music Theory Online, 28(3). doi:10.30535/mto.28.3.6. 
+Messina, D. (2009). A guide to extended techniques for the violoncello. Oberlin College. 
+19
+
+===== PAGE 20 =====
+Nummela, A. (2023). The contemporary string instruments. Royal College of Music in Stockholm. 
+Rimsky-Korsakov, N. (1922). Principles of orchestration (M. Steinberg, Ed.; E. Agate, Trans.). Edition Russe
+de Musique. (Original work published 1912). 
+Schoonderwaldt, E. (2009). The violinist’s sound palette: Spectral centroid, pitch flattening and
+anomalous low frequencies. Acta Acustica united with Acustica, 95(5), 901–914. doi:10.3813/AAA.918221. 
+Sekulić, D. (n.d.). Handbook for violin contemporary music notation. 
+Smalley, D. (1997). Spectromorphology: Explaining sound-shapes. Organised Sound, 2(2), 107–126. 
+Stowell, R. (1978). Development of violin technique from L’Abbé le fils to Paganini [Doctoral dissertation,
+University of Cambridge]. 
+Vienna Symphonic Library. (n.d.-a). Cello. VSL Academy. 
+Vienna Symphonic Library. (n.d.-b). Double bass. VSL Academy. 
+Vienna Symphonic Library. (n.d.-c). Viola. VSL Academy.
+20

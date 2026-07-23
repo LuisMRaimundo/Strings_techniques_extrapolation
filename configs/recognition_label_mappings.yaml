@@ -1,0 +1,25 @@
+# External technique-recognition label mappings (stub).
+# Lostanlen-style taxonomy labels may map to internal ontology ids or remain unresolved.
+# Do NOT treat classifier confidence as EWSD density coefficients.
+
+version: "0.1.0"
+schema_version: recognition_label_mappings_v1
+source_taxonomy: lostanlen_extended_playing_techniques_style
+
+mappings:
+  - source_label: sul_pont
+    ontology_id: null
+    unresolved: true
+    notes: >
+      External shorthand; map only after curator verification against internal bow-contact ontology.
+
+  - source_label: sul_tasto
+    ontology_id: null
+    unresolved: true
+    notes: >
+      External shorthand; map only after curator verification against internal bow-contact ontology.
+
+  - source_label: unknown_extended_technique
+    ontology_id: null
+    unresolved: true
+    notes: Default bucket when the classifier cannot assign a stable ontology id.

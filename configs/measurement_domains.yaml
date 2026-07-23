@@ -1,0 +1,54 @@
+# Measurement-domain ontology — separates where a quantity was observed.
+# Spectral centroid (or any descriptor) from one domain is NOT equivalent to another.
+
+version: "0.1.0"
+schema_version: measurement_domain_registry_v1
+
+domains:
+  - id: radiated_audio
+    label: Radiated audio
+    description: >
+      Microphone-captured sound pressure in the acoustic far field or studio recording chain.
+    notes: >
+      Spectral centroid computed from radiated audio reflects microphone placement, room response,
+      and post-processing; it is not interchangeable with bridge-force or body-acceleration centroids.
+
+  - id: bridge_force
+    label: Bridge force
+    description: >
+      Force transmitted at the bridge or measured via an instrumented bow / bridge sensor.
+    notes: >
+      Force-domain spectra and centroids describe excitation mechanics; do not map them directly
+      to radiated-audio centroids without an explicit transfer model.
+
+  - id: string_velocity_at_bow
+    label: String velocity at bow
+    description: >
+      Transverse string velocity or related kinematic quantity at the bow contact point.
+    notes: >
+      Bow-point velocity spectra differ from radiated audio; centroid comparisons across domains
+      require separate calibration and must not be treated as equivalent descriptors.
+
+  - id: bridge_mobility
+    label: Bridge mobility
+    description: >
+      Mechanical mobility or admittance of the bridge–body system (often from impact or FRF studies).
+    notes: >
+      Mobility-derived frequency summaries describe structural response, not perceived timbre;
+      spectral centroid from mobility is not equivalent to audio-domain centroid.
+
+  - id: body_acceleration
+    label: Body acceleration
+    description: >
+      Acceleration measured on the instrument body (e.g. near the bridge or top plate).
+    notes: >
+      Body-acceleration spectra include structural resonances and contact mechanics; centroid values
+      must not be merged with radiated-audio centroids without domain-specific interpretation.
+
+  - id: unresolved
+    label: Unresolved measurement domain
+    description: >
+      Domain of observation is unknown, mixed, or not specified in the source record.
+    notes: >
+      Do not infer cross-domain equivalence for any descriptor (including spectral centroid)
+      when the measurement domain remains unresolved.

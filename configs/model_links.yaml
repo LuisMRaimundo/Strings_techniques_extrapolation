@@ -1,0 +1,41 @@
+# Link-function registry for metric-only technique transformation.
+# Selection follows the mathematical domain of the density metric, not observed sample range alone.
+
+version: "0.1.0-phase4"
+
+default_metric_definition_id: ewsd_v1
+
+links:
+  log:
+    description: "Strictly positive unbounded density on multiplicative effects."
+    domain: "positive_real"
+    forward: "eta = log(D)"
+    inverse: "D = exp(eta)"
+    numerical_floor: 1.0e-12
+  logit:
+    description: "Density constrained to (0, 1)."
+    domain: "unit_interval"
+    forward: "eta = logit(D)"
+    inverse: "D = invlogit(eta)"
+    numerical_eps: 1.0e-9
+  identity:
+    description: "Unrestricted real metric (or non-negative scalar treated additively)."
+    domain: "real"
+    forward: "eta = D"
+    inverse: "D = eta"
+  probit:
+    description: "Optional unit-interval link when justified by metric registry."
+    domain: "unit_interval"
+    forward: "eta = probit(D)"
+    inverse: "D = invprobit(eta)"
+    enabled: false
+
+selection_rules:
+  # EWSD acoustic-balanced score: non-negative real; multiplicative literature effects use log.
+  ewsd_v1: log
+  EWSD_score_acoustic_balanced: log
+
+notes: |
+  Do not select the link from observed values alone if the mathematical domain
+  is defined in the metric registry. Record selected link on every prediction.
+  Silent clipping is forbidden; numerical safeguards must be flagged.

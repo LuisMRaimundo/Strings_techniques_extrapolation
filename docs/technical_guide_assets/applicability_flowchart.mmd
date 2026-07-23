@@ -1,0 +1,10 @@
+flowchart TD
+  A[param + query] --> B{dims present?}
+  B -->|no| I[insufficient_metadata]
+  B -->|yes| C{match?}
+  C -->|no| N[not_applicable]
+  C -->|yes| D{transfer w/o equation?}
+  D -->|yes| T[applicable_only_by_explicit_transfer]
+  D -->|no| E{contradictory?}
+  E -->|yes| X[contradictory_metadata]
+  E -->|no| M[matched]

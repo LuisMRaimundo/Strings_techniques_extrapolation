@@ -1,0 +1,55 @@
+version: "1.0.0"
+schema_version: nonlinear_extrapolation_targets_v1
+
+default_quantity: EWSD_score_acoustic_balanced
+
+targets:
+  - target_quantity: EWSD_score_acoustic_balanced
+    unit: dimensionless_score
+    likelihood_family: lognormal
+    mapping_status: mapping_unresolved
+    notes: Direct EWSD extrapolation requires validated transfer function F (Phase 1 guard).
+
+  - target_quantity: spectral_slope_db_per_harmonic
+    unit: dB_per_harmonic
+    likelihood_family: normal
+    mapping_status: component_available
+    notes: Component descriptor; not identical to EWSD unless mapped.
+
+  - target_quantity: brightness_or_upper_spectral_activity_index_20khz
+    unit: dimensionless_index
+    likelihood_family: lognormal
+    mapping_status: component_available
+
+techniques:
+  - technique: ordinary
+    baseline: true
+  - technique: sul_tasto
+    submodel: M1_bow_contact_log_ratio
+  - technique: sul_ponticello
+    submodel: M1_bow_contact_log_ratio
+  - technique: con_sordino
+    submodel: M1_mute_log_scalar
+    excludes:
+      - heavy_practice_mute
+  - technique: artificial_harmonic
+    submodel: M2_harmonic_stub
+  - technique: natural_harmonic
+    submodel: M2_harmonic_stub
+
+instruments:
+  - vln
+  - vla
+  - vlc
+  - cb
+
+dynamics:
+  ordinal:
+    - ppp
+    - pp
+    - mp
+    - mf
+    - f
+    - ff
+    - fff
+  notes: Dynamic levels are categorical ordinal; not equally spaced numerically.

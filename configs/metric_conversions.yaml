@@ -1,0 +1,15 @@
+# Explicit registered transformations only. Silent rescaling is forbidden.
+conversions:
+  - conversion_id: ewsd_percent_to_score
+    source_metric_definition_id: ewsd_v1_percent
+    target_metric_definition_id: ewsd_v1
+    equation: "target = source / 100.0 * reference_score"
+    parameters:
+      reference_score:
+        value: 100.0
+        unit: dimensionless
+        provenance: "Identity reference for percent→score when percent is defined as fraction*100 of the EWSD score scale."
+    applicable_domain: "Only when percent values were produced from ewsd_v1 scores on the same analysis settings."
+    uncertainty_introduced: "Propagates percent measurement uncertainty; no additional process noise declared."
+    validation_status: declared_unvalidated
+    notes: "Must not be used to convert unrelated percentage metrics."

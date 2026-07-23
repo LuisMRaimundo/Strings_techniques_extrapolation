@@ -1,0 +1,72 @@
+# Collection registry — discovered at runtime. No collection_id is special-cased in code.
+# IMPORTANT: Separate measured IOWA and ORCHIDEA ordinary tables are NOT available
+# in this repository. Only a precomputed midpoint exists (see legacy entry below).
+
+collections:
+  - collection_id: legacy_iowa_orchidea_midpoint
+    display_name: "Legacy IOWA–ORCHIDEA midpoint ordinary CDM (precomputed)"
+    enabled: true
+    collection_type: pooled_derived
+    data_paths:
+      - "data/collections/legacy_iowa_orchidea_midpoint/ordinary_metrics.csv"
+    format: csv
+    schema_mapping: "configs/schemas/legacy_iowa_orchidea_midpoint.yaml"
+    metric_definition_id: ewsd_v1
+    default_roles:
+      - baseline
+    citation_id: LEGACY_IOWA_ORCHIDEA_MIDPOINT
+    licence: null
+    measured_or_estimated: derived
+    notes: >
+      Precomputed combination of upstream IOWA and ORCHIDEA EWSD acoustic-balanced
+      scores (midpoint). These values are NOT direct single-collection measurements
+      and must not be split into fictional separate IOWA/ORCHIDEA records.
+
+  - collection_id: custom_lab_01
+    display_name: "Custom Laboratory Collection 01"
+    enabled: true
+    collection_type: measured
+    data_paths:
+      - "data/collections/custom_lab_01/results.csv"
+    format: csv
+    schema_mapping: "configs/schemas/custom_lab_01.yaml"
+    metric_definition_id: ewsd_v1
+    default_roles:
+      - baseline
+    citation_id: CUSTOM_LAB_01
+    licence: private
+    measured_or_estimated: measured
+    notes: "Example user collection with non-standard column names."
+
+  - collection_id: violin_technique_holdout
+    display_name: "Violin measured-technique holdout"
+    enabled: true
+    collection_type: measured
+    data_paths:
+      - "data/collections/violin_technique_holdout/measured.csv"
+    format: csv
+    schema_mapping: "configs/schemas/violin_technique_holdout.yaml"
+    metric_definition_id: ewsd_v1
+    default_roles:
+      - external_validation
+    citation_id: VIOLIN_TECHNIQUE_HOLDOUT
+    licence: null
+    measured_or_estimated: measured
+    notes: "EXTERNAL VALIDATION ONLY — not for model construction or calibration."
+
+  - collection_id: custom_test_collection
+    display_name: "Synthetic custom test collection"
+    enabled: true
+    collection_type: measured
+    data_paths:
+      - "tests/fixtures/synthetic/custom_test_collection.csv"
+    format: csv
+    schema_mapping: "configs/schemas/custom_test_collection.yaml"
+    metric_definition_id: ewsd_v1
+    default_roles:
+      - baseline
+      - descriptive_comparison
+    citation_id: CUSTOM_TEST_COLLECTION
+    licence: test-fixture
+    measured_or_estimated: measured
+    notes: "Phase-1 synthetic fixture with deliberately non-standard column names and intentional defects."

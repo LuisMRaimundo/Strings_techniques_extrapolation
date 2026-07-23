@@ -1,0 +1,10 @@
+flowchart LR
+  IN[Ingestion] --> PI[ProductionInstruction]
+  PI --> ONT[Ontology]
+  PI --> APP[Applicability]
+  PI --> QC[Qualitative constraints]
+  PDF[Corpus PDFs] --> ID[Identity] --> SRC[Sources/Extracts] --> ACT[Activation]
+  ACT --> PRED[Prediction]
+  UA[User assumptions] --> PRED
+  APP --> PRED
+  PRED --> OUT[Exports/Reports]

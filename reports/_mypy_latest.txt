@@ -1,0 +1,51 @@
+src\string_technique_model\literature\scales.py:47: error: "str" has no attribute "value"  [attr-defined]
+src\string_technique_model\density\validation.py:13: error: No return value expected  [return-value]
+src\string_technique_model\provenance.py:199: error: Unused "type: ignore" comment  [unused-ignore]
+src\string_technique_model\provenance.py:428: error: Unsupported left operand type for + ("None")  [operator]
+src\string_technique_model\provenance.py:428: note: Left operand is of type "list[str] | bool | Any | None"
+src\string_technique_model\provenance.py:428: error: Argument 1 to "set" has incompatible type "list[str] | int | Any"; expected "Iterable[Any]"  [arg-type]
+src\string_technique_model\provenance.py:428: error: Argument 1 to "set" has incompatible type "list[str] | int | Any"; expected "Iterable[str | Any]"  [arg-type]
+src\string_technique_model\provenance.py:428: error: Unsupported operand types for + ("bool" and "list[str]")  [operator]
+src\string_technique_model\provenance.py:437: error: Unsupported left operand type for + ("None")  [operator]
+src\string_technique_model\provenance.py:437: note: Left operand is of type "list[str] | bool | Any | None"
+src\string_technique_model\provenance.py:437: error: Argument 1 to "set" has incompatible type "list[str] | int | Any"; expected "Iterable[Any]"  [arg-type]
+src\string_technique_model\provenance.py:437: error: Argument 1 to "set" has incompatible type "list[str] | int | Any"; expected "Iterable[str | Any]"  [arg-type]
+src\string_technique_model\provenance.py:437: error: Unsupported operand types for + ("bool" and "list[str]")  [operator]
+src\string_technique_model\gui_manual_entry.py:676: error: Incompatible types in assignment (expression has type "PastePreview", variable has type "None")  [assignment]
+src\string_technique_model\gui_manual_entry.py:783: error: Incompatible types in assignment (expression has type "list[dict[Hashable, Any]]", variable has type "list[dict[str, Any]]")  [assignment]
+src\string_technique_model\cli\literature.py:105: error: Incompatible types in assignment (expression has type "dict[str, Any]", variable has type "PackageIngestionResult")  [assignment]
+src\string_technique_model\cli\literature.py:121: error: Incompatible types in assignment (expression has type "dict[str, Any]", variable has type "PackageIngestionResult")  [assignment]
+src\string_technique_model\sensitivity\prediction_sensitivity.py:91: error: Unsupported operand types for - ("float" and "None")  [operator]
+src\string_technique_model\sensitivity\prediction_sensitivity.py:91: note: Right operand is of type "float | None"
+src\string_technique_model\sensitivity\prediction_sensitivity.py:129: error: Unsupported operand types for - ("float" and "None")  [operator]
+src\string_technique_model\sensitivity\prediction_sensitivity.py:129: note: Right operand is of type "float | None"
+src\string_technique_model\pipeline.py:185: error: Unsupported target for indexed assignment ("dict[str, Any] | dict[str, str] | int | list[Any] | list[str] | str | Any | None")  [index]
+src\string_technique_model\pipeline.py:185: error: No overload variant of "__setitem__" of "list" matches argument types "str", "str"  [call-overload]
+src\string_technique_model\pipeline.py:185: note: Possible overload variants:
+src\string_technique_model\pipeline.py:185: note:     def __setitem__(self, SupportsIndex, Any, /) -> None
+src\string_technique_model\pipeline.py:185: note:     def __setitem__(self, slice[Any, Any, Any], Iterable[Any], /) -> None
+src\string_technique_model\pipeline.py:185: note:     def __setitem__(self, SupportsIndex, str, /) -> None
+src\string_technique_model\pipeline.py:185: note:     def __setitem__(self, slice[Any, Any, Any], Iterable[str], /) -> None
+src\string_technique_model\pipeline.py:196: error: Unsupported target for indexed assignment ("dict[str, Any] | dict[str, str] | int | list[Any] | list[str] | str | Any | None")  [index]
+src\string_technique_model\pipeline.py:196: error: No overload variant of "__setitem__" of "list" matches argument types "str", "str"  [call-overload]
+src\string_technique_model\pipeline.py:196: note: Possible overload variants:
+src\string_technique_model\pipeline.py:196: note:     def __setitem__(self, SupportsIndex, Any, /) -> None
+src\string_technique_model\pipeline.py:196: note:     def __setitem__(self, slice[Any, Any, Any], Iterable[Any], /) -> None
+src\string_technique_model\pipeline.py:196: note:     def __setitem__(self, SupportsIndex, str, /) -> None
+src\string_technique_model\pipeline.py:196: note:     def __setitem__(self, slice[Any, Any, Any], Iterable[str], /) -> None
+src\string_technique_model\pipeline.py:200: error: Unsupported target for indexed assignment ("dict[str, Any] | dict[str, str] | int | list[Any] | list[str] | str | Any | None")  [index]
+src\string_technique_model\pipeline.py:200: error: No overload variant of "__setitem__" of "list" matches argument types "str", "str"  [call-overload]
+src\string_technique_model\pipeline.py:200: note: Possible overload variants:
+src\string_technique_model\pipeline.py:200: note:     def __setitem__(self, SupportsIndex, Any, /) -> None
+src\string_technique_model\pipeline.py:200: note:     def __setitem__(self, slice[Any, Any, Any], Iterable[Any], /) -> None
+src\string_technique_model\pipeline.py:200: note:     def __setitem__(self, SupportsIndex, str, /) -> None
+src\string_technique_model\pipeline.py:200: note:     def __setitem__(self, slice[Any, Any, Any], Iterable[str], /) -> None
+src\string_technique_model\cli\prediction.py:210: error: Incompatible types in assignment (expression has type "dict[str, Any]", variable has type "list[dict[str, Any]]")  [assignment]
+src\string_technique_model\gui.py:40: error: "Misc" has no attribute "title"  [attr-defined]
+src\string_technique_model\gui.py:41: error: "Misc" has no attribute "minsize"  [attr-defined]
+src\string_technique_model\gui.py:42: error: "Misc" has no attribute "geometry"  [attr-defined]
+src\string_technique_model\gui.py:353: error: Argument "progress" to "run_pipeline" has incompatible type "Callable[[str], str]"; expected "Callable[[str], None] | None"  [arg-type]
+src\string_technique_model\gui.py:353: error: Cannot infer type of lambda  [misc]
+src\string_technique_model\gui.py:367: error: Cannot infer type of lambda  [misc]
+src\string_technique_model\gui.py:390: error: Unused "type: ignore" comment  [unused-ignore]
+Found 31 errors in 9 files (checked 132 source files)

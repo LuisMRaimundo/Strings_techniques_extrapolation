@@ -1,0 +1,64 @@
+version: "1.0.0"
+schema_version: nonlinear_extrapolation_models_v1
+
+models:
+  - model_id: M0_constant_legacy
+    model_version: "1.0.0"
+    description: Legacy provisional density effects from config multipliers.
+    method: constant
+    enabled: true
+
+  - model_id: M1_hierarchical_spline
+    model_version: "1.0.0"
+    description: Log baseline spline + technique log-ratio submodels.
+    method: hierarchical_spline
+    submodel_ids:
+      - M1_bow_contact_log_ratio
+      - M1_mute_log_scalar
+    enabled: true
+
+  - model_id: M1_bayesian
+    model_version: "1.0.0"
+    description: PyMC log-ratio spline when backend available.
+    method: physical_informed_bayesian
+    enabled: true
+
+  - model_id: M2_harmonic_stub
+    model_version: "1.0.0"
+    description: Harmonic extrapolation deferred to Phase 2.
+    method: evidence_only
+    enabled: false
+
+baseline:
+  spline_degree: 3
+  n_basis: 8
+  penalty_lambda: 1.0
+  log_transform: true
+  quantity: EWSD_score_acoustic_balanced
+
+technique_submodels:
+  sul_tasto:
+    submodel_id: M1_bow_contact_log_ratio
+    model_family: log_ratio_spline
+    min_observations: 3
+    prior_ids:
+      - alpha_t_sul_tasto
+      - sigma_technique_residual
+
+  sul_ponticello:
+    submodel_id: M1_bow_contact_log_ratio
+    model_family: log_ratio_spline
+    min_observations: 3
+    prior_ids:
+      - alpha_t_sul_ponticello
+      - sigma_technique_residual
+
+  con_sordino:
+    submodel_id: M1_mute_log_scalar
+    model_family: mute_scalar
+    min_observations: 3
+    prior_ids:
+      - alpha_mute_vln
+      - alpha_mute_vla
+      - alpha_mute_generic
+      - sigma_mute_residual

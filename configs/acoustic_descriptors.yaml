@@ -1,0 +1,240 @@
+# Acoustic-descriptor registry — separate from EWSD metric registry.
+# implemented:true only when code exists under descriptors/.
+
+version: "0.5.0-descriptor-backend"
+schema_version: "acoustic_descriptor_registry_v1"
+ewsd_compatibility_default: incompatible_unless_explicit_activated_mapping
+default_analysis_profile: configs/analysis_profiles/default_descriptor_v1.yaml
+
+descriptors:
+  - descriptor_id: DESC_SPECTRAL_CENTROID
+    name: spectral_centroid
+    definition: "C = sum(f_k W_k) / sum(W_k) with explicit W_k in {magnitude, power}."
+    formula_status: implemented_spectral_centroid_v1
+    units: Hz
+    amplitude_power_convention: configurable_magnitude_or_power_weights
+    temporal_aggregation: mean_over_frames
+    required_input_representation: [audio]
+    valid_domain: positive_frequency
+    interpretation_limits: Not an EWSD coefficient. Domain must be declared.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: spectral_centroid_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_SPECTRAL_SLOPE
+    name: spectral_slope
+    definition: OLS slope of dB-power versus log10 frequency (method spectral_slope_logfreq_db_linreg_v1).
+    formula_status: implemented_spectral_slope_logfreq_db_linreg_v1
+    units: dB_per_decade_log10Hz
+    amplitude_power_convention: power_spectrum_to_dB
+    temporal_aggregation: mean_power_spectrum_then_regression
+    required_input_representation: [audio]
+    valid_domain: real
+    interpretation_limits: Method ID must be preserved; not EWSD.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: spectral_slope_logfreq_db_linreg_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_HNR
+    name: harmonic_to_noise_ratio
+    definition: Spectral-mask harmonic vs residual power ratio in dB (not autocorrelation HNR).
+    formula_status: implemented_hnr_spectral_mask_v1
+    units: dB
+    amplitude_power_convention: power_ratio_10log10
+    temporal_aggregation: mean_power_spectrum
+    required_input_representation: [audio]
+    valid_domain: real
+    interpretation_limits: Definition is spectral_mask only.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: hnr_spectral_mask_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_SPECTRAL_FLUX
+    name: spectral_flux
+    definition: Mean L1 half-wave-rectified difference of sum-normalized magnitude frames.
+    formula_status: implemented_spectral_flux_l1_halfwave_v1
+    units: normalized_L1_halfwave
+    amplitude_power_convention: magnitude_L1_normalized_frames
+    temporal_aggregation: mean_over_frame_transitions
+    required_input_representation: [audio]
+    valid_domain: non_negative
+    interpretation_limits: Not EWSD.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: spectral_flux_l1_halfwave_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_FRAME_SPECTRAL_VARIANCE
+    name: frame_level_spectral_variance
+    definition: Variance across frames of per-frame spectral centroids (temporal, not within-frame spread).
+    formula_status: implemented_frame_spectral_variance_centroid_v1
+    units: Hz_squared
+    amplitude_power_convention: inherits_centroid_weighting
+    temporal_aggregation: variance_of_frame_centroids
+    required_input_representation: [audio]
+    valid_domain: non_negative
+    interpretation_limits: Distinct from within-frame spectral spread.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: frame_spectral_variance_centroid_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_LTAS
+    name: long_term_average_spectrum
+    definition: Mean power spectrum across frames (vector object).
+    formula_status: implemented_ltas_mean_power_v1
+    units: power_linear_mean
+    amplitude_power_convention: mean_power_spectrum
+    temporal_aggregation: mean_over_frames
+    required_input_representation: [audio]
+    valid_domain: non_negative
+    interpretation_limits: Comparability requires matching domain and analysis profile.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: vector
+    implemented: true
+    method_id: ltas_mean_power_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_PARTIAL_SALIENCE
+    name: partial_salience
+    definition: Peak-based relative saliences of spectral components.
+    formula_status: implemented_partial_peak_salience_v1
+    units: relative_salience_0_to_1
+    amplitude_power_convention: mean_magnitude_peaks
+    temporal_aggregation: mean_magnitude_spectrum
+    required_input_representation: [audio]
+    valid_domain: unresolved
+    interpretation_limits: Synthetic multi-sinusoids are numerical proxies, not cello multiphonics.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: vector
+    implemented: true
+    method_id: partial_peak_salience_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_PITCH_COMPONENT_COUNT
+    name: pitch_component_count
+    definition: Count of peaks above configurable threshold/separation.
+    formula_status: implemented_pitch_component_count_v1
+    units: count
+    amplitude_power_convention: mean_magnitude_peaks
+    temporal_aggregation: mean_magnitude_spectrum
+    required_input_representation: [audio]
+    valid_domain: non_negative_integer
+    interpretation_limits: Not a physical multiphonic simulator.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: pitch_component_count_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_ABSOLUTE_ATTENUATION
+    name: absolute_attenuation
+    definition: Typed amplitude (20 log10) or power (10 log10) level differences.
+    formula_status: implemented_typed_attenuation_functions
+    units: dB
+    amplitude_power_convention: must_state_amplitude_vs_power
+    temporal_aggregation: n_a
+    required_input_representation: [scalar_levels]
+    valid_domain: real
+    interpretation_limits: Never treat dB as EWSD; sones ≠ dB; bridge_mobility ≠ SPL.
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+    implemented: true
+    method_id: typed_attenuation_v1
+    analysis_profile_id: PROFILE_DEFAULT_DESCRIPTOR_V1
+
+  - descriptor_id: DESC_TEMPORAL_MODULATION
+    name: temporal_modulation
+    definition: Modulation depth/rate of spectral or amplitude envelope.
+    formula_status: unresolved_in_this_repository
+    units: unresolved
+    amplitude_power_convention: unresolved
+    temporal_aggregation: unresolved
+    required_input_representation: [audio, stft]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar_or_vector
+
+  - descriptor_id: DESC_ATTACK_TIME
+    name: attack_time
+    definition: Rise time of envelope.
+    formula_status: unresolved_in_this_repository
+    units: s
+    amplitude_power_convention: unresolved
+    temporal_aggregation: unresolved
+    required_input_representation: [audio]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+
+  - descriptor_id: DESC_LOUDNESS
+    name: loudness
+    definition: Psychoacoustic loudness (standard unresolved here).
+    formula_status: unresolved_in_this_repository
+    units: sones_or_unresolved
+    amplitude_power_convention: unresolved
+    temporal_aggregation: unresolved
+    required_input_representation: [audio]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+
+  - descriptor_id: DESC_FUNDAMENTAL_SALIENCE
+    name: fundamental_salience
+    definition: Prominence of nominal fundamental.
+    formula_status: unresolved_in_this_repository
+    units: unresolved
+    amplitude_power_convention: unresolved
+    temporal_aggregation: unresolved
+    required_input_representation: [partial_amplitudes, fft]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+
+  - descriptor_id: DESC_UPPER_PARTIAL_ENERGY_RATIO
+    name: upper_partial_energy_ratio
+    definition: Upper vs total/low partial energy.
+    formula_status: unresolved_in_this_repository
+    units: ratio_or_dB_unresolved
+    amplitude_power_convention: unresolved
+    temporal_aggregation: unresolved
+    required_input_representation: [partial_amplitudes, band_energy, fft]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar
+
+  - descriptor_id: DESC_BRIDGE_MOBILITY
+    name: bridge_mobility
+    definition: Mechanical bridge mobility.
+    formula_status: unresolved_in_this_repository
+    units: mobility_unit_unresolved
+    amplitude_power_convention: n_a
+    temporal_aggregation: frequency_response
+    required_input_representation: [bridge_transfer_measurement]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: vector
+
+  - descriptor_id: DESC_INTER_PLAYER_VARIABILITY
+    name: inter_player_variability
+    definition: Across-performer dispersion.
+    formula_status: unresolved_in_this_repository
+    units: depends_on_base_descriptor
+    amplitude_power_convention: inherits
+    temporal_aggregation: across_players
+    required_input_representation: [ensemble_descriptor_table]
+    implemented: false
+    ewsd_compatibility: incompatible_without_activated_mapping
+    value_kind: scalar_or_vector
+
+analysis_parameters_when_implemented:
+  note: Defaults are recorded in configs/analysis_profiles/default_descriptor_v1.yaml and copied onto DescriptorResult.
+  profile_path: configs/analysis_profiles/default_descriptor_v1.yaml

@@ -1,0 +1,281 @@
+# Archive PDF identity validation — internal title/author/year/DOI only.
+# Filenames are claims, not authority. File presence ≠ EWSD activation.
+
+version: "0.4.0-archive-identity"
+archive_root_note: >
+  Source archive inspected at Desktop/STRINGGG...; verified binaries deposited
+  under literature/corpus/ when identity_match allows ingestion.
+
+entries:
+  - entry_id: ID_MEYER_2009
+    file_path_archive: IMP_Acoustics and the Performance of music_(Jürgen Meyer) (z-lib.org).pdf
+    deposited_path: literature/corpus/books/meyer_2009_acoustics_and_the_performance_of_music.pdf
+    file_hash_sha256: 4e58860f92b357de28856768d1eef67222bd06cc5b092afdcd2f436009867b70
+    page_count: 446
+    expected_citation: "Meyer, J. Acoustics and the Performance of Music (English 5th ed. translation). Springer, 2009."
+    internal_title: "Acoustics and the Performance of Music"
+    internal_subtitle: "Manual for Acousticians, Audio Engineers, Musicians, Architects and Musical Instruments Makers"
+    internal_authors: ["Meyer, Jürgen"]
+    internal_year: 2009
+    internal_doi: null
+    internal_isbn: "978-0-387-09516-5"
+    internal_publisher: "Springer Science+Business Media, LLC"
+    internal_edition: "Fifth Edition (English translation of 5th German edition, 2004)"
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: MEYER_ACOUSTICS
+    ingest_decision: deposit_and_register
+    notes: >
+      Filename claim matches internal identity. Copyright 2009 Springer; LoC 2008944095.
+      String-instrument directional characteristics and seating/tonal chapters present.
+      Does not by itself activate EWSD coefficients.
+
+  - entry_id: ID_FLETCHER_ROSSING_PHYSICS
+    file_path_archive: The_Physics_of_Musical_Instruments.pdf
+    deposited_path: literature/corpus/books/fletcher_rossing_1991_physics_of_musical_instruments.pdf
+    file_hash_sha256: b784c3251102bead11f39a30a506441eb8833bd00c4e4b3628c22d60d9833675
+    page_count: 628
+    expected_citation: "Fletcher, N. H., & Rossing, T. D. The Physics of Musical Instruments. Springer-Verlag, 1991."
+    internal_title: "The Physics of Musical Instruments"
+    internal_authors: ["Fletcher, Neville H.", "Rossing, Thomas D."]
+    internal_year: 1991
+    internal_doi: "10.1007/978-1-4612-2980-3"
+    internal_isbn: "978-0-387-94151-6"
+    internal_publisher: "Springer-Verlag New York Inc."
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_FLETCHER_ROSSING_1991
+    ingest_decision: deposit_and_register
+    notes: >
+      Copyright © 1991; LoC cataloguing year 1993 on title verso. Part III covers
+      string instruments including Chapter 10 Bowed String Instruments. Generic
+      bowed-string physics — not portable EWSD technique coefficients.
+
+  - entry_id: ID_ROSSING_SCIENCE_STRINGS_2010
+    file_path_archive: Thomas D. Rossing_The Science of String Instruments.pdf
+    deposited_path: literature/corpus/books/rossing_2010_science_of_string_instruments.pdf
+    file_hash_sha256: d40e5018d6d2a917125f0daa586252246ff0d21878800095c347bc149d853084
+    page_count: 466
+    expected_citation: "Rossing, T. D. (Ed.). The Science of String Instruments. Springer, 2010."
+    internal_title: "The Science of String Instruments"
+    internal_authors: ["Rossing, Thomas D. (editor)"]
+    internal_year: 2010
+    internal_doi: "10.1007/978-1-4419-7110-4"
+    internal_isbn: "978-1-4419-7109-8"
+    internal_publisher: "Springer Science+Business Media, LLC"
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_ROSSING_SCIENCE_STRING_INSTRUMENTS_2010
+    ingest_decision: deposit_and_register
+    notes: >
+      Edited volume. Chapters on bowed strings, violin, cello, double bass, and
+      bowing (Guettler). Chapter-level extracts require separate curator validation
+      before any numerical parameter activation.
+
+  - entry_id: ID_SCHOONDERWALDT_2009
+    file_path_archive: Schoonderwaldt_(2009)_The violinist’s sound palette Spectral centroid, pitch flattening and anomalous low frequencies.pdf
+    deposited_path: literature/corpus/articles/schoonderwaldt_2009_violinists_sound_palette.pdf
+    file_hash_sha256: afe670ac94fb8d8da65798e0a55873a39b28cafd38f89edbbedbf45e34b86144
+    page_count: 14
+    expected_citation: "Schoonderwaldt, E. (2009). The violinist’s sound palette… Acta Acustica united with Acustica."
+    internal_title: "The Violinist's Sound Palette: Spectral Centroid, Pitch Flattening and Anomalous Low Frequencies"
+    internal_authors: ["Schoonderwaldt, Erwin"]
+    internal_year: 2009
+    internal_doi: "10.3813/AAA.918221"
+    internal_publisher: "Acta Acustica united with Acustica"
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_SCHOONDERWALDT_2009
+    ingest_decision: deposit_and_register
+
+  - entry_id: ID_EVANGELISTA_FREIRE_2025
+    file_path_archive: Evangelista_(2025)_Audio analysis of the effects of heavy violin practice mutes Spectral and loudness changes.pdf
+    deposited_path: literature/corpus/articles/evangelista_freire_2025_heavy_violin_practice_mutes.pdf
+    file_hash_sha256: 354091dc9296e39ed870a7d52e2b9054527a75dccc45ec6682a01928ab941a58
+    page_count: 7
+    expected_citation: "Evangelista, G., & Freire, S. (2025). Audio analysis of the effects of heavy violin practice mutes… Acta Acustica."
+    internal_title: "Audio analysis of the effects of heavy violin practice mutes: Spectral and loudness changes"
+    internal_authors: ["Evangelista, Gianpaolo", "Freire, Sérgio"]
+    internal_year: 2025
+    internal_doi: "10.1051/aacus/2025029"
+    internal_publisher: "Acta Acustica"
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_EVANGELISTA_FREIRE_2025
+    ingest_decision: deposit_and_register
+
+  - entry_id: ID_FALLOWFIELD_2020_TEMPO
+    file_path_archive: Fallowfield_(2020)_Cello multiphonics Technical and musical parameters.pdf
+    deposited_path: literature/corpus/articles/fallowfield_2020_cello_multiphonics_tempo.pdf
+    file_hash_sha256: 47fd44cd265ffd570fb5ba6e75839f6d8928150d86c10ef76c9dea515fa0a5f5
+    page_count: 19
+    expected_citation: "Fallowfield, E. (2019). Cello multiphonics… TEMPO 74(291), 51–69."
+    internal_title: "Cello Multiphonics: Technical and Musical Parameters"
+    internal_authors: ["Fallowfield, Ellen"]
+    internal_year: 2019
+    internal_doi: "10.1017/S0040298219000974"
+    internal_publisher: "TEMPO / Cambridge University Press"
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_FALLOWFIELD_TEMPO_MULTIPHONICS
+    ingest_decision: deposit_and_register
+    notes: >
+      Footer recovers TEMPO 74 (291) 51–69 © 2019. Filename '2020' is a download-date
+      style claim; not the 2009 Cello Map handbook.
+
+  - entry_id: ID_FALLOWFIELD_2009_CLAIMED
+    file_path_archive: Fallowfield_(2009)_Cello map A handbook of cello technique for performers and composers.pdf
+    deposited_path: null
+    file_hash_sha256: 47fd44cd265ffd570fb5ba6e75839f6d8928150d86c10ef76c9dea515fa0a5f5
+    page_count: 19
+    expected_citation: "Fallowfield 2009 Cello Map handbook (filename claim)"
+    internal_title: "Cello Multiphonics: Technical and Musical Parameters"
+    internal_authors: ["Fallowfield, Ellen"]
+    internal_year: null
+    internal_doi: null
+    internal_publisher: "TEMPO"
+    identity_match: false
+    validation_status: duplicate_file
+    rejection_reason: "Byte-identical to Fallowfield TEMPO multiphonics article; not the 2009 handbook."
+    duplicate_of: ID_FALLOWFIELD_2020_TEMPO
+    associated_source_id: null
+    ingest_decision: reject_duplicate
+
+  - entry_id: ID_LOSTANLEN_2018
+    file_path_archive: Lostanlen_(2018)_Extended playing techniques The next milestone in musical instrument recognition.pdf
+    deposited_path: literature/corpus/articles/lostanlen_anden_lagrange_2018_extended_playing_techniques.pdf
+    file_hash_sha256: 88e3d9d60e2181750e747f38bd8291e3e257967bfded947fc1046c3d1a5ea9a6
+    page_count: 10
+    expected_citation: "Lostanlen et al. (2018). Extended playing techniques… DLfM 2018. ACM 10.1145/3273024.3273036"
+    internal_title: "Extended playing techniques: The next milestone in musical instrument recognition"
+    internal_authors: ["Lostanlen, Vincent", "Andén, Joakim", "Lagrange, Mathieu"]
+    internal_year: 2018
+    internal_doi: "10.1145/3273024.3273036"
+    internal_publisher: "ACM / DLfM"
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_LOSTANLEN_ANDEN_LAGRANGE_2018
+    ingest_decision: deposit_and_register_recognition_only
+
+  - entry_id: ID_STOWELL_CLAIMED_1978
+    file_path_archive: Stowell_(1978)_Development of violin technique from L’Abbé le fils to Paganini.pdf
+    deposited_path: literature/corpus/books/stowell_cambridge_companion_technique_performing_practice.pdf
+    file_hash_sha256: adc5ec9aab4bedebae3d293986bde8d9136e8885a105aecec488284fe96090e0
+    page_count: 21
+    expected_citation: "Stowell 1978 L’Abbé–Paganini thesis (filename claim)"
+    internal_title: "Technique and performing practice"
+    internal_authors: ["Stowell, Robin"]
+    internal_year: 1992
+    internal_doi: "10.1017/CCOL9780521390330.008"
+    internal_publisher: "Cambridge University Press"
+    identity_match: false
+    validation_status: partial_identity_match
+    rejection_reason: "Filename claims 1978 thesis; internal content is Cambridge Companion to the Violin chapter (DOI CCOL9780521390330.008)."
+    duplicate_of: null
+    associated_source_id: SRC_STOWELL_CAMBRIDGE_TECHNIQUE_PERFORMING_PRACTICE
+    ingest_decision: register_actual_publication_terminology_only
+
+  - entry_id: ID_SOA_SYNTHESIS
+    file_path_archive: String Timbral and Articulatory Techniques.pdf
+    deposited_path: literature/corpus/reports/string_timbral_articulatory_state_of_art.pdf
+    file_hash_sha256: 8adcc93b6ea340e987004b396ce727f0454856c0c25d9b87b2ba403aafa0efb3
+    page_count: 20
+    expected_citation: "State of the Art on String Timbral and Articulatory Techniques (local synthesis)"
+    internal_title: "State of the Art on String Timbral and Articulatory Techniques: Harmonics, Sul Tasto, Sul Ponticello, and Con Sordino"
+    internal_authors: null
+    internal_year: null
+    internal_doi: null
+    internal_publisher: null
+    identity_match: true
+    validation_status: verified_identity
+    rejection_reason: null
+    duplicate_of: null
+    associated_source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    ingest_decision: already_registered_secondary_synthesis
+    notes: Secondary synthesis; author/year unresolved; not a substitute for primaries.
+
+  - entry_id: ID_BERIO_CLAIMED
+    file_path_archive: Berio_(1976)_Sequenza VIII for violin.pdf
+    deposited_path: null
+    file_hash_sha256: 1c803b7fa767ddc96965c732dac6c5b0d6809178bce6e7b488f18f109232c3eb
+    page_count: 3
+    expected_citation: "Berio Sequenza VIII for violin (1976) — filename claim"
+    internal_title: "Review of Sequenza XI for guitar (Notes)"
+    internal_authors: ["McKenzie"]
+    internal_year: 1991
+    internal_doi: null
+    internal_publisher: "Notes"
+    identity_match: false
+    validation_status: rejected_file_identity_mismatch
+    rejection_reason: "Internal document is a short review of Sequenza XI for guitar, not Sequenza VIII for violin."
+    duplicate_of: null
+    associated_source_id: null
+    ingest_decision: reject
+
+  - entry_id: ID_HANN_CLAIMED
+    file_path_archive: Hann_(2015)_The influence of historic violin treatises on modern teaching and performance practices.pdf
+    deposited_path: null
+    file_hash_sha256: 3dd7babc9030901105bb8e261168bdaef15d97db1a30e664329a6d6137087a6e
+    page_count: null
+    expected_citation: "Hann 2015 violin treatises (filename claim)"
+    internal_title: "Fashion / luxury brand paper (Yoosun Hann)"
+    internal_authors: ["Hann, Yoosun"]
+    internal_year: 2011
+    internal_doi: null
+    internal_publisher: null
+    identity_match: false
+    validation_status: rejected_file_identity_mismatch
+    rejection_reason: "Unrelated fashion/luxury brand paper; not a violin-treatise study."
+    duplicate_of: null
+    associated_source_id: null
+    ingest_decision: reject
+
+  - entry_id: ID_MESSINA_CLAIMED
+    file_path_archive: Messina_(2009)_A guide to extended techniques for the violoncello.pdf
+    deposited_path: null
+    file_hash_sha256: 4185e739a8e5707d74bcb878edf5d8a4d170d1dc26d10b5890344c7f596a0fff
+    page_count: 1
+    expected_citation: "Messina 2009 cello extended techniques (filename claim)"
+    internal_title: null
+    internal_authors: null
+    internal_year: null
+    internal_doi: null
+    internal_publisher: null
+    identity_match: false
+    validation_status: insufficient_metadata
+    rejection_reason: "One-page image PDF; no recoverable internal text/metadata for identity verification."
+    duplicate_of: null
+    associated_source_id: null
+    ingest_decision: reject
+
+  - entry_id: ID_RIMSKY_CLAIMED
+    file_path_archive: Rimsky-Korsakov_(1922)_Principles of orchestration.pdf
+    deposited_path: null
+    file_hash_sha256: b7b4303127983aad5274891680631c054a7e8a030b30158c17beb6caf7d416a6
+    page_count: 3
+    expected_citation: "Rimsky-Korsakov Principles of Orchestration (1922 treatise) — filename claim"
+    internal_title: "JSTOR review of Principles of Orchestration"
+    internal_authors: null
+    internal_year: null
+    internal_doi: null
+    internal_publisher: "JSTOR review excerpt"
+    identity_match: false
+    validation_status: rejected_file_identity_mismatch
+    rejection_reason: "Short JSTOR review, not the complete treatise."
+    duplicate_of: null
+    associated_source_id: null
+    ingest_decision: reject

@@ -1,0 +1,54 @@
+version: "0.2.0-curated-meyer-package"
+project_metric_definition_id: ewsd_v1
+project_metric_config: configs/density_metric.yaml
+
+mappings:
+  - source_variable: EWSD_score_acoustic_balanced
+    canonical_variable_name: density_value
+    mapping_status: direct_same_metric
+    notes: "Same scalar family as project Phi when definition IDs match."
+
+  - source_variable: dynamic_range
+    canonical_variable_name: dynamic_range
+    mapping_status: indirect_proxy
+    notes: "Dynamic range in dB constrains level, not EWSD density."
+
+  - source_variable: global_sound_power_change
+    canonical_variable_name: global_sound_power_change
+    mapping_status: indirect_proxy
+    notes: "Mute/level dB changes are acoustic level effects, not density multipliers."
+
+  - source_variable: sound_pressure_level
+    canonical_variable_name: spl
+    mapping_status: incompatible_variable
+    notes: "Never treat SPL as density."
+
+  - source_variable: sound_power_level
+    canonical_variable_name: swl
+    mapping_status: incompatible_variable
+    notes: "Never treat SWL as density."
+
+  - source_variable: frequency_dependent_spectral_redistribution
+    canonical_variable_name: frequency_dependent_spectral_redistribution
+    mapping_status: qualitative_constraint_only
+    notes: "Supported mechanism; no numeric density transfer function in package."
+
+  - source_variable: upper_partial_attenuation
+    canonical_variable_name: upper_partial_attenuation
+    mapping_status: qualitative_constraint_only
+    notes: "Sul tasto mechanism; numeric TF unavailable."
+
+  - source_variable: spectral_centroid
+    canonical_variable_name: spectral_centroid_hz
+    mapping_status: indirect_proxy
+    notes: "Centroid ≠ density."
+
+  - source_variable: harmonic_radiation_offset_vs_violin
+    canonical_variable_name: harmonic_radiation_offset_vs_violin
+    mapping_status: indirect_proxy
+    notes: "Relative level comparison only."
+
+  - source_variable: harmonic_level_lower_bound
+    canonical_variable_name: harmonic_level_lower_bound
+    mapping_status: indirect_proxy
+    notes: "Level floor constraint only."

@@ -1,0 +1,75 @@
+# Phase-4 prediction engine configuration.
+
+version: "0.3.0-pdf-soa-prediction"
+model_version: "technique_transform_v0.3.0"
+schema_version: "production_instruction_v1"
+literature_package_version: "0.3.0-pdf-soa-package"
+
+prediction:
+  n_draws: 5000
+  random_seed: 20250723
+  default_backend: metric-only
+  allow_wider_conditional_without_metadata: false
+  # Numerical EWSD technique parameters remain inactive after PDF integration.
+  active_ewsd_technique_parameters: false
+
+transfers:
+  enabled: false
+  require_explicit_equation: true
+  require_transfer_uncertainty: true
+  # No hidden default. Must be set explicitly before any transfer activation.
+  uncertainty_sd: null
+  max_target_evidence_grade: C
+
+capabilities:
+  metric_only: qualitative_constraints_available
+  spectrum_aware: schema_only
+  descriptor_extraction: unavailable
+  numerical_spectrum_transform: unavailable
+
+# User numerical assumptions (configs/user_assumptions.yaml).
+# Inactive unless a run explicitly sets activation_enabled / CLI flag.
+# Assumption-based results are never labelled literature-validated.
+user_assumptions:
+  registry_path: configs/user_assumptions.yaml
+  activation_enabled: false
+  allow_alongside_literature: false
+  result_label: assumption_based
+  never_claim_literature_validated: true
+
+backends:
+  metric_only:
+    allowed_density_mappings:
+      - direct_same_metric
+      - approved_explicit_metric_mapping
+  spectrum_aware:
+    required_representation_keys_any_of:
+      - audio
+      - fft
+      - psd
+      - stft
+      - partial_amplitudes
+      - band_energy
+
+validation:
+  enabled: false
+  collection_ids: []
+
+sensitivity:
+  enabled: true
+  prior_width_factors: [0.5, 1.0, 2.0]
+  n_draws_convergence_check: [500, 1000, 5000]
+
+statuses_without_active_parameters:
+  - insufficient_active_parameters
+  - qualitative_constraints_only
+  - not_estimable_from_current_evidence
+
+prohibitions:
+  - invent_coefficients
+  - copy_ordinary_as_technique
+  - interpret_db_as_density
+  - silent_mute_choice
+  - silent_harmonic_order_inference
+  - silent_violin_transfer
+  - mark_estimates_as_measured

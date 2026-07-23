@@ -1,0 +1,29 @@
+# Evangelista & Freire (2025) mute measurement table — metadata stub.
+# Rows are empty until primary-source curation ingests verified values.
+# Do NOT invent numerical density mappings from this stub.
+
+dataset_id: evangelista_freire_2025_mute_table
+status: metadata_stub
+schema_version: evangelista_mute_table_v1
+
+source:
+  citation: "Evangelista, M. V. da S., & Freire, S. (2025). Audio analysis of the effects of heavy violin practice mutes."
+  local_pdf: literature/corpus/articles/evangelista_freire_2025_heavy_violin_practice_mutes.pdf
+  ingestion_status: not_ingested
+  provenance_notes: >
+    Local PDF verified in corpus manifest. Numerical rows require primary-source extraction;
+    synthesis citations alone must not activate EWSD parameters.
+
+field_schema:
+  mute_category: MuteCategory or free-text category from source
+  mute_material: material description when reported
+  mute_mass_g: mass in grams when reported
+  mute_geometry: geometry / form factor descriptor
+  bridge_contact_configuration: bridge contact area or placement descriptor
+  mute_model: commercial or custom model identifier when given
+  loudness_sones: loudness in sones when reported
+  intensity_reduction_percent: percent reduction relative to open instrument when reported
+  instrument: instrument code (e.g. vln)
+  provenance_notes: row-level curator notes
+
+rows: []

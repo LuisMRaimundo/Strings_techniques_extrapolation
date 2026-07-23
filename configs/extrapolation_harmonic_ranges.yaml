@@ -1,0 +1,90 @@
+version: "1.2.0"
+schema_version: nonlinear_harmonic_ranges_v3
+
+# Domains (do not conflate):
+# 1) physical_harmonic_range — open strings × configured orders (computed)
+# 2) instrument_harmonic_analysis_range — optional research window
+# 3) user_requested_output_range — per-run GUI/CLI filter
+#
+# Default mode enumerates configured orders within the physical/max ceiling.
+# It is NOT "every mathematical partial below C8".
+
+defaults:
+  selection_mode: configured_physically_plausible_harmonics
+  maximum_sounding_pitch: C8
+  maximum_sounding_midi: 108
+  artificial_default_order: 4
+  artificial_touch_interval: P4
+  artificial_configuration_policy: canonical_single_string_assignment
+  retain_excluded_by_analysis: false
+  order_selection_reason: practical_analysis_scope
+  limited_extrapolation_semitones: 3
+  physical_or_assumption_semitones: 12
+
+harmonic_register:
+  vln:
+    natural:
+      orders: [2, 3, 4, 5, 6, 7, 8]
+      configured_order_min: 2
+      configured_order_max: 8
+      maximum_sounding_pitch: C8
+    artificial:
+      orders: [4]
+      configured_order_min: 4
+      configured_order_max: 4
+      touch_interval: P4
+      maximum_sounding_pitch: C8
+      configuration_policy: canonical_single_string_assignment
+  vla:
+    natural:
+      orders: [2, 3, 4, 5, 6, 7, 8]
+      configured_order_min: 2
+      configured_order_max: 8
+      maximum_sounding_pitch: C8
+    artificial:
+      orders: [4]
+      configured_order_min: 4
+      configured_order_max: 4
+      touch_interval: P4
+      maximum_sounding_pitch: C8
+      configuration_policy: canonical_single_string_assignment
+  vlc:
+    natural:
+      orders: [2, 3, 4, 5, 6, 7, 8, 9, 10]
+      configured_order_min: 2
+      configured_order_max: 10
+      maximum_sounding_pitch: C8
+    artificial:
+      orders: [4]
+      configured_order_min: 4
+      configured_order_max: 4
+      touch_interval: P4
+      maximum_sounding_pitch: C8
+      configuration_policy: canonical_single_string_assignment
+  cb:
+    natural:
+      orders: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      configured_order_min: 2
+      configured_order_max: 12
+      maximum_sounding_pitch: C8
+    artificial:
+      orders: [4]
+      configured_order_min: 4
+      configured_order_max: 4
+      touch_interval: P4
+      maximum_sounding_pitch: C8
+      configuration_policy: canonical_single_string_assignment
+
+instrument_harmonic_analysis_range:
+  vln:
+    natural_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+    artificial_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+  vla:
+    natural_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+    artificial_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+  vlc:
+    natural_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+    artificial_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+  cb:
+    natural_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}
+    artificial_harmonic: {minimum_sounding_pitch: null, maximum_sounding_pitch: C8}

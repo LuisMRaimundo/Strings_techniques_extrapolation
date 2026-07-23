@@ -1,0 +1,95 @@
+version: "1.0.0"
+schema_version: nonlinear_extrapolation_priors_v1
+
+# IMPORTANT:
+# These α centers are regularization / user assumptions for zero-observation cases.
+# They are NOT empirically fitted technique×register responses.
+# Sul tasto and sul ponticello are intentionally NOT symmetric inverses.
+
+priors:
+  - prior_id: alpha_t_sul_tasto
+    parameter: alpha_t
+    family: normal
+    mean: -0.12
+    sd: 0.50
+    activation_status: active
+    source: regularization_assumption
+    notes: >
+      Regularization center encoding a weak decrease tendency for sul tasto on a
+      positive density-like scalar. Not a literature-measured coefficient.
+      Not the inverse of sul ponticello.
+
+  - prior_id: alpha_t_sul_ponticello
+    parameter: alpha_t
+    family: normal
+    mean: 0.20
+    sd: 0.55
+    activation_status: active
+    source: regularization_assumption
+    notes: >
+      Regularization center encoding a weak increase tendency for sul ponticello.
+      Magnitude deliberately different from |sul tasto| — techniques are not inverses.
+      Not a literature-measured register curve.
+
+  - prior_id: alpha_mute_vln
+    parameter: alpha_mute
+    family: normal
+    mean: -0.691151
+    sd: 0.35
+    activation_status: active
+    source: user_assumption
+    notes: >
+      user_assumption: map configured ~6 dB power reduction via log(10^(-6/10))
+      onto EWSD_score_acoustic_balanced. Requires EWSD ∝ power. Not a spectral A_m(f).
+
+  - prior_id: alpha_mute_vla
+    parameter: alpha_mute
+    family: normal
+    mean: -0.460517
+    sd: 0.35
+    activation_status: active
+    source: user_assumption
+    notes: >
+      user_assumption: map configured ~4 dB power reduction via log(10^(-4/10))
+      onto EWSD scalar. Requires EWSD ∝ power.
+
+  - prior_id: alpha_mute_generic
+    parameter: alpha_mute
+    family: normal
+    mean: -0.25
+    sd: 0.90
+    activation_status: fallback_only
+    source: regularization_assumption
+    notes: Loose prior for cello/contrabass without tight dB anchor.
+
+  - prior_id: sigma_technique_residual
+    parameter: sigma
+    family: half_normal
+    sd: 1.0
+    activation_status: active
+    source: weakly_informative
+    notes: Residual scale for bow-contact log-ratio observations.
+
+  - prior_id: sigma_mute_residual
+    parameter: sigma
+    family: half_normal
+    sd: 1.0
+    activation_status: active
+    source: weakly_informative
+    notes: Residual scale for mute log-ratio observations.
+
+  - prior_id: sigma_spline_smooth
+    parameter: sigma_smooth
+    family: half_normal
+    sd: 1.0
+    activation_status: active
+    source: rw2_spline_prior
+    notes: Smoothness scale for spline coefficient RW2-style prior.
+
+  - prior_id: sigma_baseline_residual
+    parameter: sigma_baseline
+    family: half_normal
+    sd: 0.5
+    activation_status: active
+    source: weakly_informative
+    notes: Ordinary baseline residual scale on log scale.

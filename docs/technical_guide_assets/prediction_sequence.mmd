@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant U as Caller
+  participant P as Pipeline
+  participant E as Evidence/Assumptions
+  participant O as Ops+Links
+  participant Q as MC UQ
+  U->>P: request + mode
+  P->>E: resolve active params
+  alt active
+    E->>O: apply_operation
+    O->>Q: propagate_metric_only
+    Q-->>U: density summary
+  else inactive
+    P-->>U: NA + qualitative
+  end

@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+.DS_Store
+*.sqlite
+*.sqlite3
+
+# Regenerable run outputs (keep directory via .gitkeep if present)
+outputs/**
+!outputs/.gitkeep
+
+# Copyrighted full-text PDFs must not be published to a public GitHub repo.
+# Keep metadata / extracted notes under literature/; store PDFs locally only.
+literature/corpus/**/*.pdf
+
+# Local inventory dumps
+all_files.txt

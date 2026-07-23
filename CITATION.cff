@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it.
+title: string-technique-model
+version: 0.1.0
+date-released: 2025-07-23
+authors:
+  - family-names: Research
+    given-names: Data Engineering
+abstract: >
+  Conditional literature-informed estimates of the same acoustic density
+  metric used for ordinary bowing, for selected extended bowed-string techniques.
+  Values are model estimates, not measurements of missing recordings.

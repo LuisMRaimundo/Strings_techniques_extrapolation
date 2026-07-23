@@ -1,0 +1,17 @@
+# Evangelista & Freire (2025) Zenodo companion dataset — external, not ingested.
+# Metadata only; no audio or tabular rows are loaded by this repository.
+
+dataset_id: evangelista_freire_2025_zenodo_external
+status: external_unresolved
+schema_version: evangelista_zenodo_external_v1
+
+source:
+  citation: "Evangelista, M. V. da S., & Freire, S. (2025). Audio analysis of the effects of heavy violin practice mutes."
+  repository: Zenodo
+  zenodo_record: unresolved
+  ingestion_status: external_unresolved
+  provenance_notes: >
+    Referenced by synthesis literature; record URL and checksum not verified in this repository.
+    Register and ingest only after curator resolves the Zenodo identifier and licence terms.
+
+rows: []

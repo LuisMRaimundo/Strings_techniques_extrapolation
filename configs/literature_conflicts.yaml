@@ -1,0 +1,5 @@
+# Conflicting evidence register.
+# Empty for this snapshot: no curated contradictory extracts exist yet.
+
+version: "0.1.0-phase3-corpus-gap"
+conflicts: []

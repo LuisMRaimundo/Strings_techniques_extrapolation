@@ -1,0 +1,163 @@
+version: "1.0.0"
+schema_version: nonlinear_model_selection_v1
+
+# Transparent, deterministic thresholds. Tunable; never hidden in code alone.
+thresholds:
+  min_distinct_pitches_for_linear: 3
+  min_distinct_pitches_for_spline: 6
+  min_pitch_span_semitones_for_spline: 12
+  min_observations_for_linear: 3
+  min_observations_for_spline: 6
+  min_design_rank_ratio: 0.85  # rank / n_basis heuristic for spline identifiability
+
+# Complexity ladder (ascending). Never jump to the top without evidence.
+complexity_ladder:
+  - M0_constant_effect
+  - M1_regularized_linear_trend
+  - M2_penalized_register_spline
+  - M3_hierarchical_instrument_dynamic
+  - M4_physical_informed
+  - M5_spectral_or_modal_specific
+
+families:
+  ordinary_baseline_model:
+    techniques: [ordinary, ordinario, arco, arco_normal]
+    mechanism: bowed_string_ordinary_excitation_to_radiated_descriptor
+    preferred_quantity_domain: [descriptor_scalar, ewsd_scalar]
+    ladder:
+      - model_id: ordinary_constant_level
+        complexity: M0_constant_effect
+        requires: { min_observations: 1 }
+      - model_id: ordinary_linear_register_trend
+        complexity: M1_regularized_linear_trend
+        requires: { min_observations: 3, min_distinct_pitches: 3 }
+      - model_id: ordinary_penalized_register_spline
+        complexity: M2_penalized_register_spline
+        requires: { min_observations: 6, min_distinct_pitches: 6, min_pitch_span_semitones: 12 }
+
+  bow_contact_model:
+    techniques: [sul_tasto, sul_ponticello]
+    mechanism: bow_contact_point_modifies_string_excitation
+    preferred_quantity_domain: [descriptor_scalar, ewsd_scalar]
+    required_covariates: [instrument, dynamic, pitch]
+    required_physical_covariates_for_M4: [beta, bow_force, bow_velocity]
+    optional_covariates: [bow_force, bow_velocity, speaking_length]
+    ladder:
+      - model_id: constant_technique_effect_over_smoothed_baseline
+        complexity: M0_constant_effect
+        requires: {}
+        selection_reason_if_chosen_with_zero_obs: no_target_technique_observations
+      - model_id: regularized_linear_register_trend
+        complexity: M1_regularized_linear_trend
+        requires: { min_observations: 3, min_distinct_pitches: 3 }
+      - model_id: penalized_register_spline
+        complexity: M2_penalized_register_spline
+        requires: { min_observations: 6, min_distinct_pitches: 6, min_pitch_span_semitones: 12, spline_design_identifiable: true }
+      - model_id: hierarchical_bow_contact_by_instrument_dynamic
+        complexity: M3_hierarchical_instrument_dynamic
+        requires: { min_instruments: 2, min_dynamics: 2, min_observations: 12 }
+        enabled: false  # Phase later
+      - model_id: physical_informed_bow_contact
+        complexity: M4_physical_informed
+        requires_covariates: [beta]
+        optional_covariates: [bow_force, bow_velocity]
+        enabled: true
+
+  mute_transfer_model:
+    techniques: [con_sordino]
+    mechanism: mute_modifies_bridge_body_transmission
+    preferred_quantity_domain: [spectrum_ltas, descriptor_scalar, ewsd_scalar]
+    required_covariates:
+      - ordinary_spectrum_or_ltas
+      - muted_spectrum_or_ltas
+      - mute_category
+      - instrument
+      - measurement_domain
+    optional_covariates: [mute_material, mute_mass_g]
+    ladder:
+      - model_id: qualitative_or_na_mute
+        complexity: M0_constant_effect
+        requires: { authorize_numeric_assumption: false }
+        value_kind: qualitative_only
+      - model_id: constant_assumption_fallback
+        complexity: M0_constant_effect
+        requires: { authorize_numeric_assumption: true }
+        marks: [constant_assumption_fallback]
+      - model_id: scalar_descriptor_approximation_linear
+        complexity: M1_regularized_linear_trend
+        requires: { min_observations: 3, min_distinct_pitches: 3, has_spectra_or_ltas: false }
+        marks: [scalar_descriptor_approximation]
+      - model_id: scalar_descriptor_approximation_spline
+        complexity: M2_penalized_register_spline
+        requires: { min_observations: 6, min_distinct_pitches: 6, min_pitch_span_semitones: 12, has_spectra_or_ltas: false }
+        marks: [scalar_descriptor_approximation]
+      - model_id: spectral_transfer_model
+        complexity: M5_spectral_or_modal_specific
+        requires: { has_spectra_or_ltas: true }
+        marks: [spectral_transfer_model]
+
+  harmonic_modal_model:
+    techniques: [natural_harmonic, artificial_harmonic]
+    mechanism: nodal_touch_selects_modal_participation
+    preferred_quantity_domain: [descriptor_scalar, modal]
+    # Modal geometry covariates (filled after harmonic target generation)
+    required_covariates:
+      - harmonic_type
+      - string
+      - harmonic_order
+      - sounding_pitch
+      - baseline_semantics
+    # Acoustic descriptor calibration (model component, not a covariate)
+    required_model_components_for_numeric:
+      - calibrated_harmonic_descriptor_model
+    optional_covariates: [stopped_pitch, touched_pitch, open_string_pitch, bow_force, bow_velocity]
+    ladder:
+      # Gate: selected only when modal metadata is incomplete
+      - model_id: harmonic_modal_metadata_gate
+        complexity: not_applicable
+        requires: { harmonic_metadata_complete: false }
+        value_kind: unavailable
+        fallback_level: no_numeric_fallback
+        selection_reason_if_chosen: insufficient_harmonic_metadata
+        role: metadata_gate
+      # Metadata present, but no calibrated EWSD/descriptor transfer yet
+      - model_id: harmonic_modal_acoustic_model_unavailable
+        complexity: not_applicable
+        requires: { harmonic_metadata_complete: true }
+        value_kind: unavailable
+        fallback_level: no_numeric_fallback
+        selection_reason_if_chosen: no_harmonic_acoustic_calibration_data
+        marks: [modal_frequencies_generated_acoustic_values_unavailable]
+        role: acoustic_calibration_gate
+      - model_id: harmonic_modal_frequency_with_descriptor_priors
+        complexity: M5_spectral_or_modal_specific
+        requires: { harmonic_metadata_complete: true, has_calibrated_descriptor_model: true }
+        enabled: false  # Phase 2 numerics
+        role: numeric_descriptor_model
+
+  multiphonic_component_model:
+    techniques: [multiphonics, multiphonic]
+    mechanism: simultaneous_partial_components_under_special_bowing
+    ladder:
+      - model_id: multiphonic_qualitative_only
+        complexity: M0_constant_effect
+        requires: {}
+        value_kind: qualitative_only
+
+  execution_target_model:
+    techniques: [flautando]
+    mechanism: combined_bow_force_velocity_contact_articulation_target
+    notes: Do not auto-route flautando into sul_tasto.
+    ladder:
+      - model_id: flautando_qualitative_or_na
+        complexity: M0_constant_effect
+        requires: {}
+        value_kind: qualitative_only
+
+policy:
+  never_select_most_complex_by_default: true
+  require_predictive_gain_for_upgrade: true  # reserved for comparison stage
+  authorize_numeric_assumption_when_zero_obs: true  # false → qualitative/NA for mute/bow
+  refuse_physical_informed_without_covariates: true
+  refuse_constant_factor_for_harmonics: true
+  refuse_flautando_as_sul_tasto: true

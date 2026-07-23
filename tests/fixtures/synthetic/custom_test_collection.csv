@@ -1,0 +1,12 @@
+sample_code,source_instrument,execution_mode,note_label,midi_number,dyn_label,acoustic_density_result,metric_code,room_tag
+CTC-001,Violin,normale,A4,69,mezzo-forte,23.809207,ewsd_v1,
+CTC-002,Violin,normale,A4,69,pianissimo,27.470280,ewsd_v1,
+CTC-003,Violin,normale,A4,69,fortissimo,30.797650,ewsd_v1,
+CTC-004,Viola,normale,C4,,mezzo-forte,41.250000,ewsd_v1,
+CTC-005,Cello,normale,C2,36,fortissimo,94.363449,ewsd_v1,
+CTC-006,Contrabass,normale,E1,28,mezzo-forte,55.100000,ewsd_v1,lab-a
+CTC-007,Violin,ponticello,A4,69,mezzo-forte,22.040514,ewsd_v1,
+CTC-008,Violin,tastiera,A4,69,mezzo-forte,,ewsd_v1,
+CTC-009,Banjo,normale,A4,69,mezzo-forte,12.000000,ewsd_v1,
+CTC-010,Violin,normale,A4,69,mezzo-forte,23.809207,not_a_real_metric,
+CTC-001,Violin,normale,A4,69,mezzo-forte,23.809207,ewsd_v1,

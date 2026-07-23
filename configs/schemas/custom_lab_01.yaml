@@ -1,0 +1,55 @@
+collection_id: custom_lab_01
+
+columns:
+  record_id: sample_identifier
+  instrument: instr
+  technique: playing_mode
+  pitch_name_sounding: sounding_note
+  pitch_midi_sounding: midi_sounding
+  dynamic: dyn
+  string_name: string
+  density_value: acoustic_density
+  density_unit: density_unit
+  source_file: filename
+
+constants:
+  measured_or_estimated: measured
+  metric_definition_id: ewsd_v1
+  articulation: sustain
+
+value_maps:
+  instrument:
+    Violin: vln
+    Viola: vla
+    Cello: vlc
+    Contrabass: cb
+  technique:
+    normale: ordinary
+    ponticello: sul_ponticello
+    tastiera: sul_tasto
+    muted: con_sordino
+    artificial harmonics: artificial_harmonic
+  dynamic:
+    pianissimo: pp
+    mezzo-forte: mf
+    fortissimo: ff
+
+missing_policy:
+  unavailable_fields: missing_by_design
+
+schema_mapping_version: "1.0"
+
+required_fields:
+  - instrument
+  - technique
+  - pitch_name_sounding
+  - dynamic
+  - density_value
+  - metric_definition_id
+
+missing_value_markers: ["", "NA", "NaN", "null"]
+
+validation:
+  allowed_instruments: [vln, vla, vlc, cb]
+  allowed_techniques: [ordinary, artificial_harmonic, sul_ponticello, sul_tasto, con_sordino]
+  allowed_dynamics: [pp, p, mp, mf, f, ff]

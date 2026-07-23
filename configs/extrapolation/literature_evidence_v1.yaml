@@ -1,0 +1,414 @@
+# Literature-evidence table for narrow technique extrapolation (priority 1).
+# Numeric values are NEVER applied as EWSD multipliers unless density_mapping is direct.
+# Heavy practice mutes, multiphonics, flautando, on-bridge, afterlength are out of scope.
+
+version: "1.0.0"
+schema_version: "extrapolation_literature_evidence_v1"
+scope_note: >
+  First-priority transformations only: ordinario→sul_tasto, ordinario→sul_ponticello,
+  ordinario→standard_con_sordino. Instrument- and technique-specific.
+
+entries:
+  # --- Sul tasto (no mute) — qualitative spectral tendencies ---
+  - evidence_id: EXEV_ST_CENTROID_DEC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "6-7"
+    instrument: null  # bowed-string generic; apply per-instrument with transfer warning
+    technique: sul_tasto
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "coordinated bow force/velocity; no mute; speaking-string bowing"
+    target_quantity: spectral_centroid
+    supported_relation: decrease_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease
+    numerical_value: null
+    lower_bound: null
+    upper_bound: null
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    assumptions: []
+    warnings:
+      - "Bow force often dominates centroid; position alone is insufficient."
+      - "Secondary synthesis; not a portable EWSD transform."
+
+  - evidence_id: EXEV_ST_UPPER_PARTIAL_DEC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "6-7"
+    instrument: null
+    technique: sul_tasto
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "typical coordinated sul tasto; no mute"
+    target_quantity: upper_partial_energy_ratio
+    supported_relation: decrease_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "Context-dependent; not invariant timbre."
+
+  - evidence_id: EXEV_ST_SLOPE_SOFTER
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "6-7"
+    instrument: null
+    technique: sul_tasto
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "recurrent tendency under coordinated conditions"
+    target_quantity: spectral_slope
+    supported_relation: more_negative_or_softer_high_frequency_balance_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease_high_frequency_balance
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "Slope method-dependent; qualitative direction only."
+
+  - evidence_id: EXEV_ST_HNR_DEC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "6-7"
+    instrument: null
+    technique: sul_tasto
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "greater relative bow-noise prominence under typical conditions"
+    target_quantity: HNR
+    supported_relation: decrease_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "Context-dependent; not universal."
+
+  - evidence_id: EXEV_ST_FLUX_UNRESOLVED
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "6-8"
+    instrument: null
+    technique: sul_tasto
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "no portable numerical flux relation curated"
+    target_quantity: spectral_flux
+    supported_relation: insufficient_for_numerical_or_rank_claim
+    value_kind: unavailable
+    unit: null
+    qualitative_value: null
+    density_mapping_status: unsupported
+    transferability: none
+    warnings:
+      - "Spectral flux not supported as a transferable ST vs ordinario relation in curated extracts."
+
+  - evidence_id: EXEV_ST_FRAME_VAR_UNRESOLVED
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "6-8"
+    instrument: null
+    technique: sul_tasto
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "no portable frame-centroid variance relation curated"
+    target_quantity: frame_centroid_variance
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+    warnings:
+      - "Frame-centroid variance not claimed for sul tasto in first-priority evidence table."
+
+  # --- Sul ponticello (no mute) ---
+  - evidence_id: EXEV_SP_UPPER_PARTIAL_INC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "9-10"
+    instrument: null
+    technique: sul_ponticello
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "speaking-string sul ponticello; not on-bridge/afterlength"
+    target_quantity: upper_partial_energy_ratio
+    supported_relation: increase_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: increase
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "On-bridge and afterlength excluded from this model."
+      - "Sufficient force near bridge can retain fuller tone."
+
+  - evidence_id: EXEV_SP_CENTROID_INC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "9-11"
+    instrument: null
+    technique: sul_ponticello
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "recurrent high-frequency enrichment tendency; centroid alone inadequate"
+    target_quantity: spectral_centroid
+    supported_relation: increase_vs_ordinario_tendency
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: increase
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "Centroid alone is inadequate for SP characterisation."
+      - "No universal SP/ordinario density ratio (1.25 forbidden)."
+
+  - evidence_id: EXEV_SP_SLOPE_BRIGHTER
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "9-10"
+    instrument: null
+    technique: sul_ponticello
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "upper-partial enrichment tendency"
+    target_quantity: spectral_slope
+    supported_relation: brighter_high_frequency_balance_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: increase_high_frequency_balance
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+
+  - evidence_id: EXEV_SP_FRAME_VAR_INC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "9-11"
+    instrument: null
+    technique: sul_ponticello
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "temporal spectral instability common"
+    target_quantity: frame_centroid_variance
+    supported_relation: increase_vs_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: increase
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+
+  - evidence_id: EXEV_SP_HNR_CONTEXT
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "9-10"
+    instrument: null
+    technique: sul_ponticello
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "noise increase mainly in extreme/unstable regimes — not all SP"
+    target_quantity: HNR
+    supported_relation: decrease_only_in_unstable_extreme_regimes
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease_if_unstable_multiple_slip
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "Do not apply HNR decrease to moderate stable sul ponticello by default."
+
+  - evidence_id: EXEV_SP_FLUX_UNRESOLVED
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "9-11"
+    instrument: null
+    technique: sul_ponticello
+    mute_state: "off"
+    measurement_domain: radiated_audio
+    conditions: "no portable numerical flux transform curated"
+    target_quantity: spectral_flux
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+
+  # --- Standard orchestral / performance mute (con sordino) ---
+  - evidence_id: EXEV_MUTE_VLN_ATTEN_DB
+    source_id: MEYER_ACOUSTICS
+    source_page: "mute level reduction (curated extract EV_MEYER_VLN_MUTE_001)"
+    instrument: vln
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "standard/performance orchestral mute; NOT heavy practice mute"
+    target_quantity: attenuation_db_power
+    supported_relation: global_sound_power_reduction_vs_unmuted
+    value_kind: literature_bounded
+    unit: dB
+    qualitative_value: null
+    numerical_value: 6.0
+    lower_bound: 6.0
+    upper_bound: 6.0
+    amplitude_or_power: power
+    density_mapping_status: indirect_proxy
+    transferability: violin_only
+    assumptions: []
+    warnings:
+      - "SPL/power level attenuation — must NOT be used as EWSD multiplier."
+      - "Heavy practice mute (~10 dB) excluded from first model."
+
+  - evidence_id: EXEV_MUTE_VLA_ATTEN_DB
+    source_id: MEYER_ACOUSTICS
+    source_page: "viola mute level (curated extract EV_MEYER_VLA_MUTE_001)"
+    instrument: vla
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "standard viola mute"
+    target_quantity: attenuation_db_power
+    supported_relation: global_sound_power_reduction_vs_unmuted
+    value_kind: literature_bounded
+    unit: dB
+    numerical_value: 4.0
+    lower_bound: 4.0
+    upper_bound: 4.0
+    amplitude_or_power: power
+    density_mapping_status: indirect_proxy
+    transferability: viola_only
+    warnings:
+      - "Instrument-specific; do not copy violin 6 dB to viola."
+      - "Not an EWSD transform."
+
+  - evidence_id: EXEV_MUTE_VLC_ATTEN_UNAVAILABLE
+    source_id: MEYER_ACOUSTICS
+    source_page: null
+    instrument: vlc
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "no curated portable cello orchestral-mute dB in first evidence table"
+    target_quantity: attenuation_db_power
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+    warnings:
+      - "Do not transfer violin/viola mute dB to cello."
+
+  - evidence_id: EXEV_MUTE_CB_ATTEN_UNAVAILABLE
+    source_id: MEYER_ACOUSTICS
+    source_page: null
+    instrument: cb
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "no curated portable double-bass orchestral-mute dB in first evidence table"
+    target_quantity: attenuation_db_power
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+    warnings:
+      - "Do not transfer violin/viola mute dB to double bass."
+
+  - evidence_id: EXEV_MUTE_UPPER_PARTIAL_DEC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "12-14"
+    instrument: null
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "standard performance mute; frequency-dependent redistribution"
+    target_quantity: upper_partial_energy_ratio
+    supported_relation: decrease_vs_unmuted_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+    warnings:
+      - "Not a simple high-cut; depends on mute mass/material/bridge."
+
+  - evidence_id: EXEV_MUTE_CENTROID_DEC
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "12-14"
+    instrument: null
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "reduced brilliance tendency"
+    target_quantity: spectral_centroid
+    supported_relation: decrease_vs_unmuted_ordinario
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+
+  - evidence_id: EXEV_MUTE_SLOPE_SOFTER
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "12-14"
+    instrument: null
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "upper-region attenuation tendency"
+    target_quantity: spectral_slope
+    supported_relation: softer_high_frequency_balance_vs_unmuted
+    value_kind: qualitative_only
+    unit: tendency
+    qualitative_value: decrease_high_frequency_balance
+    density_mapping_status: qualitative_constraint_only
+    transferability: instrument_specific_application_required
+
+  - evidence_id: EXEV_MUTE_HNR_UNRESOLVED
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "12"
+    instrument: null
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "no portable HNR claim for standard mute in first table"
+    target_quantity: HNR
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+
+  - evidence_id: EXEV_MUTE_FLUX_UNRESOLVED
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "12"
+    instrument: null
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "no portable flux claim"
+    target_quantity: spectral_flux
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+
+  - evidence_id: EXEV_MUTE_FRAME_VAR_UNRESOLVED
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: "12"
+    instrument: null
+    technique: con_sordino
+    mute_state: standard_performance_orchestral
+    measurement_domain: radiated_audio
+    conditions: "no portable frame-centroid variance claim"
+    target_quantity: frame_centroid_variance
+    supported_relation: insufficient
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+
+  # Explicit EWSD prohibition — shared by all first-priority techniques
+  - evidence_id: EXEV_EWSD_NO_DIRECT_TF
+    source_id: SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART
+    source_page: null
+    instrument: null
+    technique: null  # applies to all priority techniques via engine policy
+    mute_state: null
+    measurement_domain: unresolved
+    conditions: "no active literature→EWSD density mapping in repository"
+    target_quantity: EWSD_score_acoustic_balanced
+    supported_relation: insufficient_for_numerical_extrapolation
+    value_kind: unavailable
+    density_mapping_status: unsupported
+    transferability: none
+    warnings:
+      - "EWSD_score_acoustic_balanced must not be extrapolated without validated formula/component mappings."
+      - "Mute dB and qualitative spectral tendencies are not EWSD transforms."

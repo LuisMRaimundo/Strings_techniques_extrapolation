@@ -1,0 +1,59 @@
+# Paths to Spectral_Analyser compiled_density_metrics_research.xlsx
+# for measured ordinary/ordinario arco baselines (EWSD_score_acoustic_balanced).
+# Machine-local Orchidea tree; missing files are skipped with a warning.
+
+version: "1.0.0"
+schema_version: "orchidea_ordinary_manifest_v1"
+sheet_name: Spectral_Density_Metrics
+ewsd_column: EWSD_score_acoustic_balanced
+technique: ordinary
+mute_state: "off"
+
+# Optional absolute root override via CLI: --orchidea-root
+default_orchidea_root: "D:/CORDAS/Orchidea"
+
+workbooks:
+  - instrument: vln
+    dynamic: pp
+    relative_path: "ORCH_Vln/Violin/ordinario/ORCH_arco_Vln_pp/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: vln
+    dynamic: mf
+    relative_path: "ORCH_Vln/Violin/ordinario/ORCH_arco_Vln_mf/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: vln
+    dynamic: ff
+    relative_path: "ORCH_Vln/Violin/ordinario/ORCH_arco_Vln_ff/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+
+  - instrument: vla
+    dynamic: pp
+    relative_path: "ORCH_VLA/ordinario/OrchSOL-Vla-Arco-pp/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: vla
+    dynamic: mf
+    relative_path: "ORCH_VLA/ordinario/OrchSOL-Vla-Arco-mf/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: vla
+    dynamic: ff
+    relative_path: "ORCH_VLA/ordinario/OrchSOL-Vla-Arco-ff/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+
+  - instrument: vlc
+    dynamic: pp
+    relative_path: "ORCH_Vlc/Violoncello/ordinario/ORC_Vlc_arco_pp/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: vlc
+    dynamic: mf
+    relative_path: "ORCH_Vlc/Violoncello/ordinario/ORC_Vlc_arco_mf/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: vlc
+    dynamic: ff
+    relative_path: "ORCH_Vlc/Violoncello/ordinario/ORC_Vlc_arco_ff/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+
+  - instrument: cb
+    dynamic: pp
+    relative_path: "ORCH_CB/ordinario/ORCH_SOL_CB_PP/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: cb
+    dynamic: mf
+    relative_path: "ORCH_CB/ordinario/ORCH_SOL_CB_MF/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+  - instrument: cb
+    dynamic: ff
+    relative_path: "ORCH_CB/ordinario/ORCH_SOL_CB_FF/_Sustains/analysis_results/compiled_density_metrics_research.xlsx"
+
+# Measured component columns preserved from Spectral_Density_Metrics when present
+component_columns:
+  spectral_slope: spectral_slope_db_per_harmonic
+  upper_partial_energy_proxy: brightness_or_upper_spectral_activity_index_20khz

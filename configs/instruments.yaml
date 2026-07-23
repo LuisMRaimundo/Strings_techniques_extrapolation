@@ -1,0 +1,87 @@
+# Instrument-specific physical metadata.
+# Only values with documented provenance may be used as scientific model parameters.
+# Ranges below for ordinary arco tables come from Textural Density spectral_data spans.
+
+instruments:
+  vln:
+    name: violin
+    aliases: [violin]
+    open_string_tuning: [G3, D4, A4, E5]
+    written_range_midi: [55, 103]
+    sounding_range_midi: [55, 103]
+    written_equals_sounding: true
+    ordinary_table_span: [G3, G7]
+    approximate_string_length_m:
+      value: null
+      status: unsupported_pending_local_literature_extraction
+    bridge_resonances_hz: {status: unsupported_pending_local_literature_extraction}
+    air_resonance_hz: {status: unsupported_pending_local_literature_extraction}
+    high_frequency_rolloff: {status: unsupported_pending_local_literature_extraction}
+    technique_valid_ranges:
+      artificial_harmonic: {sounding_span: [G5, G7], notes: "upper sounding register typical for artificial harmonics; order must be supplied"}
+      sul_ponticello: {sounding_span: [G3, G7]}
+      sul_tasto: {sounding_span: [G3, G7]}
+      con_sordino: {sounding_span: [G3, G7], mute_type: uncertain_latent}
+    uncertainty: medium_for_ordinary_tables_high_for_techniques
+
+  vla:
+    name: viola
+    aliases: [viola]
+    open_string_tuning: [C3, G3, D4, A4]
+    written_range_midi: [48, 96]
+    sounding_range_midi: [48, 96]
+    written_equals_sounding: true
+    ordinary_table_span: [C3, C7]
+    approximate_string_length_m: {value: null, status: unsupported_pending_local_literature_extraction}
+    bridge_resonances_hz: {status: unsupported_pending_local_literature_extraction}
+    air_resonance_hz: {status: unsupported_pending_local_literature_extraction}
+    high_frequency_rolloff: {status: unsupported_pending_local_literature_extraction}
+    technique_valid_ranges:
+      artificial_harmonic: {sounding_span: null, status: not_estimable_without_instrument_specific_evidence}
+      sul_ponticello: {sounding_span: [C3, C7]}
+      sul_tasto: {sounding_span: [C3, C7]}
+      con_sordino: {sounding_span: [C3, C7], mute_type: uncertain_latent}
+    uncertainty: medium_for_ordinary_tables_high_for_techniques
+    transfer_policy: "Violin parameters must not be silently reused."
+
+  vlc:
+    name: violoncello
+    aliases: [cello, violoncello]
+    open_string_tuning: [C2, G2, D3, A3]
+    written_range_midi: [36, 84]
+    sounding_range_midi: [36, 84]
+    written_equals_sounding: true
+    ordinary_table_span: [C2, C6]
+    approximate_string_length_m: {value: null, status: unsupported_pending_local_literature_extraction}
+    bridge_resonances_hz: {status: unsupported_pending_local_literature_extraction}
+    air_resonance_hz: {status: unsupported_pending_local_literature_extraction}
+    high_frequency_rolloff: {status: unsupported_pending_local_literature_extraction}
+    technique_valid_ranges:
+      artificial_harmonic: {sounding_span: null, status: not_estimable_without_instrument_specific_evidence}
+      sul_ponticello: {sounding_span: [C2, C6]}
+      sul_tasto: {sounding_span: [C2, C6]}
+      con_sordino: {sounding_span: [C2, C6], mute_type: uncertain_latent}
+    uncertainty: medium_for_ordinary_tables_high_for_techniques
+    transfer_policy: "Violin parameters must not be silently reused."
+
+  cb:
+    name: double_bass
+    aliases: [double_bass, contrabass, bass]
+    open_string_tuning_sounding: [E1, A1, D2, G2]
+    written_range_midi: [28, 72]   # orchestral written often one octave higher; this project stores SOUNDING as canonical for tables
+    sounding_range_midi: [28, 72]
+    written_equals_sounding: false
+    pitch_convention: "Tables and predictions use sounding/concert pitch; written pitch reported separately with +12 semitone orchestral transposition default."
+    written_to_sounding_semitones: -12
+    ordinary_table_span: [E1, C5]
+    approximate_string_length_m: {value: null, status: unsupported_pending_local_literature_extraction}
+    bridge_resonances_hz: {status: unsupported_pending_local_literature_extraction}
+    air_resonance_hz: {status: unsupported_pending_local_literature_extraction}
+    high_frequency_rolloff: {status: unsupported_pending_local_literature_extraction}
+    technique_valid_ranges:
+      artificial_harmonic: {sounding_span: null, status: not_estimable_without_instrument_specific_evidence}
+      sul_ponticello: {sounding_span: [E1, C5]}
+      sul_tasto: {sounding_span: [E1, C5]}
+      con_sordino: {sounding_span: [E1, C5], mute_type: uncertain_latent}
+    uncertainty: medium_for_ordinary_tables_high_for_techniques
+    transfer_policy: "Violin parameters must not be silently reused."

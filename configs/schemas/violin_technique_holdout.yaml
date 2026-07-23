@@ -1,0 +1,42 @@
+collection_id: violin_technique_holdout
+
+columns:
+  record_id: record
+  instrument: instrument_name
+  technique: tech
+  pitch_name_sounding: note
+  dynamic: dynamic_marking
+  density_value: cdm
+  source_file: src
+
+constants:
+  measured_or_estimated: measured
+  metric_definition_id: ewsd_v1
+  density_unit: dimensionless
+  articulation: sustain
+
+value_maps:
+  instrument:
+    violin: vln
+    viola: vla
+    cello: vlc
+    double_bass: cb
+  technique:
+    artificial_harmonic: artificial_harmonic
+    sul_ponticello: sul_ponticello
+    sul_tasto: sul_tasto
+    con_sordino: con_sordino
+  dynamic:
+    pp: pp
+    mf: mf
+    ff: ff
+
+missing_policy:
+  unavailable_fields: missing_by_design
+
+schema_mapping_version: "1.0"
+
+validation:
+  allowed_instruments: [vln, vla, vlc, cb]
+  allowed_techniques: [ordinary, artificial_harmonic, sul_ponticello, sul_tasto, con_sordino]
+  allowed_dynamics: [pp, p, mp, mf, f, ff]

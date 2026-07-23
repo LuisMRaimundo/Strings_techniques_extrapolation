@@ -1,0 +1,63 @@
+# Explicit tolerance profiles for acoustics stress testing.
+# Do not use a single global tolerance for all checks.
+
+version: "1.0.0"
+
+profiles:
+  - id: TOL_FLOAT64_REL
+    value: 1.0e-12
+    unit: relative
+    rationale: IEEE float64 relative agreement for exact algebraic identities
+    applicable_descriptors: []
+    applicable_checks: [beta_identity, unit_scale_invariance, link_inverse]
+    source_or_justification: engineering
+
+  - id: TOL_FLOAT64_ABS
+    value: 1.0e-9
+    unit: absolute
+    rationale: Absolute float comparison for small dimensionless ratios
+    applicable_descriptors: []
+    applicable_checks: [beta_exact, db_conversion]
+    source_or_justification: engineering
+
+  - id: TOL_BETA_CONTRADICTION
+    value: 1.0e-6
+    unit: absolute
+    rationale: Matches technique_ontology.yaml contradiction_tolerance_abs
+    applicable_descriptors: []
+    applicable_checks: [beta_contradiction]
+    source_or_justification: configs/technique_ontology.yaml
+
+  - id: TOL_FFT_CENTROID_HZ
+    value: null
+    unit: Hz
+    rationale: >
+      Descriptor extraction is not implemented; reserved for FFT bin resolution
+      (~ fs/N) when DESC_SPECTRAL_CENTROID becomes implemented.
+    applicable_descriptors: [DESC_SPECTRAL_CENTROID]
+    applicable_checks: [centroid_sine]
+    source_or_justification: unimplemented_placeholder
+
+  - id: TOL_NO_NUMERICAL_COMPARISON
+    value: null
+    unit: none
+    rationale: Literature provides only qualitative/directional claims or domain mismatch
+    applicable_descriptors: []
+    applicable_checks: [literature_directional, domain_mismatch]
+    source_or_justification: scientific_scope
+
+  - id: TOL_SOURCE_TABLE_EXACT
+    value: 0.0
+    unit: absolute
+    rationale: Stored source-table rows must round-trip exactly when present
+    applicable_descriptors: []
+    applicable_checks: [mute_table_rows]
+    source_or_justification: data_integrity
+
+  - id: TOL_GRAPHICAL_READING
+    value: null
+    unit: none
+    rationale: Graphical paper values are not digitised as exact benchmarks in this package
+    applicable_descriptors: []
+    applicable_checks: []
+    source_or_justification: literature_limitation

@@ -1,0 +1,76 @@
+# Cross-instrument transfer candidates (Phase 3).
+# None are activated. Identity or arbitrary-constant transfers are rejected.
+
+version: "0.1.0-phase3-corpus-gap"
+
+transfer_candidates:
+  - target_instrument: vla
+    target_technique: sul_ponticello
+    target_parameter: bow_beta_sul_ponticello
+    source_instrument: vln
+    source_parameter: bow_beta_sul_ponticello
+    physical_justification: >
+      Bow–bridge relative position effects are common to bowed strings, but
+      instrument-specific string length, bridge, and body responses differ.
+    proposed_scaling_variables: [string_length, sounding_fundamental_frequency, bow_position_ratio]
+    proposed_equation: null
+    evidence_ids: []
+    additional_uncertainty: "unknown_pending_scaling_equation"
+    transfer_status: requires_additional_parameters
+    rejection_reason: >
+      No verified source parameter and no explicit scaling equation; cannot use
+      target = violin_parameter.
+
+  - target_instrument: vlc
+    target_technique: sul_ponticello
+    target_parameter: bow_beta_sul_ponticello
+    source_instrument: vln
+    source_parameter: bow_beta_sul_ponticello
+    physical_justification: "Generic bowed-string bow-position physics may transfer with scaling."
+    proposed_scaling_variables: [string_length, sounding_fundamental_frequency, bow_position_ratio]
+    proposed_equation: null
+    evidence_ids: []
+    additional_uncertainty: "unknown_pending_scaling_equation"
+    transfer_status: requires_additional_parameters
+    rejection_reason: "Missing explicit scaling equation and verified source extracts."
+
+  - target_instrument: cb
+    target_technique: sul_ponticello
+    target_parameter: bow_beta_sul_ponticello
+    source_instrument: vln
+    source_parameter: bow_beta_sul_ponticello
+    physical_justification: "Generic bowed-string bow-position physics may transfer with scaling."
+    proposed_scaling_variables: [string_length, sounding_fundamental_frequency, bow_position_ratio]
+    proposed_equation: null
+    evidence_ids: []
+    additional_uncertainty: "unknown_pending_scaling_equation"
+    transfer_status: requires_additional_parameters
+    rejection_reason: "Missing explicit scaling equation and verified source extracts."
+
+  - target_instrument: vla
+    target_technique: con_sordino
+    target_parameter: mute_attenuation_curve
+    source_instrument: vln
+    source_parameter: mute_attenuation_curve
+    physical_justification: "Bridge added-mass mechanism is shared, but mute/bridge geometry differs."
+    proposed_scaling_variables: [bridge_resonance, mute_mass, instrument_size]
+    proposed_equation: null
+    evidence_ids: []
+    additional_uncertainty: "high"
+    transfer_status: rejected
+    rejection_reason: >
+      Rejected identity transfer of violin mute curves to viola/cello/bass without
+      mute-type distinction and scaling equation.
+
+  - target_instrument: vlc
+    target_technique: artificial_harmonic
+    target_parameter: technique_to_ordinary_cdm_log_ratio
+    source_instrument: vln
+    source_parameter: technique_to_ordinary_cdm_log_ratio
+    physical_justification: null
+    proposed_scaling_variables: []
+    proposed_equation: "target_parameter = violin_parameter"
+    evidence_ids: []
+    additional_uncertainty: null
+    transfer_status: rejected
+    rejection_reason: "Identity transfer without physical scaling is prohibited."
