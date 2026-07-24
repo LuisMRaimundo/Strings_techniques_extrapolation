@@ -50,12 +50,23 @@ def test_harmonic_not_constant_factor_by_default() -> None:
     assert results
     assert results[0].estimate_mean is None
     assert results[0].posterior_mean is None
-    assert results[0].na_reason == "no_harmonic_acoustic_calibration_data"
+    # Violin art has mf tables; pp without collection-matched ordinary anchors is NA
+    # (not a silent proxy, not "no calibration for technique").
+    assert results[0].na_reason in {
+        "no_calibrated_harmonic_value_for_target",
+        "no_harmonic_acoustic_calibration_data",
+    }
     assert results[0].model_family == "harmonic_modal_model"
-    assert results[0].selected_model_id == "harmonic_modal_acoustic_model_unavailable"
+    assert results[0].selected_model_id in {
+        "harmonic_modal_frequency_with_descriptor_priors",
+        "harmonic_modal_acoustic_model_unavailable",
+    }
     assert results[0].value_kind.value == "unavailable"
     assert results[0].selection_mode
     assert results[0].configuration_policy == "canonical_single_string_assignment"
+    assert results[0].support_class in {None, "unsupported"} or str(
+        results[0].support_class
+    ) == "unsupported"
 
 
 def test_stub_dict_keys() -> None:

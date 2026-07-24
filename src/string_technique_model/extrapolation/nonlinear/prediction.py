@@ -267,6 +267,100 @@ def _attach_selection_fields(
     return result
 
 
+def _ordinary_anchors_for_harmonic(
+    measured_ordinary_rows: list[dict[str, Any]],
+    *,
+    instrument: str,
+    target_quantity: str,
+) -> list[Any]:
+    """Build collection-tagged same-note ordinary anchors for dynamic transfer.
+
+    Rows without an explicit ``collection`` are skipped — pooled GUI means are
+    not admissible substitutes for collection-matched ordinary baselines.
+    """
+    from string_technique_model.extrapolation.nonlinear.harmonic_source_resolver import (
+        OrdinaryAnchor,
+    )
+
+    inst = str(instrument).strip().lower()
+    if inst in {"violin", "violino"}:
+        inst = "vln"
+    elif inst in {"viola"}:
+        inst = "vla"
+    elif inst in {"cello", "violoncello", "violoncelo"}:
+        inst = "vlc"
+
+    anchors: list[OrdinaryAnchor] = []
+    for r in measured_ordinary_rows:
+        tech = str(r.get("technique") or "ordinary").strip().lower()
+        if tech not in {"ordinary", "ordinario", "ord"}:
+            continue
+        r_inst = str(r.get("instrument") or "").strip().lower()
+        if r_inst in {"violin", "violino"}:
+            r_inst = "vln"
+        elif r_inst in {"viola"}:
+            r_inst = "vla"
+        elif r_inst in {"cello", "violoncello", "violoncelo"}:
+            r_inst = "vlc"
+        if r_inst != inst:
+            continue
+        collection = r.get("collection")
+        if collection is None or str(collection).strip() == "":
+            continue
+        note = r.get("note") or r.get("pitch")
+        dynamic = r.get("dynamic")
+        value = r.get("value")
+        if note is None or dynamic is None or value is None:
+            continue
+        try:
+            val = float(value)
+        except (TypeError, ValueError):
+            continue
+        quantity = str(r.get("quantity") or target_quantity)
+        processing_version = str(
+            r.get("processing_version") or "ssa_ewsd_acoustic_balanced_v1"
+        )
+        anchors.append(
+            OrdinaryAnchor(
+                instrument=inst,
+                collection=str(collection).strip().lower(),
+                note=str(note).strip(),
+                dynamic=str(dynamic).strip().lower(),
+                value=val,
+                quantity=quantity,
+                processing_version=processing_version,
+                record_id=str(r.get("record_id") or r.get("source_path") or ""),
+            )
+        )
+    return anchors
+
+
+def _attach_harmonic_provenance(result: ExtrapolationResult, pred: dict[str, Any]) -> ExtrapolationResult:
+    """Copy resolver provenance fields onto an ExtrapolationResult."""
+    import json
+
+    result.support_class = pred.get("support_class")
+    result.source_instrument = pred.get("source_instrument")
+    result.source_collection = pred.get("source_collection")
+    result.source_technique = pred.get("source_technique")
+    result.source_dynamic = pred.get("source_dynamic")
+    result.target_instrument = pred.get("target_instrument") or result.instrument
+    result.target_dynamic = pred.get("target_dynamic") or result.dynamic
+    result.source_record_ids_harmonic = list(pred.get("source_record_ids") or [])
+    result.ordinary_baseline_record_ids = list(pred.get("ordinary_baseline_record_ids") or [])
+    result.transfer_method = pred.get("transfer_method")
+    result.transfer_formula = pred.get("transfer_formula")
+    result.transfer_gate_status = pred.get("transfer_gate_status")
+    result.cross_instrument_transfer_enabled = pred.get("cross_instrument_transfer_enabled")
+    result.harmonic_selection_reason = pred.get("selection_reason")
+    result.harmonic_rejection_reason = pred.get("rejection_reason")
+    result.calibration_processing_version = pred.get("calibration_processing_version")
+    cands = pred.get("harmonic_candidates")
+    if cands is not None:
+        result.harmonic_candidates_json = json.dumps(cands, ensure_ascii=True)
+    return result
+
+
 def _rows_to_frame(measured_ordinary_rows: list[dict[str, Any]]) -> pd.DataFrame:
     return normalize_measured_rows(measured_ordinary_rows)
 
@@ -700,13 +794,19 @@ def predict_register(
                 midi=midi,
                 baseline_semantics=str(annotated.get("baseline_semantics") or "unresolved"),
                 target_quantity=target_quantity,
-                ordinary_by_dynamic=ordinary_by_dynamic or None,
+                ordinary_by_dynamic=None,  # pooled GUI mean forbidden for transfer gates
+                ordinary_rows=_ordinary_anchors_for_harmonic(
+                    list(measured_ordinary_rows),
+                    instrument=inst,
+                    target_quantity=target_quantity,
+                ),
             )
 
             use_numeric = (
                 decision.selected_model_id == "harmonic_modal_frequency_with_descriptor_priors"
                 and pred.get("mean") is not None
                 and not pred.get("na_reason")
+                and str(pred.get("support_class") or "") != "unsupported"
             )
             if use_numeric:
                 result = _result_from_prediction(
@@ -718,12 +818,13 @@ def predict_register(
                     target_quantity=target_quantity,
                     prediction=pred,
                     model_id=decision.selected_model_id,
-                    submodel_id=str(pred.get("submodel_id") or "calibrated_harmonic_descriptor_lookup"),
+                    submodel_id=str(pred.get("submodel_id") or "calibrated_harmonic_descriptor_resolver"),
                     baseline_fit=baseline,
                     data_status=data_status,
                     decision=decision,
                 )
                 result.model_status = "calibrated_descriptor_lookup"
+                _attach_harmonic_provenance(result, pred)
                 result.string_name = annotated.get("string")
                 result.harmonic_type = annotated.get("harmonic_type") or tech
                 result.harmonic_order = annotated.get("harmonic_order")
@@ -810,9 +911,7 @@ def predict_register(
                 submodel_id=pred.get("submodel_id"),
                 evidence_tier=EvidenceTier.LEVEL_0_UNSUPPORTED,
                 measured_or_extrapolated="unavailable",
-                value_kind=ValueKind.UNAVAILABLE
-                if decision.value_kind_hint == "unavailable"
-                else ValueKind.QUALITATIVE_ONLY,
+                value_kind=ValueKind.UNAVAILABLE,
                 warnings=list(pred.get("warnings") or [])
                 + [
                     f"selection_reason={decision.selection_reason}",
@@ -880,6 +979,17 @@ def predict_register(
             )
             attached = _attach_selection_fields(na, decision)
             attached.model_status = model_status
+            # Only demote selected model when the instrument/technique has no calibration at all.
+            if pred.get("model_id") == "harmonic_modal_acoustic_model_unavailable":
+                attached.model_id = "harmonic_modal_acoustic_model_unavailable"
+                attached.selected_model_id = "harmonic_modal_acoustic_model_unavailable"
+                attached.model_status = "modal_frequencies_generated_acoustic_values_unavailable"
+            elif pred.get("support_class") == "unsupported":
+                attached.model_id = str(
+                    pred.get("model_id") or decision.selected_model_id or attached.model_id
+                )
+                attached.model_status = "calibrated_model_selected_target_value_unavailable"
+            _attach_harmonic_provenance(attached, pred)
             results.append(attached)
             continue
 

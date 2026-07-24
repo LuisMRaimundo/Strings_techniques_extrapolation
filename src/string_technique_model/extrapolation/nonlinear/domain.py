@@ -297,6 +297,24 @@ class ExtrapolationResult(BaseModel):
     configured_order_min: int | None = None
     configured_order_max: int | None = None
     order_selection_reason: str | None = None
+    # Harmonic calibration provenance (acceptance architecture)
+    support_class: str | None = None
+    source_instrument: str | None = None
+    source_collection: str | None = None
+    source_technique: str | None = None
+    source_dynamic: str | None = None
+    target_instrument: str | None = None
+    target_dynamic: str | None = None
+    source_record_ids_harmonic: list[str] = Field(default_factory=list)
+    ordinary_baseline_record_ids: list[str] = Field(default_factory=list)
+    transfer_method: str | None = None
+    transfer_formula: str | None = None
+    transfer_gate_status: str | None = None
+    cross_instrument_transfer_enabled: bool | None = None
+    harmonic_selection_reason: str | None = None
+    harmonic_rejection_reason: str | None = None
+    harmonic_candidates_json: str | None = None
+    calibration_processing_version: str | None = None
 
     def to_row(self) -> dict[str, Any]:
         # Sync neutral estimate fields from legacy posterior_* when needed
@@ -343,6 +361,8 @@ class ExtrapolationResult(BaseModel):
             "missing_model_components",
             "assumption_ids",
             "source_row_ids",
+            "source_record_ids_harmonic",
+            "ordinary_baseline_record_ids",
         ):
             if isinstance(d.get(key), list):
                 d[key] = ";".join(str(x) for x in d[key])

@@ -292,6 +292,65 @@ def export_nonlinear_workbook(
     for row in rows:
         tech_blocks[str(row.get("technique") or "unknown")].append(row)
 
+    harm_results = [
+        r
+        for r in results
+        if "harmonic" in str(r.technique or "").lower() or r.support_class is not None
+    ]
+    coverage_rows = []
+    try:
+        from string_technique_model.extrapolation.nonlinear.harmonic_source_resolver import (
+            build_coverage_manifest_rows,
+            write_coverage_manifests,
+        )
+
+        write_coverage_manifests()
+        for inst in sorted({r.instrument for r in harm_results} or {"vln", "vla", "vlc"}):
+            coverage_rows.extend(build_coverage_manifest_rows(instrument=inst))
+    except Exception as exc:  # pragma: no cover
+        coverage_rows = [{"error": str(exc)}]
+    coverage_df = pd.DataFrame(coverage_rows)
+
+    source_sel_rows = []
+    transfer_rows = []
+    unsupported_rows = []
+    for r in harm_results:
+        base = {
+            "record_id": r.record_id,
+            "target_instrument": r.target_instrument or r.instrument,
+            "technique": r.technique,
+            "target_dynamic": r.target_dynamic or r.dynamic,
+            "pitch": r.pitch,
+            "sounding_pitch": r.sounding_pitch,
+            "support_class": r.support_class,
+            "source_instrument": r.source_instrument,
+            "source_collection": r.source_collection,
+            "source_technique": r.source_technique,
+            "source_dynamic": r.source_dynamic,
+            "source_record_ids": ";".join(r.source_record_ids_harmonic or []),
+            "ordinary_baseline_record_ids": ";".join(r.ordinary_baseline_record_ids or []),
+            "transfer_method": r.transfer_method,
+            "transfer_formula": r.transfer_formula,
+            "transfer_gate_status": r.transfer_gate_status,
+            "cross_instrument_transfer_enabled": r.cross_instrument_transfer_enabled,
+            "harmonic_selection_reason": r.harmonic_selection_reason,
+            "harmonic_rejection_reason": r.harmonic_rejection_reason,
+            "estimate_mean": r.estimate_mean,
+            "value_kind": r.value_kind.value,
+            "na_reason": r.na_reason,
+            "model_status": r.model_status,
+            "candidates_json": r.harmonic_candidates_json,
+            "calibration_processing_version": r.calibration_processing_version,
+        }
+        source_sel_rows.append(base)
+        if r.support_class == "same_instrument_dynamic_transfer":
+            transfer_rows.append(base)
+        if r.support_class == "unsupported" or r.estimate_mean is None:
+            unsupported_rows.append(base)
+    source_sel_df = pd.DataFrame(source_sel_rows)
+    transfer_df = pd.DataFrame(transfer_rows)
+    unsupported_harm_df = pd.DataFrame(unsupported_rows)
+
     with pd.ExcelWriter(path, engine="openpyxl") as writer:
         methodology.to_excel(writer, sheet_name="Methodology", index=False)
         summary_df.to_excel(writer, sheet_name="Posterior_Summary", index=False)
@@ -307,6 +366,10 @@ def export_nonlinear_workbook(
         run_summary.to_excel(writer, sheet_name="Run_Summary", index=False)
         comparison_df.to_excel(writer, sheet_name="Model_Comparison", index=False)
         priors_df.to_excel(writer, sheet_name="Priors_Used", index=False)
+        coverage_df.to_excel(writer, sheet_name="Harmonic_Coverage", index=False)
+        source_sel_df.to_excel(writer, sheet_name="Harmonic_Source_Selection", index=False)
+        transfer_df.to_excel(writer, sheet_name="Dynamic_Transfers", index=False)
+        unsupported_harm_df.to_excel(writer, sheet_name="Unsupported_Harmonic_Targets", index=False)
         for tech, block in tech_blocks.items():
             pd.DataFrame(block).to_excel(writer, sheet_name=str(tech)[:31], index=False)
 

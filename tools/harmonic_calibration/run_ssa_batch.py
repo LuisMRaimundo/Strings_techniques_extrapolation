@@ -13,16 +13,23 @@ CALIB = ROOT / "data" / "harmonic_calibration"
 SSA = Path(r"E:\PYTHON CODES\CÓDIGOS FINAIS - GIT HUB\Spectral_Analyser")
 EXPORT = ROOT / "tools" / "harmonic_calibration" / "export_ewsd_table_from_research_xlsx.py"
 
+# batch_name -> (collection, technique, dynamic, pattern, instrument)
 BATCH_META = {
-    "orchidea_artificial_harmonic_mf": ("orchidea", "artificial_harmonic", "mf", "*.wav"),
-    "philharmonia_artificial_harmonic_mf": ("philharmonia", "artificial_harmonic", "mf", "*.wav"),
-    "philharmonia_artificial_harmonic_mf_wav": ("philharmonia", "artificial_harmonic", "mf", "*.wav"),
-    "philharmonia_natural_harmonic_mf": ("philharmonia", "natural_harmonic", "mf", "*.wav"),
-    "philharmonia_natural_harmonic_mf_wav": ("philharmonia", "natural_harmonic", "mf", "*.wav"),
-    "philharmonia_natural_harmonic_p": ("philharmonia", "natural_harmonic", "p", "*.wav"),
-    "philharmonia_natural_harmonic_p_wav": ("philharmonia", "natural_harmonic", "p", "*.wav"),
-    "mcgill_artificial_harmonic_mf": ("mcgill", "artificial_harmonic", "mf", "*.wav"),
-    "mcgill_natural_harmonic_mf": ("mcgill", "natural_harmonic", "mf", "*.wav"),
+    # Violin
+    "orchidea_artificial_harmonic_mf": ("orchidea", "artificial_harmonic", "mf", "*.wav", "vln"),
+    "philharmonia_artificial_harmonic_mf": ("philharmonia", "artificial_harmonic", "mf", "*.wav", "vln"),
+    "philharmonia_artificial_harmonic_mf_wav": ("philharmonia", "artificial_harmonic", "mf", "*.wav", "vln"),
+    "philharmonia_natural_harmonic_mf": ("philharmonia", "natural_harmonic", "mf", "*.wav", "vln"),
+    "philharmonia_natural_harmonic_mf_wav": ("philharmonia", "natural_harmonic", "mf", "*.wav", "vln"),
+    "philharmonia_natural_harmonic_p": ("philharmonia", "natural_harmonic", "p", "*.wav", "vln"),
+    "philharmonia_natural_harmonic_p_wav": ("philharmonia", "natural_harmonic", "p", "*.wav", "vln"),
+    "mcgill_artificial_harmonic_mf": ("mcgill", "artificial_harmonic", "mf", "*.wav", "vln"),
+    "mcgill_natural_harmonic_mf": ("mcgill", "natural_harmonic", "mf", "*.wav", "vln"),
+    # Viola
+    "viola_orchidea_artificial_harmonic_mf": ("orchidea", "artificial_harmonic", "mf", "*.wav", "vla"),
+    "viola_philharmonia_artificial_harmonic_mf": ("philharmonia", "artificial_harmonic", "mf", "*.wav", "vla"),
+    "viola_philharmonia_natural_harmonic_mf": ("philharmonia", "natural_harmonic", "mf", "*.wav", "vla"),
+    "viola_mcgill_artificial_harmonic_mf": ("mcgill", "artificial_harmonic", "mf", "*.wav", "vla"),
 }
 
 
@@ -32,12 +39,11 @@ def main() -> int:
     p.add_argument("--skip-ssa", action="store_true", help="Only export if research xlsx exists")
     args = p.parse_args()
 
-    collection, technique, dynamic, pattern = BATCH_META[args.batch_name]
+    collection, technique, dynamic, pattern, instrument = BATCH_META[args.batch_name]
     audio_dir = CALIB / "batches" / args.batch_name
     out_dir = CALIB / "ssa_outputs" / args.batch_name
     research = out_dir / "compiled_density_metrics_research.xlsx"
-    measured_stem = args.batch_name.removesuffix("_wav")
-    measured = CALIB / "measured" / f"{measured_stem}.csv"
+    measured = CALIB / "measured" / f"{args.batch_name}.csv"
 
     if not args.skip_ssa:
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -64,6 +70,8 @@ def main() -> int:
         sys.executable,
         str(EXPORT),
         str(research),
+        "--instrument",
+        instrument,
         "--technique",
         technique,
         "--dynamic",

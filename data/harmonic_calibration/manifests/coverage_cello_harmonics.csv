@@ -1,0 +1,3 @@
+instrument,collection,technique,dynamic,measured_sounding_pitches,missing_sounding_pitches,min_measured_pitch,max_measured_pitch,n_measured_notes,n_transferred_notes,n_interpolated_notes,n_unavailable_notes,ssa_ewsd_version,source_files,source_hashes,known_omissions,calibration_status
+vlc,,artificial_harmonic,,,,,,0,0,0,unknown_until_request_set,ssa_ewsd_acoustic_balanced_v1,,,no_calibration_for_technique,unavailable
+vlc,,natural_harmonic,,,,,,0,0,0,unknown_until_request_set,ssa_ewsd_acoustic_balanced_v1,,,no_calibration_for_technique,unavailable

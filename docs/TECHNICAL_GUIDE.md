@@ -29,7 +29,7 @@
 - Ordinary baseline: **IMPLEMENTED** as a log-linear penalized cubic B-spline on MIDI, per instrument $\times$ dynamic.
 - Bow-contact techniques (`sul_tasto`, `sul_ponticello`): **IMPLEMENTED** as multiplicative log-ratio submodels with an ordinary baseline shape; alpha centres come from **ASSUMPTION** priors when observations are absent.
 - Mute technique (`con_sordino`): **IMPLEMENTED** as a mute log-scalar effect driven by a dB power reduction **ASSUMPTION** (about 6 dB for violin, 4 dB for viola), mapped to a log-ratio via `log(10^{-\mathrm{dB}/10})`.
-- Harmonic register (`natural_harmonic`, `artificial_harmonic`): **IMPLEMENTED** for pitch generation only; acoustic EWSD values remain **PLANNED**.
+- Harmonic register (`natural_harmonic`, `artificial_harmonic`): **IMPLEMENTED** for modal pitch generation; acoustic EWSD is **IMPLEMENTED** via instrument-isolated calibrated lookup / gated dynamic transfer where measured tables exist (violin art/nat, viola art mf), otherwise explicit `NA` (`implemented_but_uncalibrated` for viola natural and cello).
 - Optional Bayesian backend (PyMC/ArviZ): **OPTIONAL_BACKEND**; when the extra is not installed, the pipeline reports `bayesian_backend_unavailable` and never fabricates posteriors.
 - Acoustic descriptors: separate backend under `descriptors/`; **IMPLEMENTED** as scalar/vector features. They are not currently used to compute EWSD from spectra — see §11.
 
@@ -1085,22 +1085,59 @@ Three explicit domains are surfaced on every harmonic target row and must not be
 
 ---
 
-## 21. Harmonic model-selection audit
+## 21. Harmonic acoustic calibration and source-priority resolver
 
-Because the acoustic calibration for harmonics is not implemented, harmonic cells always resolve to one of two gate states:
+Modal pitch generation (§20) and acoustic EWSD calibration are separate. Modal targets may exist while `estimate_mean` remains `NA`.
 
-- `harmonic_modal_metadata_gate`: `selection_reason = insufficient_harmonic_metadata`, `assumption_ids = [ASSUMP_HARMONIC_REQUIRES_MODAL_METADATA]`.
-- `harmonic_modal_acoustic_model_unavailable`: `selection_reason = no_harmonic_acoustic_calibration_data`, `assumption_ids = [ASSUMP_HARMONIC_DESCRIPTOR_MODEL_NOT_IMPLEMENTED]`, `model_status = modal_frequencies_generated_acoustic_values_unavailable`.
+### 21.1 Instrument isolation
 
-In both cases:
+A viola or cello request must **never** silently consume violin calibration. Cross-instrument transfer is an explicit, **disabled-by-default** candidate (`cross_instrument_transfer_enabled = false`).
 
-- `value_kind = unavailable`,
-- `fallback_level = no_numeric_fallback`,
-- `estimate_mean`, `estimate_median`, `interval_low`, `interval_high` are `None`.
+### 21.2 Support classes
 
-> **Warning.** Harmonic sounding pitches are generated numerically, but their acoustic EWSD values are **not** predicted numerically. Do not read pitch tables as timbre tables.
+Each resolved harmonic cell exports a `support_class` among:
 
-**Status:** **IMPLEMENTED** for the audit and reporting; the numeric harmonic model is **PLANNED**.
+- `same_instrument_same_collection_measured`
+- `same_instrument_cross_collection_measured`
+- `same_instrument_dynamic_transfer`
+- `same_instrument_interpolated`
+- `cross_instrument_transfer`
+- `unsupported`
+
+Plus provenance fields: `source_instrument`, `source_collection`, `source_technique`, `source_dynamic`, `target_instrument`, `target_dynamic`, `source_record_ids`, `ordinary_baseline_record_ids`, `transfer_method`, `transfer_formula`, `transfer_gate_status`, `selection_reason`, `rejection_reason`.
+
+### 21.3 Source priority (deterministic)
+
+1. Exact measured value (same instrument, collection, technique, note, dynamic).
+2. Same-instrument **collection-aware** dynamic transfer (same processing version / quantity / domain / note).
+3. Same-instrument multi-collection measured model at the exact key.
+4. Optional interpolation inside the observed register (**disabled by default**).
+5. Experimental cross-instrument transfer (**disabled by default**).
+6. `NA` (`support_class = unsupported`).
+
+The resolver records every candidate, rejection reason, and the selected source. First-CSV-row / generic dict lookup is not the scientific rule.
+
+### 21.4 Collection-aware dynamic transfer
+
+$$
+H_{d_2}(p) = H_{d_1}(p)\,\frac{O_{d_2}(p)}{O_{d_1}(p)}
+$$
+
+Gates: same instrument; same collection; same SSA/EWSD processing version; same quantity/domain; same note; explicit source/target dynamics; valid ordinary values at both dynamics. Pooled register-mean ordinary baselines are **not** admissible. Any regional/pooled fallback must be a separately named candidate and remains disabled by default.
+
+### 21.5 Coverage manifests
+
+Machine-readable manifests: `data/harmonic_calibration/manifests/coverage_{violin,viola,cello}_harmonics.csv`. Current unique measured sounding-pitch counts (from canonical tables): violin art mf **31**; violin nat mf **15**; violin nat p **9**; viola art mf **35**; viola natural / cello art / cello nat **unavailable**.
+
+### 21.6 Model-selection audit when unsupported
+
+When metadata is incomplete: `harmonic_modal_metadata_gate`.  
+When the instrument/technique has **no** calibration table: `harmonic_modal_acoustic_model_unavailable` with `model_status = modal_frequencies_generated_acoustic_values_unavailable`.  
+When tables exist but the note/dynamic fails gates: calibrated model id may remain selected with `support_class = unsupported` and `estimate_mean = NA`.
+
+> **Warning.** Do not read modal pitch tables as timbre tables. Numeric EWSD appears only where the resolver accepts a support class other than `unsupported`.
+
+**Status:** **IMPLEMENTED** (limited coverage). See `reports/harmonic_instrument_acceptance_gaps.md`.
 
 ---
 

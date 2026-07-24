@@ -114,6 +114,9 @@ class NarrowExtrapolatorApp(ttk.Frame):
         file_m.add_command(label="Export results to Excel…", command=self.export_results)
         file_m.add_command(label="Open last Excel export", command=self.open_last_export)
         file_m.add_separator()
+        file_m.add_command(label="Reload calibration data", command=self.reload_calibration_data)
+        file_m.add_command(label="Show calibration status…", command=self.show_calibration_status)
+        file_m.add_separator()
         file_m.add_command(label="Return to start (edit & re-run)…", command=self.return_to_start)
         file_m.add_separator()
         file_m.add_command(label="Exit", command=self.root.destroy)
@@ -615,7 +618,13 @@ class NarrowExtrapolatorApp(ttk.Frame):
                     export_nonlinear_workbook,
                     predict_register,
                 )
+                from string_technique_model.extrapolation.nonlinear.harmonic_source_resolver import (
+                    clear_harmonic_calibration_cache,
+                )
                 from string_technique_model.extrapolation.register_builder import TECHNIQUE_SORT_ORDER
+
+                # Always reload measured CSVs so GUI does not serve a stale cache.
+                clear_harmonic_calibration_cache()
 
                 techs = []
                 for t in TECHNIQUE_SORT_ORDER:
@@ -848,6 +857,76 @@ class NarrowExtrapolatorApp(ttk.Frame):
             parent=self.root,
         ):
             self.open_last_export()
+
+    def reload_calibration_data(self) -> None:
+        """Invalidate cached harmonic calibration tables after measured CSVs change."""
+        from string_technique_model.extrapolation.nonlinear.harmonic_source_resolver import (
+            clear_harmonic_calibration_cache,
+            coverage_counts,
+            load_raw_harmonic_calibration_table,
+            write_coverage_manifests,
+        )
+
+        clear_harmonic_calibration_cache()
+        write_coverage_manifests()
+        table = load_raw_harmonic_calibration_table()
+        instruments = sorted(table["instrument"].unique()) if not table.empty else []
+        msg = (
+            f"Calibration cache cleared.\n"
+            f"Loaded instruments: {', '.join(instruments) or '(none)'}\n"
+            f"vln art mf notes: {coverage_counts('vln','artificial_harmonic','mf')}\n"
+            f"vla art mf notes: {coverage_counts('vla','artificial_harmonic','mf')}\n"
+            f"vlc art notes: {coverage_counts('vlc','artificial_harmonic')}\n"
+            f"Cross-instrument transfer: disabled"
+        )
+        self.status_text.set(
+            "Calibration reloaded | "
+            f"instruments={','.join(instruments) or 'none'} | "
+            f"vla_art_mf={coverage_counts('vla','artificial_harmonic','mf')}"
+        )
+        messagebox.showinfo("Calibration reloaded", msg, parent=self.root)
+
+    def show_calibration_status(self) -> None:
+        from string_technique_model.extrapolation.nonlinear.harmonic_source_resolver import (
+            coverage_counts,
+            load_raw_harmonic_calibration_table,
+        )
+        from string_technique_model.extrapolation.nonlinear.harmonic_support import (
+            DEFAULT_ALLOW_CROSS_INSTRUMENT,
+            DEFAULT_ALLOW_INTERPOLATION,
+            DEFAULT_PROCESSING_VERSION,
+        )
+
+        table = load_raw_harmonic_calibration_table()
+        lines = [
+            f"PACKAGE_ROOT: {PACKAGE_ROOT}",
+            f"SSA/EWSD version: {DEFAULT_PROCESSING_VERSION}",
+            f"Interpolation enabled: {DEFAULT_ALLOW_INTERPOLATION}",
+            f"Cross-instrument transfer enabled: {DEFAULT_ALLOW_CROSS_INSTRUMENT}",
+            "",
+            "Coverage (unique sounding pitches from measured tables):",
+            f"  violin artificial mf: {coverage_counts('vln','artificial_harmonic','mf')}",
+            f"  violin natural mf: {coverage_counts('vln','natural_harmonic','mf')}",
+            f"  violin natural p: {coverage_counts('vln','natural_harmonic','p')}",
+            f"  viola artificial mf: {coverage_counts('vla','artificial_harmonic','mf')}",
+            f"  viola natural: {coverage_counts('vla','natural_harmonic')}",
+            f"  cello artificial: {coverage_counts('vlc','artificial_harmonic')}",
+            f"  cello natural: {coverage_counts('vlc','natural_harmonic')}",
+        ]
+        if not table.empty:
+            combos = (
+                table.groupby(["instrument", "technique", "dynamic", "collection"])
+                .size()
+                .reset_index(name="n")
+            )
+            lines.append("")
+            lines.append("Loaded technique/dynamic/collection combinations:")
+            for row in combos.itertuples(index=False):
+                lines.append(
+                    f"  {row.instrument} | {row.technique} | {row.dynamic} | "
+                    f"{row.collection} | n={row.n}"
+                )
+        messagebox.showinfo("Calibration status", "\n".join(lines), parent=self.root)
 
     def open_last_export(self) -> None:
         path = Path(self.output_path.get().strip() or _DEFAULT_OUT)

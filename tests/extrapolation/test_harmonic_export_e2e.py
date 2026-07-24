@@ -41,12 +41,15 @@ def test_export_retains_unavailable_harmonics(tmp_path: Path) -> None:
         "artificial_harmonic",
         "natural_harmonic",
     ):
+        # Harmonics are calibrated at mf (and natural also at p); ff has no
+        # measured table and must not silently proxy — use mf for numeric e2e.
+        dyn = "mf" if "harmonic" in tech else "ff"
         all_r.extend(
             predict_register(
                 rows,
                 technique=tech,
                 instrument="vln",
-                dynamic="ff",
+                dynamic=dyn,
                 harmonic_selection_mode="configured_physically_plausible_harmonics",
                 harmonic_sounding_max="C8",
                 include_low_harmonics=True,
@@ -129,3 +132,26 @@ def test_export_retains_unavailable_harmonics(tmp_path: Path) -> None:
     assert not gate.empty
     assert (gate["rejection_reason"] == "gate_not_applicable_modal_metadata_complete").all()
     assert "failed_requirement:harmonic_metadata_complete" not in set(gate["rejection_reason"])
+
+    for sheet in (
+        "Harmonic_Coverage",
+        "Harmonic_Source_Selection",
+        "Dynamic_Transfers",
+        "Unsupported_Harmonic_Targets",
+    ):
+        assert sheet in xl.sheet_names
+    src = pd.read_excel(out, sheet_name="Harmonic_Source_Selection")
+    assert "support_class" in src.columns
+    assert "source_record_ids" in src.columns
+    assert src["support_class"].notna().any()
+    # Provenance IDs must survive for measured / cross-collection rows.
+    measured = src[
+        src["support_class"].isin(
+            [
+                "same_instrument_same_collection_measured",
+                "same_instrument_cross_collection_measured",
+            ]
+        )
+    ]
+    assert not measured.empty
+    assert measured["source_record_ids"].astype(str).str.len().gt(0).any()

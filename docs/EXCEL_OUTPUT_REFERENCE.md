@@ -23,6 +23,10 @@ GUI writes `nonlinear_extrapolation_results.xlsx`. The CLI honours
 | `By_Technique` | Cell counts grouped by technique, instrument, dynamic, and model. |
 | `Diagnostics` | Per-cell diagnostic subset. |
 | `Unavailable` | Subset of `Posterior_Summary` where `value_kind == unavailable`. |
+| `Harmonic_Coverage` | Per instrument×collection×technique×dynamic coverage manifest (measured / missing pitches, hashes). |
+| `Harmonic_Source_Selection` | Resolver audit per harmonic result (`support_class`, source/target, candidates, transfer gates). |
+| `Dynamic_Transfers` | Subset where `support_class == same_instrument_dynamic_transfer`. |
+| `Unsupported_Harmonic_Targets` | Harmonic rows with `unsupported` / missing `estimate_mean`. |
 | `Run_Summary` | Key-value run metadata. |
 | `Model_Comparison` | Optional comparison of `M0` vs `M1` when provided. |
 | `Priors_Used` | Loaded priors with activation status. |
@@ -159,6 +163,13 @@ GUI-authored runs additionally add:
 
 Subset of `Posterior_Summary` for rows with `value_kind == unavailable`.
 Use this sheet to audit which cells were refused and why.
+
+## Harmonic audit sheets
+
+- **`Harmonic_Coverage`** — regenerated coverage manifest rows (instrument, collection, technique, dynamic, measured/missing pitches, counts, SSA/EWSD version, source files/hashes).
+- **`Harmonic_Source_Selection`** — one row per harmonic result with `support_class`, source/target instrument and dynamic, collection, `source_record_ids`, transfer formula/gates, candidate JSON, `estimate_mean` / `na_reason`.
+- **`Dynamic_Transfers`** — rows accepted as `same_instrument_dynamic_transfer`.
+- **`Unsupported_Harmonic_Targets`** — harmonic rows with unavailable numeric EWSD under the resolver gates.
 
 ## `Model_Comparison` sheet
 

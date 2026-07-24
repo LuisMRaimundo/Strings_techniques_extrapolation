@@ -1,13 +1,19 @@
-"""Harmonic technique predictor (calibrated descriptor lookup + Phase-2 stub)."""
+"""Harmonic technique predictor (calibrated descriptor resolver + uncalibrated modal gate)."""
 
 from __future__ import annotations
 
 from typing import Any
 
 from string_technique_model.extrapolation.nonlinear.domain import EvidenceTier, ValueKind
-from string_technique_model.extrapolation.nonlinear.harmonic_calibration_table import (
+from string_technique_model.extrapolation.nonlinear.harmonic_source_resolver import (
+    OrdinaryAnchor,
     has_calibrated_harmonic_coverage,
-    lookup_calibrated_harmonic,
+    resolve_harmonic_value,
+)
+from string_technique_model.extrapolation.nonlinear.harmonic_support import (
+    DEFAULT_ALLOW_CROSS_INSTRUMENT,
+    DEFAULT_ALLOW_INTERPOLATION,
+    HarmonicSupportClass,
 )
 
 
@@ -39,20 +45,48 @@ def predict_harmonic_register(
     baseline_semantics: str,
     target_quantity: str,
     ordinary_by_dynamic: dict[str, float] | None = None,
+    ordinary_rows: list[OrdinaryAnchor] | None = None,
+    allow_interpolation: bool = DEFAULT_ALLOW_INTERPOLATION,
+    allow_cross_instrument: bool = DEFAULT_ALLOW_CROSS_INSTRUMENT,
 ) -> dict[str, Any]:
-    """Predict harmonic EWSD from calibrated measured tables when available."""
-    hit = lookup_calibrated_harmonic(
+    """Predict harmonic EWSD via priority resolver (instrument-isolated)."""
+    del ordinary_by_dynamic  # pooled GUI mean is not an admissible ordinary baseline
+    resolution = resolve_harmonic_value(
         instrument=instrument,
         technique=technique,
         note=pitch,
         dynamic=dynamic,
-        ordinary_by_dynamic=ordinary_by_dynamic,
+        ordinary_rows=ordinary_rows,
+        allow_interpolation=allow_interpolation,
+        allow_cross_instrument=allow_cross_instrument,
+        quantity=target_quantity,
     )
-    if hit is not None:
-        measured = hit["measured_or_extrapolated"] == "measured"
+
+    common_prov = {
+        "support_class": resolution.support_class.value,
+        "source_instrument": resolution.source_instrument,
+        "source_collection": resolution.source_collection,
+        "source_technique": resolution.source_technique,
+        "source_dynamic": resolution.source_dynamic,
+        "target_instrument": resolution.target_instrument,
+        "target_dynamic": resolution.target_dynamic,
+        "source_record_ids": list(resolution.source_record_ids),
+        "ordinary_baseline_record_ids": list(resolution.ordinary_baseline_record_ids),
+        "transfer_method": resolution.transfer_method,
+        "transfer_formula": resolution.transfer_formula,
+        "transfer_gate_status": resolution.transfer_gate_status,
+        "cross_instrument_transfer_enabled": resolution.cross_instrument_transfer_enabled,
+        "selection_reason": resolution.selection_reason,
+        "rejection_reason": resolution.rejection_reason,
+        "harmonic_candidates": [c.__dict__ for c in resolution.candidates],
+        "calibration_processing_version": resolution.processing_version,
+    }
+
+    if resolution.mean is not None and resolution.support_class != HarmonicSupportClass.UNSUPPORTED:
+        measured = resolution.measured_or_extrapolated == "measured"
         return {
-            "mean": hit["mean"],
-            "sd": hit.get("sd"),
+            "mean": resolution.mean,
+            "sd": resolution.sd,
             "baseline_mean": None,
             "value_kind": ValueKind.MEASURED if measured else ValueKind.ASSUMPTION_BASED_EXTRAPOLATION,
             "evidence_tier": (
@@ -60,13 +94,13 @@ def predict_harmonic_register(
                 if measured
                 else EvidenceTier.LEVEL_1_ASSUMPTION_ONLY
             ),
-            "measured_or_extrapolated": hit["measured_or_extrapolated"],
+            "measured_or_extrapolated": resolution.measured_or_extrapolated,
             "na_reason": None,
             "baseline_semantics": baseline_semantics,
             "warnings": [
-                f"calibrated_harmonic_transfer={hit['transfer']}",
-                f"source_dynamic={hit['source_dynamic']}",
-                f"collection={hit.get('collection')}",
+                f"support_class={resolution.support_class.value}",
+                f"transfer_method={resolution.transfer_method}",
+                f"source_collection={resolution.source_collection}",
                 "no_constant_factor_applied_to_ordinary_baseline",
             ],
             "assumption_ids": (
@@ -81,11 +115,11 @@ def predict_harmonic_register(
             ),
             "assumptions_trace": [
                 f"baseline_semantics={baseline_semantics}",
-                f"transfer={hit['transfer']}",
-                f"source_dynamic={hit['source_dynamic']}",
+                f"selection_reason={resolution.selection_reason}",
+                f"support_class={resolution.support_class.value}",
             ],
             "model_id": "harmonic_modal_frequency_with_descriptor_priors",
-            "submodel_id": "calibrated_harmonic_descriptor_lookup",
+            "submodel_id": "calibrated_harmonic_descriptor_resolver",
             "register_shape_identified": True,
             "shape_source": "calibrated_measured_table",
             "g_t_active": False,
@@ -97,6 +131,7 @@ def predict_harmonic_register(
             "pitch": pitch,
             "midi": midi,
             "target_quantity": target_quantity,
+            **common_prov,
         }
 
     covered = has_calibrated_harmonic_coverage(instrument, technique)
@@ -104,29 +139,41 @@ def predict_harmonic_register(
         "value_kind": ValueKind.UNAVAILABLE,
         "evidence_tier": EvidenceTier.LEVEL_0_UNSUPPORTED,
         "measured_or_extrapolated": "unavailable",
-        "na_reason": (
+        "na_reason": resolution.na_reason
+        or (
             "no_calibrated_harmonic_value_for_target"
             if covered
-            else "harmonic_model_phase2"
+            else "no_harmonic_acoustic_calibration_data"
         ),
         "baseline_semantics": baseline_semantics,
         "warnings": [
-            "Harmonic descriptor unavailable for this sounding pitch/dynamic.",
+            "Harmonic descriptor unavailable under priority/gate rules.",
             "No constant factor applied to ordinary baseline.",
+            f"support_class={HarmonicSupportClass.UNSUPPORTED.value}",
         ],
         "assumption_ids": ["ASSUMP_HARMONIC_REQUIRES_MODAL_METADATA"],
         "assumptions_used": ["ASSUMP_HARMONIC_REQUIRES_MODAL_METADATA"],
         "assumptions_trace": [
             f"baseline_semantics={baseline_semantics}",
-            "no_constant_factor_applied_to_ordinary_baseline",
-            f"calibration_table_present_for_technique={covered}",
+            f"selection_reason={resolution.selection_reason}",
         ],
-        "model_id": "M2_harmonic_stub",
-        "submodel_id": "harmonic_phase2",
+        # Keep calibrated model id when technique has tables but this note fails gates.
+        "model_id": (
+            "harmonic_modal_frequency_with_descriptor_priors"
+            if covered
+            else "harmonic_modal_acoustic_model_unavailable"
+        ),
+        "submodel_id": "modal_geometry_only" if not covered else "calibrated_resolver_unsupported_target",
+        "register_shape_identified": None,
+        "shape_source": "not_applicable",
+        "g_t_active": None,
+        "prior_dominated": None,
+        "sigma_estimated_from_data": None,
         "instrument": instrument,
         "technique": technique,
         "dynamic": dynamic,
         "pitch": pitch,
         "midi": midi,
         "target_quantity": target_quantity,
+        **common_prov,
     }

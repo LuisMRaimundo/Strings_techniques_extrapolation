@@ -38,6 +38,8 @@ The default geometry is `1280 × 840` with a minimum size of
 |------|------|--------|
 | `File` | `Save Measured register…` | Save the current register to an Excel workbook (sheets `Measured` and `Requests`). |
 | `File` | `Load Measured register…` | Load a workbook and stamp provenance metadata on the loaded rows. |
+| `File` | `Reload calibration data` | Clear the in-memory harmonic calibration cache, regenerate coverage manifests, and report loaded instruments / unique-note counts. Use after measured CSVs change. |
+| `File` | `Show calibration status…` | Display SSA/EWSD version, interpolation / cross-instrument flags, and coverage counts by instrument×technique×dynamic. |
 | `File` | `Export results to Excel…` | Export the last result set (nonlinear workbook by preference). |
 | `File` | `Open last Excel export` | Reveal the last exported workbook in the operating system. |
 | `File` | `Return to start (edit & re-run)…` | Clear requests and results while preserving the measured register. |

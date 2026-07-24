@@ -65,20 +65,23 @@ supplied.
 Harmonic modal frequencies (sounding pitches from
 `n · f₀` and open-string × order enumeration) are **implemented** and
 exported as full geometry columns (see
-[DATA_SCHEMA_REFERENCE.md](DATA_SCHEMA_REFERENCE.md)). What remains
-**not implemented** is a calibrated harmonic descriptor model that maps
-these modal frequencies to a numerical EWSD or descriptor value.
+[DATA_SCHEMA_REFERENCE.md](DATA_SCHEMA_REFERENCE.md)). Acoustic EWSD for
+harmonics is **partially implemented** via instrument-isolated measured
+tables and a source-priority resolver (see TECHNICAL_GUIDE §21). Coverage
+is limited (violin art/nat; viola art mf). Viola natural and cello remain
+`implemented_but_uncalibrated`: modal pitches may exist while
+`estimate_mean` is `NA`.
 
-Two harmonic gates therefore coexist:
+Gates / support outcomes:
 
-- `harmonic_modal_metadata_gate` — modal geometry is incomplete;
-  `na_reason=insufficient_harmonic_metadata`.
-- `harmonic_modal_acoustic_model_unavailable` — modal geometry is
-  complete, but no calibrated harmonic descriptor model exists;
-  `na_reason=no_harmonic_acoustic_calibration_data`; the row is marked
-  `modal_frequencies_generated_acoustic_values_unavailable`.
+- `harmonic_modal_metadata_gate` — modal geometry incomplete.
+- `harmonic_modal_acoustic_model_unavailable` — no calibration table for
+  that instrument×technique.
+- `support_class=unsupported` — tables exist but the note/dynamic fails
+  priority/gates (no silent violin transfer; no pooled ordinary mean).
 
-No spectral EWSD formula for harmonics is invented.
+No spectral EWSD formula is invented beyond measured lookup and the
+gated ordinary-ratio dynamic transfer.
 
 ## 6. Violin-centric literature
 
