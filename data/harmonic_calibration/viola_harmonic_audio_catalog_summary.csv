@@ -1,0 +1,15 @@
+collection,technique,dynamic,n_files,n_notes
+mcgill,artificial_harmonic,mf,13,13
+mcgill,ordinario,unknown,32,32
+orchidea,artificial_harmonic,mf,35,35
+orchidea,ordinario,ff,98,49
+orchidea,ordinario,mf,98,49
+orchidea,ordinario,pp,98,49
+philharmonia,artificial_harmonic,mf,16,16
+philharmonia,natural_harmonic,mf,20,20
+philharmonia,ordinario,f,40,38
+philharmonia,ordinario,ff,49,49
+philharmonia,ordinario,mf,7,6
+philharmonia,ordinario,mp,38,37
+philharmonia,ordinario,p,50,50
+philharmonia,ordinario,pp,48,48

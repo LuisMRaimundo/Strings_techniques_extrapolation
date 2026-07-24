@@ -56,10 +56,35 @@ Expected artefact: `compiled_density_metrics_research.xlsx` with
   - natural mf: 15; natural p: 9
 - Philharmonia quirks: B6 (art) and D#6 (nat p) skipped — SSA stale-schema guard
 
+## Viola audio inventory (catalogued 2026-07-24)
+
+Local paths inspected:
+
+| Collection | Path |
+|---|---|
+| Orchidea ordinario | `D:\CORDAS\Orchidea\ORCH_VLA\ordinario` |
+| Orchidea artificial_harmonic | `D:\CORDAS\Orchidea\ORCH_VLA\artificial_harmonic` |
+| McGill non-vibrato | `D:\CORDAS\McGill\VIOLAS\VIOLA NON-VIBRATO` |
+| McGill artificial harmonics | `D:\CORDAS\McGill\VIOLAS\VIOLA ARTIFICIAL HARMONICS` |
+| Philharmonia harmonics + ordinario | `F:\...\CORDAS\VIOLA\Phillarmonia\viola\...` |
+
+| Collection | Technique | Dynamics | Unique notes |
+|---|---|---|---|
+| Orchidea | artificial_harmonic | mf | 35 |
+| Philharmonia | artificial_harmonic | mf | 16 |
+| Philharmonia | natural_harmonic | mf | 20 |
+| McGill | artificial_harmonic | mf | 13 |
+| Orchidea / Philharmonia | ordinario | pp…ff | baseline for ratios |
+
+Catalog: `data/harmonic_calibration/viola_harmonic_audio_catalog.csv`  
+Generator: `tools/harmonic_calibration/catalog_viola_harmonic_sources.py`
+
+**Gaps vs violin:** no McGill natural-harmonic folder; Philharmonia harmonics are **mf-only** (no p/pp harmonic takes); Orchidea has artificial only.
+
 ## Next STE / TD steps
 
-1. Finish Philharmonia/McGill SSA exports into `measured/*.csv` (auto-merged by loader).
-2. Re-export Violin Excel; regenerate TD `violin_art_harm` / add `violin_nat_harm`.
+1. Stage + SSA viola harmonic batches → `measured/viola_*.csv` (or instrument-tagged rows).
+2. Extend STE calibrated lookup to `vla` coverage; export Viola Excel; regenerate TD `viola_art_harm` / `viola_nat_harm`.
 
 ## Provenance policy
 
