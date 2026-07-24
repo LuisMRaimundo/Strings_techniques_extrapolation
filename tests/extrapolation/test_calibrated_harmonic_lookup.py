@@ -53,6 +53,41 @@ def test_ff_via_ordinary_ratio() -> None:
     assert abs(hit["mean"] - base["mean"] * (55.0 / 50.0)) < 1e-6
 
 
+def test_pp_proxy_when_ordinary_lacks_mf() -> None:
+    """GUI often fills only pp ordinary; still return calibrated mf note as proxy."""
+    base = lookup_calibrated_harmonic(
+        instrument="vln",
+        technique="artificial_harmonic",
+        note="G5",
+        dynamic="mf",
+    )
+    assert base is not None
+    hit = lookup_calibrated_harmonic(
+        instrument="vln",
+        technique="artificial_harmonic",
+        note="G5",
+        dynamic="pp",
+        ordinary_by_dynamic={"pp": 20.0},
+    )
+    assert hit is not None
+    assert hit["transfer"] == "calibrated_source_dynamic_proxy"
+    assert abs(hit["mean"] - base["mean"]) < 1e-9
+
+
+def test_nearest_note_fills_unmeasured_pitch() -> None:
+    hit = lookup_calibrated_harmonic(
+        instrument="vln",
+        technique="artificial_harmonic",
+        note="C8",
+        dynamic="pp",
+        ordinary_by_dynamic={"pp": 20.0},
+    )
+    assert hit is not None
+    assert "nearest_note" in hit["transfer"]
+    assert hit["nearest_semitones"] is not None
+    assert hit["nearest_semitones"] <= 3
+
+
 def test_predict_register_numeric_for_calibrated_artificial() -> None:
     reg = build_register_from_notes("G3", "G7", "vln", "mf")
     ordinary = [

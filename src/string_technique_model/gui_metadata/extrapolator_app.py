@@ -100,7 +100,7 @@ class NarrowExtrapolatorApp(ttk.Frame):
         self.build_register()
 
     def _build(self) -> None:
-        self.root.title("Manual register → technique requests")
+        self.root.title(f"Manual register → technique requests  |  {PACKAGE_ROOT}")
         self.root.minsize(1100, 720)
         self.root.geometry("1280x840")
         style = ttk.Style(self.root)
