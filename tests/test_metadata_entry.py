@@ -222,9 +222,21 @@ def test_gui_smoke_extrapolator_app(tmp_path) -> None:
         app.output_path.set(str(tmp_path / "out.xlsx"))
         app.run_requests()
         assert app._last_result is not None
-        assert app._last_result["summary"]["n_matched_baseline"] >= 1
+        summary = app._last_result["summary"]
+        # Default method is hierarchical_spline → automatic nonlinear path.
+        # The legacy M0 constant path exposes n_matched_baseline; the
+        # nonlinear path exposes n_requests / requested_method instead.
+        if "n_matched_baseline" in summary:
+            assert summary["n_matched_baseline"] >= 1
+        else:
+            assert summary.get("n_requests", 0) >= 1
+            assert summary.get("requested_method") in {"automatic", "hierarchical_spline", "constant"}
+            assert app._last_nonlinear_results is not None
+            assert len(app._last_nonlinear_results) >= 1
     finally:
         root.destroy()
+
+
 def test_gui_smoke_legacy_metadata_app() -> None:
     tk = pytest.importorskip("tkinter")
     try:

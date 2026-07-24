@@ -1,86 +1,132 @@
 # String Technique Density Model
 
-Literature-informed estimation of acoustic density for extended bowed-string techniques.
+**Version:** `0.1.0`
+(see [`pyproject.toml`](pyproject.toml) and [`CHANGELOG.md`](CHANGELOG.md))
 
-**Phase 1:** generic multi-collection ingestion and metric compatibility.  
-**Phase 2:** ordinary-bowing baseline engine.  
-**Phase 3:** specialised-literature evidence framework (auditable; curated package + local corpus).  
-**Phase 4:** evidence-gated prediction engine (Monte Carlo). Numerical EWSD technique parameters remain **inactive** until activated mappings exist — predictions therefore typically return NA.
+Literature-informed estimation of acoustic density for extended
+bowed-string techniques. The package supports a manual register entry
+workflow, a nonlinear hierarchical extrapolation pipeline, a curated
+literature evidence layer, and a user assumption registry.
 
-**v0.3:** compositional production instructions, expanded technique ontology, acoustic-descriptor registry, qualitative constraint layer, and integration of the local secondary synthesis *State of the Art on String Timbral and Articulatory Techniques* (author/year unresolved in the PDF). See `CHANGELOG.md`.
+**Start here:**
+[docs/DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md).
+The full technical reference is
+[docs/TECHNICAL_GUIDE.md](docs/TECHNICAL_GUIDE.md).
 
-Absence of evidence in the local corpus must not be interpreted as
-evidence of absence in the specialised literature.
+## Scope
 
-## Strict instrument domain
+- Instruments: orchestral bowed strings only — `vln` (violin),
+  `vla` (viola), `vlc` (violoncello), `cb` (double bass).
+- Dynamics: `pp`, `mf`, `ff`.
+- Techniques with numerical output paths: `sul_tasto`, `sul_ponticello`,
+  `con_sordino`. Harmonic techniques generate modal geometry (sounding
+  pitches from `n · f₀` and open string × configured order) but the
+  acoustic descriptor mapping remains numerically `NA`; multiphonics and
+  flautando are qualitative only. See
+  [docs/SCIENTIFIC_LIMITATIONS.md](docs/SCIENTIFIC_LIMITATIONS.md).
+- Numerical technique-to-EWSD literature parameters remain **inactive**
+  (`n_active_density_parameters == 0`). The metric identity `Φ(D) = D`
+  is enforced.
+- No audio is imported, played, or required. All computation is
+  numerical.
 
-Only orchestral bowed strings are in scope:
+## Installation
 
-- `vln` (violin)
-- `vla` (viola)
-- `vlc` (cello / violoncello)
-- `cb` (double bass / contrabass)
+The package targets Python 3.10 or newer. From the repository root:
 
-Aliases are exact matches only (case-insensitive, trimmed). No fuzzy matching.
-Out-of-scope instruments are written to
-`outputs/rejected/<collection_id>_rejected_records.csv` and are **excluded** from
-`outputs/imported/<collection_id>.parquet` unless `--include-invalid-records` is set.
-
-See `configs/instrument_domain.yaml` and `configs/technique_ontology.yaml`.
-
-## Production instructions (v0.3)
-
-The flat `technique` column remains a **legacy compatibility label**. Combined states
-(e.g. artificial harmonic + sul ponticello + mute) are represented by
-`ProductionInstruction` (`string_technique_model.production`). Migrate with:
-
-```python
-from string_technique_model.production import migrate_legacy_technique_record
-prod = migrate_legacy_technique_record(legacy_row_dict)
+```bat
+python -m pip install -e ".[dev]"
 ```
 
-Flautando is **not** auto-mapped to sul tasto. On-bridge and afterlength bowing are
-outside the tasto–ponticello continuum. Mute mass prefers `mute_mass_g`.
+Optional Bayesian backend (PyMC / ArviZ / patsy):
 
-## Dependencies / Parquet
+```bat
+python -m pip install -e ".[bayes]"
+```
 
-- Python `>=3.10`
-- Parquet via `pyarrow` is **mandatory** for collection import outputs. Missing engines fail once in preflight with an actionable message (`pip install 'pyarrow>=14.0,<20'`).
-- Prediction may write CSV if Parquet fails, with an explicit warning.
-
-## Quick start (Windows)
+Windows quick start:
 
 ```bat
 run.bat
 ```
 
-```bat
-python -m pip install -e ".[dev]"
-python -m string_technique_model collection list
-python -m string_technique_model literature build-all
-python -m string_technique_model predict from-ordinary --instrument vln --dynamic mf
-```
+## Primary workflow: GUI
 
-### Ordinary → techniques
-
-Default (evidence-backed numerical parameters inactive):
+The recommended workflow is the desktop GUI titled
+`Manual register → technique requests`, implemented in
+[`src/string_technique_model/gui_metadata/extrapolator_app.py`](src/string_technique_model/gui_metadata/extrapolator_app.py):
 
 ```bat
-python -m string_technique_model predict from-ordinary --instrument vln --dynamic mf
+python -m string_technique_model gui
 ```
 
-Writes ordinary baseline densities, **NA** technique EWSD estimates, and qualitative tendencies under `outputs/predictions/from_ordinary/`.
+Three tabs:
 
-User numerical assumptions live in `configs/user_assumptions.yaml` and stay **inactive** unless you both:
+1. **Measured register (type values)** — build a note column between two
+   scientific-pitch endpoints, then paste or type the ordinary EWSD
+   values.
+2. **Requests (notes + techniques)** — tick techniques, configure the
+   harmonic output range (physical range vs custom sounding range,
+   `C8` ceiling), and generate one request per filled note × technique.
+3. **Results** — run the nonlinear extrapolator and export the audit
+   workbook.
 
-1. pass `--activate-user-assumptions`, and  
-2. set `active_for_density_prediction: true` on specific assumptions.
+Detailed reference: [docs/GUI_REFERENCE.md](docs/GUI_REFERENCE.md).
+Full workflow: [docs/USER_GUIDE.md](docs/USER_GUIDE.md).
 
-Assumption-based rows are labelled `result_basis=user_assumption`, list `assumption_ids_used`, and are **never** marked literature-validated or evidence-based.
+## Primary workflow: CLI
+
+```bat
+python -m string_technique_model nonlinear diagnose
+python -m string_technique_model nonlinear fit-baseline --instrument vln --dynamic pp --research-excel path\to\research.xlsx
+python -m string_technique_model nonlinear predict --technique sul_ponticello --instrument vln --dynamic pp --method hierarchical_spline --research-excel path\to\research.xlsx
+```
+
+Full CLI enumeration: [docs/CLI_REFERENCE.md](docs/CLI_REFERENCE.md).
+
+## Output
+
+The nonlinear extrapolator writes a multi-sheet workbook by default at
+`outputs/extrapolation/nonlinear_extrapolation_results.xlsx`. Sheets
+include `Methodology`, `Posterior_Summary` (aliases `All_Results` and
+`Note_Level_Results`), `Model_Selection`, `Model_Selection_Audit`,
+`Technique_Effects`, `Diagnostics`, `Unavailable`, `Run_Summary`,
+`Priors_Used`, and one sheet per technique. Column dictionary:
+[docs/EXCEL_OUTPUT_REFERENCE.md](docs/EXCEL_OUTPUT_REFERENCE.md).
+
+## Configuration
+
+Configuration YAML files live under [`configs/`](configs). The most
+influential files are:
+
+- `extrapolation_model_selection.yaml` — thresholds and ladder families.
+- `extrapolation_harmonic_ranges.yaml` — configured orders and
+  sounding-pitch ceilings.
+- `extrapolation_priors.yaml` — regularization / user-assumption priors.
+- `extrapolation_models.yaml` — model shells and technique submodels.
+- `density_metric.yaml` — canonical metric definition.
+- `acoustic_descriptors.yaml` — descriptor registry.
+- `analysis_profiles/*.yaml` — descriptor analysis profiles.
+- `instruments.yaml` — per-instrument physical metadata.
+
+Full field-level reference:
+[docs/CONFIGURATION_REFERENCE.md](docs/CONFIGURATION_REFERENCE.md).
+
+## Data schemas and outputs
+
+- Row and result schemas:
+  [docs/DATA_SCHEMA_REFERENCE.md](docs/DATA_SCHEMA_REFERENCE.md)
+- Excel workbook layout:
+  [docs/EXCEL_OUTPUT_REFERENCE.md](docs/EXCEL_OUTPUT_REFERENCE.md)
+- Scientific limitations:
+  [docs/SCIENTIFIC_LIMITATIONS.md](docs/SCIENTIFIC_LIMITATIONS.md)
 
 ## Literature corpus
 
-Place local PDFs/texts under:
+Literature files live under
+[`literature/`](literature). Local PDFs are treated as verification
+material and are **git-ignored** so they do not enter a public
+repository (see [`.gitignore`](.gitignore)):
 
 ```text
 literature/corpus/books/
@@ -90,32 +136,52 @@ literature/corpus/reports/
 literature/corpus/metadata/
 ```
 
-Registered secondary synthesis:
+The presence of a PDF does not activate any numerical EWSD parameter.
+Secondary-synthesis figures require primary-source verification before
+activation.
 
-- `literature/corpus/reports/string_timbral_articulatory_state_of_art.pdf`
-- source id `SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART`
-
-PDF presence alone does **not** activate EWSD parameters. Secondary-synthesis
-numerical figures require primary-source verification before numerical activation.
-
-The legacy 4×4 instrument×technique evidence matrix is a **compatibility view**;
-scientific authority is the compositional ontology + qualitative constraints.
-
-## Tests / lint / types
+## Tests, lint, and types
 
 ```bat
 python -m pytest -q
 python -m ruff check src tests
-python -m mypy src/string_technique_model
+python -m mypy src\string_technique_model
 ```
+
+## Documentation validation
+
+```bat
+python tools\validate_documentation.py
+```
+
+A non-zero exit code indicates broken relative links, unbalanced math
+delimiters, forbidden placeholders, or obsolete identifiers in the
+documentation.
+
+Absence of evidence in the local corpus must not be interpreted as
+evidence of absence in the specialised literature.
+
+## Honest scope statement
+
+- The package does not recompute EWSD from spectra; it applies the
+  identity `Φ(D) = D`.
+- Numerical technique-to-EWSD literature parameters remain inactive.
+- Mute figures rely on an explicit user assumption
+  (`log(10^(-dB/10))`) with `alpha_origin=user_assumption`.
+- Harmonic acoustic descriptors are numerically `NA`.
+- Multiphonics and flautando produce qualitative output only.
+- Instrument transfer is refused by default (violin parameters must not
+  be silently reused for viola, cello, or contrabass).
+- The Bayesian backend is optional; no pseudo-posterior is substituted
+  when it is unavailable.
 
 ## Reports
 
-- `reports/pdf_integration_audit.md`
-- `reports/pdf_evidence_ingestion_report.md`
-- `reports/technique_ontology_report.md`
-- `reports/acoustic_descriptor_registry.md`
-- `reports/qualitative_constraints_report.md`
-- `reports/schema_migration_report.md`
-- `reports/literature_gaps.md`
-- `reports/test_status.md`
+Selected audit reports live under [`reports/`](reports):
+
+- [`reports/documentation_audit.md`](reports/documentation_audit.md)
+- [`reports/scientific_limitations.md`](reports/scientific_limitations.md)
+- [`reports/technique_ontology_report.md`](reports/technique_ontology_report.md)
+- [`reports/acoustic_descriptor_registry.md`](reports/acoustic_descriptor_registry.md)
+- [`reports/pdf_integration_audit.md`](reports/pdf_integration_audit.md)
+- [`reports/literature_gaps.md`](reports/literature_gaps.md)

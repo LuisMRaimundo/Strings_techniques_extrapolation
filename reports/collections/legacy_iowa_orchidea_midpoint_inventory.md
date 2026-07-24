@@ -13,7 +13,7 @@
 
 ## Source paths
 
-- `C:\Users\lmr20\Desktop\Extrapolação de ponticelo, sord, suç tasto\data\collections\legacy_iowa_orchidea_midpoint\ordinary_metrics.csv`
+- `E:\PYTHON CODES\CÓDIGOS FINAIS - GIT HUB\Strings_Techniques_Extrapolation\data\collections\legacy_iowa_orchidea_midpoint\ordinary_metrics.csv`
 
 ## Source columns
 

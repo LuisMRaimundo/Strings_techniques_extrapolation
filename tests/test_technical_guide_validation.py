@@ -38,12 +38,15 @@ def test_technical_guide_validation_script_passes() -> None:
 def test_guide_sections_present() -> None:
     text = GUIDE.read_text(encoding="utf-8")
     for heading in (
-        "## 1. Purpose and scientific scope",
-        "## 8. Bow-contact calculations",
-        "## 14. Density and EWSD",
-        "## 21. User numerical assumptions",
-        "## Appendix A: Code-to-documentation traceability matrix",
-        "## Appendix C: Scientific-source traceability",
+        "## 2. Purpose and research scope",
+        "## 8. Pitch registry and formulas",
+        "## 11. EWSD score and the identity metric",
+        "## 14. Automatic model selection",
+        "## 18. Bow-contact model",
+        "## 20. Harmonic register generator",
+        "## Appendix A: Formula inventory",
+        "## Appendix B: Code-to-documentation traceability matrix",
+        "## Appendix D: Production instructions, Phase-4 prediction, and literature sources",
     ):
         assert heading in text
 

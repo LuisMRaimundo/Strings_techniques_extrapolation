@@ -13,7 +13,7 @@
 
 ## Source paths
 
-- `C:\Users\lmr20\Desktop\Extrapolação de ponticelo, sord, suç tasto\tests\fixtures\synthetic\custom_test_collection.csv`
+- `E:\PYTHON CODES\CÓDIGOS FINAIS - GIT HUB\Strings_Techniques_Extrapolation\tests\fixtures\synthetic\custom_test_collection.csv`
 
 ## Source columns
 

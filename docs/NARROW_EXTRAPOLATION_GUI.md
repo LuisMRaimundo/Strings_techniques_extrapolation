@@ -1,14 +1,27 @@
-# Narrow Extrapolator GUI (numerical metadata only)
+# Narrow Extrapolator GUI (LEGACY / SECONDARY)
+
+> **LEGACY / SECONDARY.** The primary GUI is
+> `Manual register → technique requests` — see
+> [GUI_REFERENCE.md](GUI_REFERENCE.md). This document is retained for
+> historical reference only. The obsolete claims below are preserved so
+> that older screenshots can still be interpreted, but the current
+> `python -m string_technique_model gui` entry point launches the
+> primary GUI, not the window described here.
 
 The desktop app is **not** an audio tool. It runs the priority-1 literature extrapolator and shows auditable numerical / qualitative cells.
 
 Sound analysis stays in Spectral_Analyser. This GUI never imports, plays, or requires WAV/FLAC files.
 
-## Launch
+## Launch (obsolete claim — primary GUI is now different)
 
 ```bash
 python -m string_technique_model gui
 ```
+
+> **Obsolete.** The command above now launches the *Manual register →
+> technique requests* window described in
+> [GUI_REFERENCE.md](GUI_REFERENCE.md). The window described below is no
+> longer the default entry point.
 
 ## Main window
 

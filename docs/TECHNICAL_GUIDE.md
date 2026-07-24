@@ -1,1200 +1,1750 @@
 # Technical Guide
 
-**Repository:** String Technique Density Model  
-**Guide version:** 1.0.0 (implementation snapshot 2026-07-23)  
-**Audience:** musicologists, musical-acoustics researchers, data scientists, software engineers, maintainers  
-**Math rendering:** All formulas use LaTeX for [StackEdit](https://stackedit.io) / MathJax — inline `$...$` and display `$$...$$`.
+**Program:** `string-technique-model` — Strings Techniques Extrapolation
+**Distribution name:** `string-technique-model` (PyPI-style), Python package `string_technique_model`
+**Version:** `0.1.0` (`pyproject.toml`)
+**Commit at snapshot:** `644df08`
+**Document date:** 2026-07-24
+**Python requirement:** `>=3.10`
+**Console scripts:** `string-technique-model`, `string-technique-gui`
+**Optional extras:** `[bayes] = pymc, arviz, patsy`; `[dev] = pytest, pytest-cov, ruff, mypy, pandas-stubs, types-PyYAML`
+**Math rendering:** UTF-8 Markdown for StackEdit / KaTeX. Inline math uses `$ ... $`, display math uses `$$ ... $$`. No image equations, no Unicode substitutes for math operators.
 
-> **Writing rule.** This guide describes the system **as implemented**. Capabilities that are schema-only, inactive, qualitative-only, or absent are labelled accordingly. Formulas not present in code are marked **Not currently implemented.**
+> **Reading rule.** This guide describes the system **as implemented in this commit**. Every formula is tagged with a status: **IMPLEMENTED**, **IMPLEMENTED_FALLBACK**, **OPTIONAL_BACKEND**, **REFERENCE_MODEL**, **PLANNED**, or **ASSUMPTION**. A formula that appears in code exactly as written is **IMPLEMENTED**; a formula whose numerical constants come from user-supplied priors is **ASSUMPTION**; a formula used only for documentation of an oracle relationship is **REFERENCE_MODEL**.
 
----
-
-## 1. Purpose and scientific scope
-
-### Research problem
-
-The repository estimates how **specialised bowed-string production states** (harmonics, bow-contact region, mute state, multiphonics, etc.) relate to ordinary arco baselines expressed as precomputed **EWSD** (acoustic-balanced) scalar scores, while keeping **literature evidence** and **user numerical assumptions** strictly separated.
-
-### Technique, acoustics, perception, texture, EWSD
-
-Four analytical levels are modelled separately (`analytical_levels`):
-
-1. **Production instruction** — what the player physically does.
-2. **Acoustic result** — measurable descriptors / scores.
-3. **Perceptual organization** — fusion, segregation, streaming, etc.
-4. **Musical-textural function** — foreground/background, accumulation, etc.
-
-Technique **labels do not imply invariant timbres**: the same verbal label (e.g. “sul ponticello”) can combine with different left-hand regimes, mute states, dynamics, instruments, and measurement domains.
-
-### Evidence vs user assumptions
-
-| Mode | Default? | Numerical EWSD from literature params | Numerical EWSD from user assumptions |
-|------|----------|----------------------------------------|--------------------------------------|
-| `evidence_only` | **Yes** | Only if an activated, evidence-compatible parameter exists (currently **none**) | No |
-| `evidence_plus_user_assumptions` | No | Same gate | Yes, if dual activation gate passes |
-
-### What the software can and cannot currently calculate
-
-| Capability | Status |
-|------------|--------|
-| Structured `ProductionInstruction` + migration | **Implemented and active** |
-| $\beta$ from lengths | **Implemented and active** |
-| Artificial-harmonic interval $\leftrightarrow$ order validation | **Implemented and active** |
-| Qualitative constraint matching | **Implemented and active** |
-| Literature identity + extract registry | **Implemented and active** |
-| Monte Carlo density transforms (ops + links) | **Implemented**, but **inactive** without active parameters/assumptions |
-| EWSD recomputation from audio/spectrum | **Not currently implemented** |
-| Descriptor formulas (centroid, HNR, …) | **Implemented backend** (`descriptor_backend_v1`; some still unsupported) |
-| Mute mass $\rightarrow$ attenuation law | **Not currently implemented** (explicitly refused) |
-| Harmonic sounding-pitch from $n\cdot f_0$ | **Not currently implemented** |
-| Schelleng stable-motion boundary | **Not currently implemented** |
-
-**EWSD formula in this repository.** The metric module applies the identity
-
-$$
-\Phi(D) = D
-$$
-
-where $D$ is a **precomputed** EWSD acoustic-balanced scalar. This repository does **not** recompute EWSD from spectra. Direct technique-to-EWSD literature mappings are **inactive** (`n_active_density_parameters == 0`).
-
-Relevant files: `configs/density_metric.yaml`, `src/string_technique_model/density/metric.py`.
+> **Validation layers.** This document strictly separates three layers that are often conflated in acoustics-adjacent software:
+>
+> 1. **Software verification** — the code computes what the specification says (unit tests, algebraic identities, boundary handling). The commit ships with roughly **482 collected tests** (with `PYTHONPATH=src`; count verified at documentation refresh).
+> 2. **Numerical / model verification** — fitted objects reproduce known synthetic cases (spline recovery, log/exp round-trip, interval scaling with baseline).
+> 3. **Ecological acoustic validity** — whether the fitted numbers correspond to real bowed-string acoustic phenomena. This layer is **not established here** for extended techniques. The repository does not claim that its numerical outputs are validated acoustic predictions of `sul tasto`, `sul ponticello`, `con sordino`, or harmonics on real instruments.
 
 ---
 
-## 2. System architecture
+## 1. Title, version, status and validation statement
 
-![Architecture](technical_guide_assets/architecture.mmd)
+**Canonical short title:** *Strings Techniques Extrapolation — literature-informed nonlinear extrapolation of a scalar acoustic-balanced density score (EWSD) from ordinary bowing to extended techniques (sul tasto, sul ponticello, con sordino, harmonic register).*
+
+**Scope of implementation.**
+
+- Ordinary baseline: **IMPLEMENTED** as a log-linear penalized cubic B-spline on MIDI, per instrument $\times$ dynamic.
+- Bow-contact techniques (`sul_tasto`, `sul_ponticello`): **IMPLEMENTED** as multiplicative log-ratio submodels with an ordinary baseline shape; alpha centres come from **ASSUMPTION** priors when observations are absent.
+- Mute technique (`con_sordino`): **IMPLEMENTED** as a mute log-scalar effect driven by a dB power reduction **ASSUMPTION** (about 6 dB for violin, 4 dB for viola), mapped to a log-ratio via `log(10^{-\mathrm{dB}/10})`.
+- Harmonic register (`natural_harmonic`, `artificial_harmonic`): **IMPLEMENTED** for pitch generation only; acoustic EWSD values remain **PLANNED**.
+- Optional Bayesian backend (PyMC/ArviZ): **OPTIONAL_BACKEND**; when the extra is not installed, the pipeline reports `bayesian_backend_unavailable` and never fabricates posteriors.
+- Acoustic descriptors: separate backend under `descriptors/`; **IMPLEMENTED** as scalar/vector features. They are not currently used to compute EWSD from spectra — see §11.
+
+**What this software is not.** It is not a physical simulator of bowed-string instruments. It is not a spectral EWSD predictor. It does not measure loudness in sones. It does not decide whether extended techniques are perceptually equivalent to their labels.
+
+---
+
+## 2. Purpose and research scope
+
+The repository supports a doctoral research pipeline that must:
+
+1. Accept a manually curated register of ordinary EWSD values per note (musician-facing GUI or research Excel).
+2. Fit a **smooth ordinary baseline** as a function of MIDI pitch, per instrument and dynamic.
+3. Extrapolate that baseline to selected extended techniques by applying a **multiplicative log-ratio** effect $\exp(\alpha_t + g_t(p))$.
+4. Choose, in an auditable and deterministic way, the **simplest identifiable model** that the data support (constant $\rightarrow$ linear $\rightarrow$ penalized spline $\rightarrow$ physical-informed $\rightarrow$ spectral/modal); never auto-select the most complex.
+5. Generate **harmonic sounding pitches** from physically plausible string $\times$ order combinations up to a configured ceiling (`C8` by default), not by copying the ordinary chromatic register.
+6. Produce **audit-grade Excel outputs** with methodology, model selection audit, diagnostics, priors, unavailable cells, and provenance.
+7. Distinguish, in every output cell, between:
+   - measured or partially empirical numbers,
+   - assumption-based extrapolations (with named `ASSUMP_*` identifiers),
+   - qualitative-only cells,
+   - unavailable cells (with explicit `na_reason`).
+
+The scientific interpretation always distinguishes **software verification** from **ecological acoustic validity**.
+
+---
+
+## 3. System architecture
+
+### 3.1 General architecture
+
+The machine-editable Mermaid source for the architecture diagram is also
+stored at [`technical_guide_assets/architecture.mmd`](technical_guide_assets/architecture.mmd).
 
 ```mermaid
 flowchart LR
-  subgraph IN["Input / ingestion"]
-    COL[collections / CSV / Parquet / JSON]
-    CDM[ordinary CDM JSON]
-    PDF[literature corpus PDFs]
-    MAN[manual entry]
+  subgraph IN[Ingestion]
+    GUI[Manual register GUI]
+    XLS[Research Excel or Orchidea manifests]
+    CFG[YAML configs]
   end
-  subgraph CORE["Core models"]
-    PI[ProductionInstruction]
-    ONT[technique ontology]
-    APP[applicability engine]
-    QC[qualitative constraints]
-    DESC[descriptor registry schema-only]
+  subgraph PITCH[Pitch registry]
+    PR[MIDI-Hz mapping and pitch names]
   end
-  subgraph LIT["Evidence layer"]
-    SRC[LiteratureSource registry]
-    EV[EvidenceExtract]
-    ID[source identity validation]
-    ACT[activation gate]
+  subgraph BL[Ordinary baseline]
+    BSPL[log linear penalized B-spline on MIDI]
+    BFIT[BaselineFitCollection per instrument x dynamic]
   end
-  subgraph ASS["Assumption layer"]
-    UA[user_assumptions.yaml]
+  subgraph SEL[Model selection]
+    DA[DataAvailability audit]
+    LADDER[complexity ladder M0..M5]
+    DECIS[ModelSelectionDecision]
   end
-  subgraph PRED["Prediction"]
-    MODE[modes evidence_only / plus_assumptions]
-    OPS[operations + links]
-    UQ[Monte Carlo uncertainty]
-    OUT[predictions CSV + provenance]
+  subgraph TECH[Technique submodels]
+    BOW[bow contact log-ratio submodel]
+    MUTE[mute log-scalar submodel]
+    HARM[harmonic register pitch generator]
+    NA[unavailable / qualitative fallback]
   end
-  COL --> PI
-  CDM --> PRED
-  MAN --> COL
-  PDF --> ID --> SRC --> EV --> ACT
-  PI --> ONT --> APP
-  PI --> QC
-  ACT --> PRED
-  UA --> MODE --> PRED
-  APP --> PRED
-  OPS --> UQ --> OUT
-  DESC -.-> OUT
+  subgraph EWSD[Density metric]
+    PHI[Phi(D)=D on precomputed EWSD scalar]
+  end
+  subgraph POST[Uncertainty]
+    LOGR[multiplicative logR interval]
+    ADI[assumption distribution interval]
+    BAY[optional Bayesian backend PyMC/ArviZ]
+  end
+  subgraph OUT[Outputs]
+    XLSX[nonlinear_extrapolation_results.xlsx]
+    REP[Excel sheets: Methodology, Model_Selection, Diagnostics ...]
+    PROV[provenance: data_status, source_workbook_hash ...]
+  end
+  GUI --> PITCH --> BSPL
+  XLS --> BSPL
+  CFG --> SEL
+  CFG --> TECH
+  CFG --> PHI
+  BSPL --> BFIT --> TECH
+  BFIT --> DA --> LADDER --> DECIS --> TECH
+  TECH --> POST --> OUT
+  PHI --> TECH
+  HARM --> DECIS
+  DECIS --> NA
+  NA --> OUT
 ```
 
-**Data-flow direction.** Ingestion $\rightarrow$ production/ontology normalisation $\rightarrow$ applicability + evidence/assumption lookup $\rightarrow$ (optional) link/operation transforms $\rightarrow$ labelled outputs + reports. Qualitative constraints never invent EWSD numbers.
+### 3.2 Harmonic register generation flow
 
-| Layer | Main files | Main responsibility | Output |
-|-------|------------|---------------------|--------|
-| Ingestion | `collections/`, `manual_entry/`, `io/parquet_preflight.py` | Load ordinary / measured tables | Canonical frames |
-| Production | `production/` | Structured technique state | `ProductionInstruction` |
-| Ontology | `ontology/`, `configs/technique_ontology.yaml` | Allowed values, interval–order map | `OntologyConfig` |
-| Literature | `literature/`, `configs/literature_*.yaml` | Sources, extracts, activation | Ledger / matrix / reports |
-| Descriptors | `descriptors/`, `configs/acoustic_descriptors.yaml` | Registry only | Capability = unavailable |
-| Constraints | `constraints/`, `configs/qualitative_acoustic_constraints.yaml` | Qualitative tendencies | `ConstraintMatch` list |
-| Assumptions | `assumptions/`, `configs/user_assumptions.yaml` | User numerical coeffs | Activated param dicts |
-| Prediction | `prediction/` | Modes, ops, links, MC | Prediction CSV / NA |
-| Analytical levels | `analytical_levels/` | Level separation + stub inference | Assessments |
-| CLI / reports | `cli/`, `reports/` | Operator interface | Markdown / CSV |
-
-Principal package root: `src/string_technique_model/`.
-
----
-
-## 3. Conceptual model
-
-### Level 1 — Production instruction
-
-**Data model:** `ProductionInstruction` (`production/models.py`).  
-Composable axes: `left_hand`, `bow_contact`, `mute`, `bowing`, `timbre_execution_target`, `performance_context`.  
-**May not infer:** fixed timbre, EWSD value, textural function.
-
-### Level 2 — Acoustic result
-
-**Data model:** `AcousticDescriptorObservation` + precomputed EWSD scalars.  
-Descriptor **formulas:** Not currently implemented (registry schema-only).  
-EWSD values enter as upstream scalars, not as derived spectra.
-
-### Level 3 — Perceptual organization
-
-**Data model:** `PerceptualOrganizationAssessment`.  
-Categories include `fusion`, `segregation`, `streaming`, `stratification`, `source_identification_ambiguity`, `salience`, `insufficient_context`.  
-Requires contextual variables; not inferred from a technique label alone.
-
-### Level 4 — Musical-textural function
-
-**Data model:** `TexturalFunctionAssessment`.  
-`infer_textural_function` is a **conservative stub**: returns `insufficient_context` unless enough grouping context is supplied; never invents EWSD.
-
-### Explicit non-implications
-
-- Notation does **not** guarantee a fixed acoustic result.
-- An acoustic descriptor does **not** determine a textural function.
-- Perceptual/textural conclusions require contextual variables (`assert_level_separation`).
-
-### Worked conceptual example
-
-**Target:** cello artificial harmonic + sul ponticello + standard performance mute.
-
-```json
-{
-  "schema_version": "production_instruction_v1",
-  "legacy_technique_label": null,
-  "left_hand": {
-    "left_hand_regime": "artificial_harmonic",
-    "harmonic_type": "artificial",
-    "touched_interval": "P4",
-    "harmonic_order": 4,
-    "notation_represents": "touched_pitch",
-    "string_name": "A"
-  },
-  "bow_contact": {
-    "category": "sul_ponticello",
-    "excitation_region": "speaking_string",
-    "relative_bow_bridge_distance_beta": null,
-    "bow_bridge_distance_m": null,
-    "speaking_length_m": null
-  },
-  "mute": {
-    "state": "on",
-    "category": "standard_performance_orchestral"
-  },
-  "bowing": { "dynamic": "mf" },
-  "timbre_execution_target": "ordinary_colour",
-  "performance_context": { "instrument": "vlc" }
-}
+```mermaid
+flowchart TD
+  A[Request harmonic technique + instrument] --> B{harmonic_type}
+  B -->|natural| C[for each open string]
+  C --> C1[f_n = n * f_open for configured orders n in 2..N_max]
+  C1 --> D[compute sounding MIDI: m = 69 + 12*log2(f_n/440)]
+  B -->|artificial| E[iterate stopped MIDI over playable range]
+  E --> E1[sounding = stopped + 12*log2(order); default order=4 P4 touch]
+  D --> F{sounding <= max_sounding_midi = 108 C8?}
+  E1 --> F
+  F -->|yes| G[emit target row with harmonic geometry]
+  F -->|no| H[reject: outside instrument analysis range]
+  G --> I{model_selection}
+  I -->|harmonic_metadata_complete=false| J[harmonic_modal_metadata_gate]
+  I -->|harmonic_metadata_complete=true and no calibration| K[harmonic_modal_acoustic_model_unavailable]
+  J --> L[value_kind=unavailable, na_reason=insufficient_harmonic_metadata]
+  K --> M[value_kind=unavailable, na_reason=no_harmonic_acoustic_calibration_data]
+  L --> N[Excel: modal_frequencies_generated_acoustic_values_unavailable]
+  M --> N
 ```
 
-This is a **structured production state**, not one flat technique enum cell.
+### 3.3 Data-flow direction
+
+Ingestion $\rightarrow$ pitch normalisation $\rightarrow$ ordinary baseline fit $\rightarrow$ model-selection audit $\rightarrow$ technique submodel fit (or unavailable) $\rightarrow$ interval assembly $\rightarrow$ Excel export with full provenance.
+
+Qualitative constraints and evidence extraction from literature remain in the repository as separate infrastructure but do **not** inject numbers into EWSD estimates unless a curator-activated parameter passes the activation gate.
 
 ---
 
-## 4. Repository and package map
+## 4. Repository structure
 
-### Layout (principal)
+Principal directories:
 
 ```
-src/string_technique_model/
-  production/     # ProductionInstruction, beta, harmonics, mute, migration
-  ontology/       # YAML loader
-  literature/     # sources, extracts, activation, identity, corpus
-  constraints/    # qualitative engine
-  descriptors/    # registry (unimplemented formulas)
-  applicability/  # unified resolver
-  assumptions/    # user numerical assumptions
-  prediction/     # pipeline, ops, links, UQ, modes, from_ordinary
-  analytical_levels/
-  recognition/    # TechniqueRecognitionResult (no EWSD)
-  measurement_domains/
-  collections/ baseline/ density/ models/ metrics/ io/ cli/ manual_entry/
-configs/          # YAML authority files
-literature/corpus/
-reports/ tests/ data/
+Strings_Techniques_Extrapolation/
+  pyproject.toml
+  README.md
+  CHANGELOG.md
+  CITATION.cff
+  configs/                    # YAML authority files (all runtime parameters)
+    analysis_profiles/
+    datasets/
+    extrapolation/            # provisional density effects, GUI presets
+    schemas/                  # collection schema mappings
+  data/                       # sample and reference data
+  docs/                       # this guide and related documents
+    technical_guide_assets/   # Mermaid sources and README
+  literature/                 # corpus PDFs and identity manifest
+  notebooks/
+  outputs/                    # generated Excel and CSV runs (git-ignored)
+  reports/                    # generated Markdown reports
+  scripts/
+  src/string_technique_model/
+    analytical_levels/        # 4-layer separation
+    applicability/            # resolver engine
+    assumptions/              # user numerical assumptions
+    baseline/                 # ordinary baseline pitch/MIDI utilities
+    cli/                      # argparse subcommands
+    collections/              # collection registry and ingestion
+    constraints/              # qualitative-only engine
+    density/                  # Phi(D)=D metric
+    descriptors/              # acoustic descriptor backend
+    extrapolation/
+      nonlinear/              # baseline, splines, model_selection,
+                              #   bow_contact_model, mute_model,
+                              #   harmonic_register, harmonic_model,
+                              #   bayesian_backend, posterior, prediction,
+                              #   export_nonlinear, priors, provenance
+    gui_metadata/             # extrapolator_app.py, register grids
+    instruments/              # instrument registry
+    io/                       # parquet preflight
+    literature/               # evidence layer
+    manual_entry/             # pitch helpers, entry pipelines
+    measurement_domains/
+    metadata_entry/
+    metrics/
+    models/                   # technique models and capabilities
+    ontology/                 # technique ontology loader
+    pitch/                    # full chromatic registry MIDI 0..127
+    prediction/               # legacy prediction pipeline
+    production/               # ProductionInstruction, beta, harmonics
+    provenance.py             # provenance helpers
+    recognition/              # MIR label mapping
+    sensitivity/
+    testing/                  # stress runner
+    transforms/
+    uncertainty/
+    validation/
+    visualization/
+  tests/                       # ~482 collected tests (with PYTHONPATH=src)
 ```
 
-### Module roles (operational)
-
-| Package | Public symbols (selected) | Callers | Side effects |
-|---------|---------------------------|---------|--------------|
-| `production` | `migrate_legacy_technique_record`, `compute_beta`, `validate_bow_contact`, `validate_harmonic_interval_order`, `normalize_mute_mass`, models | CLI, prediction, tests | None (pure) |
-| `literature` | `build_literature_layer`, identity/registry helpers | `literature` CLI | Writes reports/CSV when not dry-run |
-| `prediction` | `build_predictions`, `predict_from_ordinary` | `predict` CLI | Writes `outputs/predictions/` |
-| `assumptions` | `resolve_user_assumptions`, registry loaders | prediction, assumptions CLI | `activate`/`deactivate` rewrite YAML |
-| `constraints` | `QualitativeConstraintEngine` | from_ordinary, tests | None |
-| `applicability` | `resolve_applicability` | literature activation, prediction | None |
-| `density` | `DensityMetric.phi` | prediction pipeline | None |
-| `io` | `check_parquet_engine` | collection loaders | None |
-
-Exceptions of note: `OperationError`, `LinkError`, `AssumptionConflictError`, `LiteratureValidationError`, `ValueError` on invalid $\beta$ lengths.
+The nonlinear extrapolation stack lives in `src/string_technique_model/extrapolation/nonlinear/`. The manual GUI is `src/string_technique_model/gui_metadata/extrapolator_app.py`.
 
 ---
 
-## 5. Data schemas
+## 5. Installation and execution
 
-All models below are Pydantic with `extra="allow"` unless noted. Serialization: JSON/YAML via `model_dump()`.
+### 5.1 Environment
 
-### `ProductionInstruction` — `production.models.ProductionInstruction`
+```bash
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# Unix
+source .venv/bin/activate
 
-| Field | Type | Required | Default | Units |
-|-------|------|----------|---------|-------|
-| `schema_version` | str | no | `production_instruction_v1` | — |
-| `legacy_technique_label` | str\|None | no | null | — |
-| `left_hand` | HarmonicInstruction\|None | no | null | — |
-| `bow_contact` | BowContactInstruction\|None | no | null | — |
-| `mute` | MuteInstruction\|None | no | null | — |
-| `bowing` | BowingConditions\|None | no | null | — |
-| `timbre_execution_target` | TimbreExecutionTarget\|None | no | null | — |
-| `performance_context` | PerformanceContext\|None | no | null | — |
-| `provenance` | dict\|None | no | null | — |
-| `missingness` | dict\|None | no | null | — |
-| `migration_warnings` | list\|None | no | null | — |
+pip install -e .
+# Optional Bayesian backend
+pip install -e ".[bayes]"
+# Development tooling
+pip install -e ".[dev]"
+```
 
-### `HarmonicInstruction`
+### 5.2 Console scripts
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `left_hand_regime` | LeftHandRegime | required in practice for harmonic paths |
-| `harmonic_type` | HarmonicType\|None | `natural`/`artificial`/`half`/`multiphonic` |
-| `harmonic_order` | int\|None | allowed $\{2,3,4,5,6\}$ |
-| `touched_interval` | str\|None | P4/M3/m3/P5 (+ aliases) |
-| `stopped_*` / `touched_*` / `sounding_*` | name/midi | **no auto derivation of sounding** |
-| `allow_order_inference` | bool | default `false` |
-| multiphonic-related optional fields | — | also mirrored on `MultiphonicInstruction` |
+- `string-technique-model` $\rightarrow$ `string_technique_model.cli:main`
+- `string-technique-gui` $\rightarrow$ `string_technique_model.gui:main`
 
-### `BowContactInstruction`
+Equivalent module invocations:
 
-| Field | Type | Unit |
-|-------|------|------|
-| `category` | BowContactCategory\|None | nominal |
-| `relative_bow_bridge_distance_beta` | float\|None | dimensionless |
-| `bow_bridge_distance_m` | float\|None | m |
-| `speaking_length_m` | float\|None | m |
-| `excitation_region` | ExcitationRegion\|None | nominal |
-| `motion_regime` | MotionRegime\|None | nominal |
-| `bow_position_ratio_deprecated` | float\|None | legacy alias of $\beta$ |
+```bash
+python -m string_technique_model --help
+python -m string_technique_model gui
+```
 
-### `MuteInstruction`
+### 5.3 Running the test suite
 
-| Field | Type | Unit |
-|-------|------|------|
-| `state` | MuteState\|None | — |
-| `category` | MuteCategory\|None | — |
-| `mute_mass_g` | float\|None | g |
-| `mass_raw` | str\|None | original text |
-| `material`, `geometry`, `bridge_contact_area`, … | str\|None | — |
+```bash
+# With src layout on PYTHONPATH
+PYTHONPATH=src python -m pytest -q
+# or
+python -m pytest -q
+```
 
-### `BowingConditions`
-
-`force_n` [N], `velocity_m_s` [m s$^{-1}$], `articulation`, `hair_inclination`, `contact_area_descriptor`, `dynamic`.
-
-### `PerformanceContext`
-
-Instrument, pitches (written/sounding), string, $f_0$ as `fundamental_frequency_hz` [Hz], register, performer/instrument IDs, recording geometry, variance fields.
-
-### `MultiphonicInstruction`
-
-Schema for stored/source-derived multiphonic configurations. **Does not calculate multiphonics from first principles.** Fields include `touching_position_ratio`, `equivalent_touching_position_ratio`, `principal_harmonic_components`, `observed_partials`, `chain_identifier`, `mutation_relationship`, `establishment_time_s`, `stability`, dependencies, `source_reference`.
-
-### Analytical levels
-
-- `AcousticDescriptorObservation`: `descriptor_id`, `value`, `units`, `analysis_params`, `provenance`
-- `PerceptualOrganizationAssessment`: `organization`, `required_context_fields`, `evidence`
-- `TexturalFunctionAssessment`: `function`, `conditional_candidates`, …
-
-### Literature
-
-- `LiteratureSource` — citation + `evidence_status` + `local_file_path`
-- `EvidenceExtract` — page-located claim fields + `curator_verification_status`
-- `SourceIdentityEntry` — archive identity validation
-
-### Assumptions
-
-`UserAssumption` (`assumptions/models.py`): `assumption_id`, `name`, `instrument`, `technique`, `operation_type`, `reported_value`, `unit`, `numerical_scale`, `compatible_links`, `source_space`, `target_space`, `uncertainty_sd`, applicability fields, `active_for_density_prediction`, `literature_validated` (must remain `false`).
-
-### Prediction
-
-`PredictionRequest` (`prediction/requests.py`): `instrument`, `target_technique` (legacy four labels), pitches, mute/bow fields, `requested_backend` default `metric-only`, `target_metric_definition_id` default `ewsd_v1`.
-
-There is no separate class named `PredictionResult`; prediction outputs are tabular rows + `PredictionBuildResult` / `FromOrdinaryResult` dataclasses/objects from the pipeline modules.
-
-### Recognition / measurement domains
-
-- `TechniqueRecognitionResult` — MIR labels; `claims_ewsd` always false
-- Measurement domain IDs: `radiated_audio`, `bridge_force`, `string_velocity_at_bow`, `bridge_mobility`, `body_acceleration`, `unresolved`
+At the document snapshot the collector reports **482 tests collected**.
 
 ---
 
-## 6. Technique ontology
+## 6. Conceptual data model
 
-**Authority file:** `configs/technique_ontology.yaml`  
-**Loader:** `ontology/loader.py::load_ontology`
+The pipeline reasons over four analytical levels (`analytical_levels/`):
 
-### Distinctions (implemented labels)
+1. **Production instruction** (`ProductionInstruction`): what the player physically does — left hand, bow-contact region, mute, bowing, timbre-execution target, performance context.
+2. **Acoustic result** (`AcousticDescriptorObservation`, precomputed EWSD scalars).
+3. **Perceptual organization** (`PerceptualOrganizationAssessment`).
+4. **Musical-textural function** (`TexturalFunctionAssessment`; stub only).
 
-| Concept | Representation | Kind |
-|---------|----------------|------|
-| Ordinary stopped | `left_hand_regime=ordinary_stopped` | nominal |
-| Natural / artificial / half harmonic | regimes + `harmonic_type` | nominal |
-| Harmonic glissando | `natural_harmonic_glissando` / `artificial_harmonic_glissando` | nominal |
-| Multiphonic | `left_hand_regime=multiphonic` + `MultiphonicInstruction` | nominal / structured |
-| Flautando | `timbre_execution_target=flautando` | **perceptual/execution target**, not a bow-contact category |
-| Sul tasto … sul ponticello continuum | `BowContactCategory` | ordered nominal on speaking string |
-| Directly on bridge / afterlength | `excitation_region` | **outside** continuum |
-| Mute types | `MuteCategory` (+ legacy aliases) | nominal |
-| $\beta$ | continuous dimensionless | continuous |
+The scalar EWSD number lives at level 2 and is treated as **precomputed** (see §11): the repository does not re-derive EWSD from an audio spectrum in this commit.
 
-**Composable:** left-hand $\times$ bow-contact $\times$ mute $\times$ bowing $\times$ timbre target.  
-**Not mutually exclusive as a single flat enum** (legacy 4×4 is compatibility only: `legacy_cell_count()`).
+Explicit non-implications:
 
-### Legacy migration examples
-
-`production/migration.py::migrate_legacy_technique_record`
-
-1. `technique=sul_ponticello` $\rightarrow$ `bow_contact.category=sul_ponticello`, `left_hand=ordinary_stopped` (unless harmonic fields present).
-2. `technique=artificial_harmonic`, `touched_interval=P4` $\rightarrow$ `left_hand` with order 4 when consistent.
-3. `technique=con_sordino`, `mute_type=orchestral` $\rightarrow$ `mute.category=standard_performance_orchestral`.
+- A technique label does not determine EWSD.
+- An acoustic descriptor value does not determine a textural function.
+- Perceptual/textural conclusions require contextual variables.
 
 ---
 
-## 7. Mathematical notation and conventions
+## 7. Metadata schema
 
-| Symbol | Meaning | Unit | Code field | Valid domain | Source |
-|--------|---------|------|------------|--------------|--------|
-| $\beta$ | Relative bow–bridge distance | 1 | `relative_bow_bridge_distance_beta` | typically $(0,1)$ on speaking string | Schoonderwaldt extracts; ontology |
-| $d_b$ | Bow–bridge distance | m | `bow_bridge_distance_m` | $\ge 0$ | production |
-| $L$ | Speaking length | m | `speaking_length_m` | $> 0$ | production |
-| $F_b$ | Bow force | N | `force_n` / `bow_force_n` | $\ge 0$ if set | production / request |
-| $v_b$ | Bow velocity | m s$^{-1}$ | `velocity_m_s` | real | production |
-| $f_0$ | Fundamental frequency | Hz | `fundamental_frequency_hz` | $> 0$ if set | context |
-| $D$ | Precomputed EWSD score | dimensionless | `baseline_value` / density samples | empirically $\sim 0$–$100$ | upstream EWSD |
-| $\eta$ | Link-space value | link-dependent | internal arrays | see §16 | `prediction/links.py` |
-| $r$ | Multiplicative ratio | 1 | `reported_value` for ratio ops | $> 0$ | ops / assumptions |
-| $\delta$ | Additive density difference | same as $D$ | `reported_value` | real | ops |
-| $x_{\mathrm{dB}}$ | Level difference | dB | literature only | real | **not** density op |
-| $m$ | MIDI note number | 1 | `*_midi` | real | `pitch_name_to_midi` |
-| $m_{\mathrm{mute}}$ | Mute mass | g | `mute_mass_g` | $\ge 0$ if set | mute normalizer |
+### 7.1 Ordinary register row (manual entry / research Excel / Orchidea)
 
-Spectral centroid, spectral slope, HNR, flux, loudness (sones), etc. appear as **descriptor IDs only**; no implemented computation symbols.
+Fields:
+
+- `note`: scientific pitch name (e.g. `G3`, `A#4`).
+- `midi`: integer MIDI number (0..127).
+- `value`: numeric EWSD acoustic-balanced score (positive).
+- `instrument`: one of `vln`, `vla`, `vlc`, `cb`.
+- `dynamic`: one of `ppp`, `pp`, `mp`, `mf`, `f`, `ff`, `fff` (categorical order enforced in `baseline.DYNAMIC_ORDER`).
+- `technique`: `ordinary` / `ordinario` / `arco` / `arco_normal` for baseline rows.
+- `quantity`: descriptor identifier, default `EWSD_score_acoustic_balanced`.
+- `source_path`, `source_workbook_path`, `source_workbook_hash`, `source_sheet`, `import_run_id`, `source_row_id`: provenance.
+- `data_status`: one of `measured_real`, `measured_research_data`, `manual_register_entry`, `synthetic`, `synthetic_integration_test`, `mixed`, `unknown`.
+- `scientific_use`: e.g. `prohibited_for_doctoral_evidence` (mandatory tag for synthetic rows).
+
+### 7.2 Extrapolation result row
+
+The full schema of `ExtrapolationResult` (`extrapolation/nonlinear/domain.py`) includes, in addition to identity fields:
+
+- Neutral estimate fields: `estimate_mean`, `estimate_median`, `estimate_sd`, `interval_low`, `interval_high`, `interval_type`.
+- Bayesian-only fields (populated only when `bayesian_backend_used=True`): `posterior_mean`, `posterior_median`, `posterior_sd`, `credible_interval_low`, `credible_interval_high`.
+- Log-ratio parameters: `log_ratio_mean`, `log_ratio_sd`, `technique_multiplier`, `alpha_t`, `alpha_origin`, `effect_kind`.
+- Model selection: `model_family`, `selected_model_id`, `candidate_model_ids`, `rejected_model_ids`, `rejection_reasons`, `selection_reason`, `fallback_level`, `complexity_level`, `model_selection_status`.
+- Harmonic geometry: `harmonic_type`, `harmonic_order`, `string_name`, `stopped_pitch`, `touched_pitch`, `open_string_pitch`, `sounding_pitch`, `sounding_midi`, `sounding_midi_float`, `sounding_frequency_hz`, `cents_deviation`, `nearest_tempered_pitch`, `physical_range_min`, `physical_range_max`, `analysis_range_min`, `analysis_range_max`, `selection_mode`, `configuration_policy`, `configured_order_min`, `configured_order_max`, `order_selection_reason`.
+- Evidence and provenance: `evidence_tier`, `assumption_ids`, `assumptions_trace`, `source_ids`, `data_status`, `scientific_use`, `source_workbook_path`, `source_workbook_hash`, `source_sheet`, `import_run_id`, `source_row_ids`, `value_kind`, `warnings`, `diagnostics_status`, `convergence_status`, `sensitivity_status`, `model_status`, `na_reason`.
+
+`data_status = synthetic` implies `scientific_use = prohibited_for_doctoral_evidence` at the export layer.
 
 ---
 
-## 8. Bow-contact calculations
+## 8. Pitch registry and formulas
 
-### Formula name: Relative bow–bridge distance $\beta$
+Pitch handling lives in `src/string_technique_model/manual_entry/pitch.py` (with helpers in `baseline/pitch.py` and `pitch/registry.py`).
 
-**Purpose:** Dimensionless contact position on the speaking length.
+### 8.1 Formula — MIDI to frequency
 
-**Equation:**
+**Equation.**
 
 $$
-\beta = \frac{d_b}{L} = \frac{\texttt{bow\_bridge\_distance\_m}}{\texttt{speaking\_length\_m}}
+f(m) = 440 \cdot 2^{(m - 69)/12}
 $$
+
+**Symbols.**
 
 | Symbol | Definition | Unit | Code field |
-|--------|------------|------|------------|
-| $\beta$ | Relative bow–bridge distance | 1 | `relative_bow_bridge_distance_beta` |
-| $d_b$ | Distance bow to bridge | m | `bow_bridge_distance_m` |
-| $L$ | Speaking length | m | `speaking_length_m` |
+|---|---|---|---|
+| $m$ | MIDI note number | dimensionless | `midi` |
+| $f(m)$ | Sounding frequency at MIDI $m$ | Hz | `sounding_frequency_hz` |
+| $A_4$ | Reference pitch (hard-coded) | Hz | constant `440.0` |
+| $m_{\mathrm{ref}}$ | Reference MIDI (hard-coded) | dimensionless | constant `69` |
 
-**Applicability:** Speaking-string excitation; continuum categories.  
-**Assumptions:** Uniform geometric ratio; no instrument-specific threshold map (`bow_contact_beta_thresholds: null`).  
-**Implementation:** `src/string_technique_model/production/bow_contact.py::compute_beta`  
-**Input validation:** $L > 0$; $d_b \ge 0$; else `ValueError`.  
-**Contradiction check:** if both $\beta$ and lengths supplied,
+**Implementation.** `manual_entry/pitch.py::midi_to_hz`.
 
-$$
-\lvert \beta - d_b/L \rvert \le \tau,\quad \tau = 10^{-6}
-$$
+**Assumptions.** 12-tone equal temperament; $A_4 = 440$ Hz fixed; no explicit alternative reference pitch.
 
-(`contradiction_tolerance_abs` in ontology).  
-**Output:** float $\beta$.  
-**Uncertainty:** Not currently implemented for $\beta$.  
-**Scientific source:** Definition aligned with Schoonderwaldt 2009 extracts; not a universal timbre law.  
-**Limitations:** $\beta$ alone does **not** determine timbre; force, velocity, string, pitch, dynamic, instrument, measurement domain interact.  
-**Schelleng boundary logic:** Not currently implemented.
+**Status:** **IMPLEMENTED**.
 
-**Worked example:**
+### 8.2 Formula — frequency to MIDI
+
+**Equation.**
 
 $$
-d_b = 0.03\,\mathrm{m},\quad L = 0.60\,\mathrm{m},\quad \beta = \frac{0.03}{0.60} = 0.05
+m(f) = 69 + 12 \log_2\!\left(\frac{f}{440}\right)
 $$
 
-**Tests:** `tests/test_pdf_soa_integration.py`, bow-contact related cases; primary-source ingestion tests for domain separation.
+**Implementation.** `manual_entry/pitch.py::hz_to_midi`. Returns `None` for non-finite or non-positive $f$.
+
+**Status:** **IMPLEMENTED**.
+
+### 8.3 Cents deviation from equal temperament
+
+**Equation.**
+
+$$
+c = 1200 \cdot \log_2\!\left(\frac{f_n}{f_{\mathrm{ET}}}\right)
+$$
+
+where $f_n$ is the physical partial frequency and $f_{\mathrm{ET}}$ is the frequency of the nearest equal-tempered MIDI note.
+
+In the harmonic register generator this is computed as
+
+$$
+c = (m_{\mathrm{float}} - \mathrm{round}(m_{\mathrm{float}})) \cdot 100
+$$
+
+with $m_{\mathrm{float}} = 69 + 12 \log_2(f_n / 440)$.
+
+**Implementation.** `extrapolation/nonlinear/harmonic_register.py::_cents_deviation`.
+
+**Status:** **IMPLEMENTED**.
+
+### 8.4 Chromatic registry
+
+`src/string_technique_model/pitch/registry.py` exposes the complete chromatic MIDI space $\{0, 1, \dots, 127\}$; an instrument-range filter is optional.
 
 ---
 
-## 9. Harmonic calculations
+## 9. Technique ontology
 
-### Interval $\leftrightarrow$ order map (implemented)
+The ontology (`configs/technique_ontology.yaml`) declares:
 
-From `configs/technique_ontology.yaml` via `ontology/loader.py` / `production/harmonics.py`:
+- **Left-hand regimes:** `ordinary_stopped`, `natural_harmonic`, `artificial_harmonic`, `half_harmonic`, `natural_harmonic_glissando`, `artificial_harmonic_glissando`, `multiphonic`.
+- **Bow-contact categories:** ordered continuum on the speaking string from `sul_tasto` through neutral to `sul_ponticello`, plus off-continuum regions `directly_on_bridge` and `afterlength`.
+- **Mute categories:** performance, light practice, heavy practice, historical, adjustable partial, and legacy orchestral/hotel labels.
+- **Timbre execution targets:** e.g. `flautando`, distinct from bow-contact categories.
+- **Harmonic interval $\leftrightarrow$ order map (allowed):** `P4 -> 4`, `M3 -> 5`, `m3 -> 6`, `P5 -> 3`.
 
-| Interval | Order $n$ |
-|----------|-----------|
-| Perfect fourth (P4) | $4$ |
-| Major third (M3) | $5$ |
-| Minor third (m3) | $6$ |
-| Perfect fifth (P5) | $3$ |
+Technique-to-family routing in the model-selection engine (`extrapolation/nonlinear/model_selection.py::TECHNIQUE_TO_FAMILY`):
 
-Allowed orders: $n \in \{2,3,4,5,6\}$. Global `allow_order_inference: false`.
+| Technique | Family |
+|---|---|
+| `ordinary`, `ordinario`, `arco`, `arco_normal` | `ordinary_baseline_model` |
+| `sul_tasto`, `sul_ponticello` | `bow_contact_model` |
+| `con_sordino` | `mute_transfer_model` |
+| `natural_harmonic`, `artificial_harmonic` | `harmonic_modal_model` |
+| `multiphonics`, `multiphonic` | `multiphonic_component_model` |
+| `flautando` | `execution_target_model` |
 
-**Validation:** `validate_harmonic_interval_order(touched_interval, harmonic_order, ...)`.
-
-### Sounding frequency / MIDI from harmonic order
-
-**Not currently implemented.**
-
-The physically expected relations
-
-$$
-f_{\mathrm{sounding}} = n\, f_{\mathrm{stopped}}
-$$
-
-$$
-m_{\mathrm{sounding}} = m_{\mathrm{stopped}} + 12\log_2 n
-$$
-
-are **not** coded. Fields `sounding_pitch_*` may be stored if supplied; they are not computed.
-
-### Ordinary pitch-name $\rightarrow$ MIDI (implemented)
-
-**Purpose:** Map scientific pitch names to MIDI for baseline cells.
-
-$$
-m = 12\,(o + 1) + p
-$$
-
-where $o$ is octave digit and $p\in\{0,\ldots,11\}$ is pitch class (C$=0$, …, B$=11$), with accidental $\#\Rightarrow +1$, $\mathrm{b}\Rightarrow -1$.
-
-**Implementation:** `baseline/pitch.py::pitch_name_to_midi`  
-**Tests:** baseline / from_ordinary suites.
+Composability rules and non-inversion between `sul_tasto` and `sul_ponticello` are enforced explicitly: they are not mirror images of one another.
 
 ---
 
-## 10. Multiphonic representation
+## 10. Acoustic descriptor backend
 
-**Status:** Schema + distinctness helper; **no first-principles predictor**.
+The descriptor backend (`src/string_technique_model/descriptors/`) is separate from EWSD prediction. It exposes reproducible acoustic features on audio, with all analysis parameters recorded on each `DescriptorResult` (no silent defaults). Registry: `configs/acoustic_descriptors.yaml` (version `0.5.0-descriptor-backend`). Default profile: `configs/analysis_profiles/default_descriptor_v1.yaml`.
 
-- Store source-derived configurations in `MultiphonicInstruction`.
-- `assert_distinct_from_harmonics` rejects conflation with natural/artificial/half harmonics, double stops, harmonic glissandi.
-- Fallowfield TEMPO article registered; **no invented fingering charts**.
+STFT defaults:
 
-Touching-position symmetry, chains, mutations: fields only. Prediction of multiphonic pitch sets: **Not currently implemented.**
+- `sample_rate_hz`: 44100
+- `fft_size`: 4096
+- `window_type`: `hann`
+- `hop_size`: 1024
+- `frequency_min_hz`: 50.0
+- Weighting: `power` for centroid unless overridden
+
+### 10.1 Spectral centroid
+
+**Descriptor ID:** `DESC_SPECTRAL_CENTROID`, method `spectral_centroid_v1`.
+
+**Equation.**
+
+$$
+C = \frac{\sum_{k} f_k \, W_k}{\sum_{k} W_k}
+$$
+
+with $W_k \in \{\lvert X_k \rvert, \lvert X_k \rvert^2\}$ (magnitude or power weighting, configured explicitly). The reported value is the mean of per-frame centroids across STFT frames.
+
+**Symbols.**
+
+| Symbol | Definition | Unit |
+|---|---|---|
+| $f_k$ | Frequency of FFT bin $k$ | Hz |
+| $W_k$ | Weight of bin $k$ (magnitude or power) | linear |
+| $C$ | Per-frame spectral centroid | Hz |
+
+**Implementation.** `descriptors/centroid.py::compute_spectral_centroid`.
+
+**Assumptions.** Non-silent frame; weighting kind is declared and preserved in output.
+
+**Status:** **IMPLEMENTED**.
+
+### 10.2 Spectral slope
+
+**Descriptor ID:** `DESC_SPECTRAL_SLOPE`, method `spectral_slope_logfreq_db_linreg_v1`.
+
+**Equation.** OLS slope of dB-power versus $\log_{10}$ frequency:
+
+$$
+y_k = 10 \log_{10}(P_k), \qquad x_k = \log_{10}(f_k),
+$$
+
+$$
+\hat{\beta} = \frac{\sum_k (x_k - \bar{x})(y_k - \bar{y})}{\sum_k (x_k - \bar{x})^2}, \quad \text{unit: dB per decade of } \log_{10}\text{Hz}
+$$
+
+DC is excluded; band defaults to `[100 Hz, 5000 Hz]`.
+
+**Implementation.** `descriptors/slope.py::compute_spectral_slope`.
+
+**Status:** **IMPLEMENTED**.
+
+### 10.3 Harmonic-to-noise ratio (spectral-mask)
+
+**Descriptor ID:** `DESC_HNR`, method `hnr_spectral_mask_v1`.
+
+**Equation.**
+
+$$
+\mathrm{HNR}_{\mathrm{mask}} = 10 \log_{10}\!\left(\frac{E_h}{E_n}\right)
+$$
+
+where $E_h = \sum_{k \in \mathcal{M}_h} P_k$ is the power inside $\pm b$-bin harmonic masks centred at $k f_0$ for $k = 1, \dots, K$, and $E_n = \sum_{k \notin \mathcal{M}_h} P_k$ is the complementary residual power.
+
+**Assumptions.** This is the **spectral-mask** definition; it is **not** autocorrelation HNR and **not** harmonic-model residual HNR.
+
+**Implementation.** `descriptors/hnr.py::spectral_mask_hnr_db`.
+
+**Status:** **IMPLEMENTED**.
+
+### 10.4 Spectral flux
+
+**Descriptor ID:** `DESC_SPECTRAL_FLUX`, method `spectral_flux_l1_halfwave_v1`.
+
+**Equation.** For adjacent frames with $L_1$-normalised magnitude spectra $\tilde{M}_t$:
+
+$$
+\mathrm{Flux}(t) = \sum_{k} \max\!\bigl(0,\; \tilde{M}_t(k) - \tilde{M}_{t-1}(k)\bigr)
+$$
+
+The scalar descriptor is the mean of $\mathrm{Flux}(t)$ across frame transitions.
+
+**Implementation.** `descriptors/flux.py`.
+
+**Status:** **IMPLEMENTED**.
+
+### 10.5 Long-term average spectrum
+
+**Descriptor ID:** `DESC_LTAS`, method `ltas_mean_power_v1`.
+
+**Equation.**
+
+$$
+\mathrm{LTAS}(k) = \frac{1}{T} \sum_{t=1}^{T} P_t(k)
+$$
+
+where $P_t(k)$ is the power at bin $k$ in frame $t$.
+
+**Implementation.** `descriptors/ltas.py`.
+
+**Status:** **IMPLEMENTED** (vector-valued).
+
+### 10.6 Frame-level spectral variance (temporal)
+
+**Descriptor ID:** `DESC_FRAME_SPECTRAL_VARIANCE`, method `frame_spectral_variance_centroid_v1`.
+
+**Equation.** Temporal variance of per-frame spectral centroids:
+
+$$
+V_t(C) = \frac{1}{T - 1} \sum_{t=1}^{T} (C_t - \bar{C})^2, \quad \text{unit: Hz}^2
+$$
+
+**Note.** This is distinct from within-frame spectral spread.
+
+**Implementation.** `descriptors/variance.py`.
+
+**Status:** **IMPLEMENTED**.
+
+### 10.7 Attenuation (typed)
+
+**Descriptor ID:** `DESC_ABSOLUTE_ATTENUATION`, method `typed_attenuation_v1`.
+
+**Equations.**
+
+$$
+\mathrm{dB}_{\mathrm{amp}} = 20 \log_{10}\!\left(\frac{A_2}{A_1}\right), \qquad
+\mathrm{dB}_{\mathrm{pow}} = 10 \log_{10}\!\left(\frac{P_2}{P_1}\right)
+$$
+
+$$
+\frac{A_2}{A_1} = 10^{\mathrm{dB}/20}, \qquad
+\frac{P_2}{P_1} = 10^{\mathrm{dB}/10}
+$$
+
+**Implementation.** `descriptors/attenuation.py`.
+
+**Assumptions.** Amplitude and power ratios are typed and refuse cross-conversion; sones are refused as dB (`refuse_sones_as_db`); bridge-mobility attenuation cannot be reported as radiated SPL.
+
+**Status:** **IMPLEMENTED**.
+
+### 10.8 Partials
+
+**Descriptor IDs:** `DESC_PARTIAL_SALIENCE`, `DESC_PITCH_COMPONENT_COUNT` — peak-based, with configurable prominence, minimum separation, and amplitude thresholds. Synthetic multi-sinusoids are numerical proxies, not physical multiphonics.
+
+**Status:** **IMPLEMENTED** (proxies).
+
+### 10.9 Unresolved descriptors
+
+`DESC_TEMPORAL_MODULATION`, `DESC_ATTACK_TIME`, `DESC_LOUDNESS`, `DESC_FUNDAMENTAL_SALIENCE`, `DESC_UPPER_PARTIAL_ENERGY_RATIO`, `DESC_BRIDGE_MOBILITY`, `DESC_INTER_PLAYER_VARIABILITY` — declared in the registry as `implemented: false`.
+
+**Status:** **PLANNED**.
+
+> **Warning — descriptor $\ne$ EWSD.** All descriptors carry `ewsd_compatibility = incompatible_without_activated_mapping`. Descriptor outputs must not be used as EWSD numbers without a registered, curator-validated transfer function.
 
 ---
 
-## 11. Mute model
+## 11. EWSD score and the identity metric
 
-**Model:** `MuteInstruction` + migration aliases + Evangelista dataset **stubs**.
+`EWSD_score_acoustic_balanced` (short name `CDM_TD`) is a **precomputed** upstream acoustic-balanced density score. Its numerical values enter the repository through curated collections; the repository does **not** recompute EWSD from a spectrum in this commit.
 
-Categories (additive): performance / light practice / heavy practice / historical / adjustable_partial / legacy orchestral & hotel labels / none / unresolved.
+### 11.1 Formula — canonical metric map
 
-### Formula name: Mute mass $\rightarrow$ grams
-
-**Purpose:** Normalise textual masses to grams.
-
-If a unit token is present:
-
-$$
-m_{\mathrm{mute}} = a \cdot u
-$$
-
-with $u\in\{1$ (g), $10^{-3}$ (mg), $10^{3}$ (kg)$\}$.
-
-**Bare numbers without unit:** `mute_mass_g = null` + warning (not silently assumed grams).
-
-**Implementation:** `production/mute.py::normalize_mute_mass`  
-**Attenuation law** $A=f(m_{\mathrm{mute}})$: **Not currently implemented** (Evangelista extracts forbid universal mass law).  
-**Loudness/LTAS $\rightarrow$ EWSD:** **Not currently implemented.**
-
-Dataset stubs: `configs/datasets/evangelista_freire_2025_mute_table.yaml` (empty rows), Zenodo `external_unresolved`, LTAS profile nullable fields.
-
----
-
-## 12. Acoustic descriptors
-
-**Registry:** `configs/acoustic_descriptors.yaml` (v`0.5.0-descriptor-backend`).  
-**Analysis profile:** `configs/analysis_profiles/default_descriptor_v1.yaml` — every parameter is recorded on `DescriptorResult` (no silent defaults).  
-**Dispatch:** `descriptors.engine.compute_descriptor` / typed attenuation helpers.
-
-`ewsd_compatibility` remains `incompatible_without_activated_mapping` for all descriptors.  
-Technique-model capability `descriptor_extraction` stays unavailable (backend is separate from EWSD models).
-
-### Spectral centroid (`DESC_SPECTRAL_CENTROID`, method `spectral_centroid_v1`)
-
-$$
-C = \frac{\sum_k f_k W_k}{\sum_k W_k}
-$$
-
-with configurable $W_k\in\{\mathrm{magnitude},\mathrm{power}\}$ (explicit; never switched silently).  
-**Measurement domain:** must not equate `string_velocity_at_bow` / `bridge_force` centroids with `radiated_audio` (Schoonderwaldt; comparison → `not_comparable`).
-
-### Spectral slope (`DESC_SPECTRAL_SLOPE`, method `spectral_slope_logfreq_db_linreg_v1`)
-
-OLS slope of **dB-power** versus **log10 frequency**, DC excluded, band from profile (`min_hz`–`max_hz`). Method ID must be preserved on outputs.
-
-### HNR (`DESC_HNR`, method `hnr_spectral_mask_v1`)
-
-Spectral-mask harmonic vs residual power ratio in dB. **Not** autocorrelation HNR and **not** harmonic-model residual HNR.
-
-### Spectral flux (`DESC_SPECTRAL_FLUX`, method `spectral_flux_l1_halfwave_v1`)
-
-Mean L1 half-wave-rectified difference of sum-normalized magnitude frames.
-
-### Frame-level spectral variance (`DESC_FRAME_SPECTRAL_VARIANCE`)
-
-Temporal variance of per-frame spectral centroids (distinct from within-frame spectral spread).
-
-### LTAS (`DESC_LTAS`)
-
-Vector object (frequencies + mean power spectrum). Evangelista & Freire source profile is a **metadata stub** until verified analysis settings are curated — do not claim comparability.
-
-### Attenuation (`DESC_ABSOLUTE_ATTENUATION`)
-
-Typed functions: $20\log_{10}(A_2/A_1)$, $10\log_{10}(P_2/P_1)$, and inverses. Sones ≠ dB; bridge-mobility ≠ radiated SPL.
-
-### Partials (`DESC_PARTIAL_SALIENCE`, `DESC_PITCH_COMPONENT_COUNT`)
-
-Configurable peak detection / thresholds. Synthetic multi-sinusoids are numerical proxies, **not** physical cello multiphonics.
-
-### Still unsupported (scope safeguard only)
-
-`DESC_TEMPORAL_MODULATION`, `DESC_ATTACK_TIME`, `DESC_LOUDNESS`, `DESC_FUNDAMENTAL_SALIENCE`, `DESC_UPPER_PARTIAL_ENERGY_RATIO`, `DESC_BRIDGE_MOBILITY`, `DESC_INTER_PLAYER_VARIABILITY`.
-
-`list_implemented_descriptors()` returns the implemented registry subset (non-empty).
-
-**Real-audio validation:** absent locally; no ecological-validity claim; no silent downloads.
-
----
-
-## 13. Decibel and ratio calculations
-
-Typed descriptor helpers **and** prediction helpers exist; **must not** be used as EWSD density operations:
-
-$$
-\frac{A_2}{A_1} = 10^{x_{\mathrm{dB}}/20}
-$$
-
-$$
-\frac{P_2}{P_1} = 10^{x_{\mathrm{dB}}/10}
-$$
-
-**Implementation:** `descriptors/attenuation.py` (typed) and `prediction/operations.py::amplitude_ratio_from_db`, `power_ratio_from_db`  
-**Density ops named as dB gains:** raise `OperationError` (`refuse_db_as_density_multiplier` path in literature activation).  
-Meyer-class dB dynamic ranges remain **indirect proxies**, not density multipliers.
-
----
-
-## 14. Density and EWSD
-
-### Formula name: Density metric identity $\Phi$
-
-**Purpose:** Canonical metric transform for prediction (collection-agnostic).
+**Equation.**
 
 $$
 \Phi(D) = D
 $$
 
-| Symbol | Definition | Unit | Code field |
-|--------|------------|------|------------|
-| $D$ | Precomputed EWSD acoustic-balanced score | dimensionless | baseline / samples |
-| $\Phi$ | Metric map | same as $D$ | `DensityMetric.phi` |
+(identity on the precomputed scalar; declared explicitly in `configs/density_metric.yaml`).
 
-**Implementation:** `density/metric.py` + `configs/density_metric.yaml`  
-**Upstream:** SSA/EWSD pipeline identifiers recorded in YAML; **not recomputed here**.  
-**Active technique-parameter mappings:** none.  
-**Event density / note counts / centroid:** not equivalent to EWSD unless a validated mapping exists (none active).
+**Implementation.** `density/metric.py::DensityMetric.phi`.
 
-If no active parameter/assumption applies, prediction cells report **NA** numerical EWSD technique estimates with qualitative attachments where available.
+**Status:** **IMPLEMENTED_FALLBACK** — the metric map is an identity because a validated transfer function is not present.
+
+### 11.2 Honesty about the acoustic transfer function
+
+The internal registry `_EWSD_TRANSFER_FUNCTIONS` (`extrapolation/nonlinear/descriptor_model.py`) is **empty**. Consequently, `ewsd_mapping_status("EWSD_score_acoustic_balanced")` returns `observed_scalar_direct_model`.
+
+The intended acoustic transfer is a function $F$ of a spectral descriptor tuple:
+
+$$
+D \;\stackrel{?}{=}\; F(D_1, D_2, \dots, D_k)
+$$
+
+**No such $F$ is implemented.** The system therefore models $D$ as a directly observed scalar and reports the model reduction as `observed_scalar_direct_model` on every export.
+
+**Status:** the reference relationship $D = F(D_1, \dots, D_k)$ is a **REFERENCE_MODEL** for future work; not evaluated numerically in this commit.
+
+> **Warning.** Do not describe cells produced from this identity metric as spectral EWSD predictions. They are model-reduced estimates on the measured scalar.
 
 ---
 
-## 15. Prediction operations
+## 12. Ordinary baseline
 
-**Module:** `prediction/operations.py::apply_operation`
+The ordinary baseline is a smooth function of MIDI pitch, fitted per instrument and per dynamic.
 
-| Operation | Equation | Spaces | Link notes |
-|-----------|----------|--------|------------|
-| `multiplicative_ratio` | $D' = D\cdot r$ | density→density | if log link: $\eta' = \eta + \ln r$ |
-| `additive_difference` | $D' = D + \delta$ | density→density | then $\eta' = g(D')$ |
-| `additive_log_difference` | $\eta' = \eta + x$, $D' = e^{\eta'}$ | log-density | requires log-compatible path |
+### 12.1 Formula — log-linear penalized B-spline baseline
 
-**Incorrect pattern (not used for additive $\delta$ in density space):**
+**Equation.**
 
 $$
-\eta' = \eta + \delta \quad\text{(forbidden when }\delta\text{ is density-space)}
+\log B_{i, d}(p) \;=\; \beta_{0,\, i, d} \;+\; s_{i, d}(p),
+\qquad
+B_{i, d}(p) \;=\; \exp\!\bigl(\beta_{0,\, i, d} + s_{i, d}(p)\bigr)
 $$
 
-The code **re-links** after density-space addition.
+with $p$ the MIDI pitch of the observation and $s_{i,d}$ a penalized cubic B-spline (see §13).
 
-**Rejected / unimplemented ops:** `decibel_*` as density ops; `frequency_dependent_transfer`; `spectral_slope_change`.
+**Symbols.**
 
-### Compatibility (implemented)
+| Symbol | Definition | Unit / Domain |
+|---|---|---|
+| $i$ | Instrument identifier | `vln`, `vla`, `vlc`, `cb` |
+| $d$ | Dynamic identifier | `pp`, `mf`, `ff`, ... |
+| $p$ | MIDI pitch | 0..127 |
+| $B_{i,d}(p)$ | Ordinary baseline EWSD estimate | same as $D$ |
+| $\beta_{0}$ | Intercept in log-space | same as $\log D$ |
+| $s_{i,d}(p)$ | Penalized cubic B-spline term | dimensionless in log-space |
 
-| Operation | identity | log | logit |
-|-----------|----------|-----|-------|
-| multiplicative_ratio | yes | yes ($r>0$) | yes if $D'$ in $(0,1)$ |
-| additive_difference | yes | yes via re-link | domain-limited |
-| additive_log_difference | no (log-space) | yes | no |
+**Implementation.**
+
+- `extrapolation/nonlinear/baseline.py::fit_ordinary_baseline`
+- `extrapolation/nonlinear/splines.py::fit_penalized_bspline`
+- Config: `configs/extrapolation_models.yaml` (`penalty_lambda: 1.0`, `spline_degree: 3`, `n_basis: 8`, `log_transform: true`, `quantity: EWSD_score_acoustic_balanced`).
+
+**Assumptions.** Only rows with `technique` in `{ordinary, ordinario, arco, arco_normal}` are used. `value` must be strictly positive (else the routine raises). Groups with fewer than 2 rows are skipped. The intercept carries **no penalty**; only spline coefficients do.
+
+**Status:** **IMPLEMENTED**.
+
+### 12.2 Prediction from a baseline fit
+
+For any query MIDI $p^\star$:
+
+$$
+\hat{B}_{i,d}(p^\star) \;=\; \exp\!\bigl(\hat{\beta}_{0} + s_{i,d}(p^\star)\bigr)
+$$
+
+and a boolean flag `outside_baseline_range` is raised when $p^\star \notin [p_{\min}, p_{\max}]$ of the fitted MIDI domain.
+
+**Status:** **IMPLEMENTED**.
+
+### 12.3 Residual scale
+
+The routine estimates a residual standard deviation
+
+$$
+\hat{\sigma}_{\mathrm{res}} \;=\; \sqrt{\frac{1}{\nu} \sum_{n} \bigl(y_n - \hat{y}_n\bigr)^2},
+\qquad \nu = \max(1, N - K - 1)
+$$
+
+where $K$ is the number of spline basis columns and $N$ is the observation count. It is used only as descriptive metadata; it is not the technique-level $\sigma$ used for intervals.
+
+**Status:** **IMPLEMENTED**.
 
 ---
 
-## 16. Link functions
+## 13. Splines and regularization
 
-**Module:** `prediction/links.py`  
-**Config:** `configs/model_links.yaml`  
-Default for `ewsd_v1`: **log**.
+### 13.1 Cubic B-spline basis
 
-### Identity
+Open uniform knot vectors are constructed with boundary knots repeated $\text{degree} + 1$ times:
 
 $$
-g(x) = x,\qquad g^{-1}(\eta) = \eta
+\mathbf{t} \;=\; \bigl(\,\underbrace{x_{\min}, \dots, x_{\min}}_{\text{degree}+1},\, t_1, \dots, t_{n_{\mathrm{int}}},\, \underbrace{x_{\max}, \dots, x_{\max}}_{\text{degree}+1}\,\bigr)
 $$
 
-### Log
+Default degree is $3$; default number of basis columns is $n_{\mathrm{basis}} = 8$. Basis evaluation uses SciPy's `BSpline` where available and a Cox--de Boor recursion as fallback (`extrapolation/nonlinear/splines.py::_de_boor_basis`).
+
+**Status:** **IMPLEMENTED**.
+
+### 13.2 Penalized least squares
+
+**Formula — P-spline objective.**
 
 $$
-g(x) = \ln x,\qquad g^{-1}(\eta) = e^{\eta}
+\hat{\boldsymbol{\beta}} \;=\; \arg\min_{\boldsymbol{\beta}} \; \bigl\lVert \mathbf{y} - \mathbf{B}\boldsymbol{\beta} \bigr\rVert_{2}^{2} \;+\; \lambda \, \boldsymbol{\beta}^{\top} \mathbf{P} \boldsymbol{\beta}
 $$
 
-Safeguard: $x \leftarrow \max(x, \varepsilon)$ with $\varepsilon = 10^{-12}$ if needed.
-
-### Logit
+with second-difference penalty
 
 $$
-g(p) = \ln\frac{p}{1-p},\qquad g^{-1}(\eta) = \frac{1}{1+e^{-\eta}}
+\mathbf{P} \;=\; \mathbf{D}_2^{\top} \mathbf{D}_2,
+\qquad
+(\mathbf{D}_2 \boldsymbol{\beta})_i \;=\; \beta_i - 2\beta_{i+1} + \beta_{i+2}
 $$
 
-Clip to $(\varepsilon, 1-\varepsilon)$, $\varepsilon=10^{-9}$.
+**Symbols.**
 
-### Probit
+| Symbol | Definition |
+|---|---|
+| $\mathbf{B}$ | Design matrix, shape $(N, K)$ |
+| $\boldsymbol{\beta}$ | Coefficient vector, length $K$ |
+| $\lambda$ | Penalty strength, `penalty_lambda` in YAML (default `1.0`) |
+| $\mathbf{D}_2$ | Second-difference operator |
 
-Present in config; **disabled** unless explicitly `enabled: true`.
+**Closed-form solution.**
+
+$$
+\hat{\boldsymbol{\beta}} \;=\; \bigl(\mathbf{B}^{\top}\mathbf{B} \;+\; \lambda \mathbf{P}\bigr)^{-1} \mathbf{B}^{\top} \mathbf{y}
+$$
+
+**Implementation.**
+
+- `extrapolation/nonlinear/splines.py::second_difference_penalty_matrix`
+- `extrapolation/nonlinear/splines.py::fit_penalized_bspline`
+
+**Assumptions.** OLS + RW2-style penalty; the penalty acts only on B-spline coefficients (not on any intercept augmented outside the basis).
+
+**Status:** **IMPLEMENTED**.
+
+### 13.3 Extrapolation flag
+
+`predict_bspline` marks any query point outside $[x_{\min}, x_{\max}]$ with `outside_range=True`. Callers must either widen uncertainty or refuse extrapolation.
+
+**Status:** **IMPLEMENTED**.
 
 ---
 
-## 17. Applicability engine
+## 14. Automatic model selection
 
-**Module:** `applicability/resolver.py::resolve_applicability`
+Model selection is an explicit function:
 
-Statuses: `matched`, `not_applicable`, `insufficient_metadata`, `applicable_only_by_explicit_transfer`, `contradictory_metadata`.
+$$
+M^{\star} \;=\; \mathcal{S}(T,\, Q,\, \mathcal{D},\, E,\, C)
+$$
 
-Decision order (simplified): instrument/technique identity $\rightarrow$ declared applicability dimensions vs query $\rightarrow$ transfer flag $\rightarrow$ contradictory ranges.
+with
 
-```mermaid
-flowchart TD
-  A[Start: param + query] --> B{Required dims present in query?}
-  B -->|no| I[insufficient_metadata]
-  B -->|yes| C{All dims match?}
-  C -->|no| N[not_applicable]
-  C -->|yes| D{Transferred without equation?}
-  D -->|yes| T[applicable_only_by_explicit_transfer]
-  D -->|no| E{Contradictory ranges?}
-  E -->|yes| X[contradictory_metadata]
-  E -->|no| M[matched]
+- $T$ = technique identifier,
+- $Q$ = target quantity (`EWSD_score_acoustic_balanced` or a registered descriptor),
+- $\mathcal{D}$ = data availability audit (observations, distinct pitches, span, covariates, spectra),
+- $E$ = evidence tier hint,
+- $C$ = configuration (`configs/extrapolation_model_selection.yaml`).
+
+**Status of the selection engine:** **IMPLEMENTED** (`extrapolation/nonlinear/model_selection.py`).
+
+### 14.1 Thresholds
+
+From `configs/extrapolation_model_selection.yaml`:
+
+| Threshold | Value |
+|---|---|
+| `min_distinct_pitches_for_linear` | 3 |
+| `min_distinct_pitches_for_spline` | 6 |
+| `min_pitch_span_semitones_for_spline` | 12 |
+| `min_observations_for_linear` | 3 |
+| `min_observations_for_spline` | 6 |
+| `min_design_rank_ratio` | 0.85 |
+
+### 14.2 Complexity ladder
+
+Ascending: `M0_constant_effect` $\rightarrow$ `M1_regularized_linear_trend` $\rightarrow$ `M2_penalized_register_spline` $\rightarrow$ `M3_hierarchical_instrument_dynamic` $\rightarrow$ `M4_physical_informed` $\rightarrow$ `M5_spectral_or_modal_specific`.
+
+### 14.3 Families and gates
+
+| Family | Techniques | Mechanism |
+|---|---|---|
+| `ordinary_baseline_model` | ordinary/ordinario/arco/arco_normal | ordinary excitation |
+| `bow_contact_model` | sul_tasto, sul_ponticello | bow-contact point modifies excitation |
+| `mute_transfer_model` | con_sordino | mute modifies bridge/body transmission |
+| `harmonic_modal_model` | natural_harmonic, artificial_harmonic | nodal touch selects modal participation |
+| `multiphonic_component_model` | multiphonic(s) | qualitative only |
+| `execution_target_model` | flautando | qualitative only; never routed as sul_tasto |
+
+### 14.4 Harmonic gate semantics (critical)
+
+Two harmonic gate states are represented separately:
+
+- `harmonic_modal_metadata_gate` — selected when modal metadata is incomplete (missing string, harmonic order, sounding pitch, or baseline semantics). `selection_reason_if_chosen = insufficient_harmonic_metadata`.
+- `harmonic_modal_acoustic_model_unavailable` — selected when modal metadata is complete but no acoustic calibration exists. `selection_reason_if_chosen = no_harmonic_acoustic_calibration_data`. `model_status = modal_frequencies_generated_acoustic_values_unavailable`.
+
+The `harmonic_modal_metadata_gate` is **only applicable when metadata is incomplete**. When metadata is complete, the gate is rejected with reason `gate_not_applicable_modal_metadata_complete` (this is not a failed requirement — it is a scope declaration).
+
+The engine strictly separates:
+
+- `missing_covariates` (modal geometry that the user must supply),
+- `missing_model_components` (in particular, `calibrated_harmonic_descriptor_model`).
+
+The audit fields on the decision expose both `modal_metadata_status` (`complete` / `incomplete`) and `acoustic_calibration_status` (`available` / `unavailable`).
+
+**Status:** **IMPLEMENTED**.
+
+### 14.5 Policy invariants
+
+- Never auto-select the most complex model by default.
+- Refuse `M4_physical_informed` without required physical covariates.
+- Refuse constant-factor path for harmonic families (`refuse_constant_factor_for_harmonics: true`).
+- Refuse `flautando` as `sul_tasto`.
+- Numeric assumptions are authorised only when the flag `authorize_numeric_assumption_when_zero_obs` is true; otherwise the fallback is qualitative or NA.
+
+**Status:** **IMPLEMENTED**.
+
+### 14.6 Evidence tier hint
+
+`assess_data_availability` and `select_model` classify cells into an evidence tier for downstream reporting. Tiers:
+
+- `LEVEL_0_UNSUPPORTED`
+- `LEVEL_1_ASSUMPTION_ONLY`
+- `LEVEL_1_BIBLIOGRAPHIC_QUALITATIVE`
+- `LEVEL_2_METADATA_CONSTRAINED`
+- `LEVEL_3_PARTIAL_EMPIRICAL`
+- `LEVEL_4_MATCHED_EMPIRICAL`
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 15. Constant-effect fallback
+
+When no target-technique observations exist (and numeric assumptions are authorised), the bow-contact submodel falls back to a **constant technique effect** carried by an assumption prior.
+
+### 15.1 Formula — constant fallback
+
+**Equation.**
+
+$$
+Y_{i, d, t}(p) \;=\; B_{i, d}(p) \cdot \exp(\alpha_t)
+$$
+
+$\alpha_t$ is the mean of the corresponding prior (see §17). The `alpha_origin` field records that the coefficient is a `regularization_assumption`, not an empirical fit.
+
+**Symbols.**
+
+| Symbol | Definition |
+|---|---|
+| $Y_{i,d,t}$ | Technique-level estimate |
+| $B_{i,d}$ | Ordinary baseline (from §12) |
+| $\alpha_t$ | Constant log-ratio effect for technique $t$ |
+
+**Status:** **IMPLEMENTED_FALLBACK** (`selected_model_id = constant_technique_effect_over_smoothed_baseline`).
+
+### 15.2 Interval type when constant
+
+Constant-effect predictions are marked `prior_dominated = True` and their intervals are **assumption distribution intervals**, not confidence or posterior credible intervals (see §22).
+
+---
+
+## 16. Register-dependent technique model
+
+When technique observations exist, the log-ratio can carry a register-dependent shape term.
+
+### 16.1 Formula — register-dependent multiplicative technique model
+
+**Equation.**
+
+$$
+Y_{i, d, t}(p) \;=\; B_{i, d}(p) \cdot \exp\!\bigl(\alpha_t + g_t(p)\bigr)
+$$
+
+with $g_t \equiv 0$ when the register shape is not identified. When identified, $g_t$ is either a ridge-regularized linear trend or a penalized cubic B-spline in MIDI, fitted on the log-ratio $\log(y_n / \hat{B}_{i,d}(p_n))$.
+
+**Symbols.**
+
+| Symbol | Definition |
+|---|---|
+| $\alpha_t$ | Constant log-ratio intercept for technique $t$ |
+| $g_t(p)$ | Register-dependent shape (linear or penalized spline) |
+| $Y$ | Technique-level EWSD estimate |
+| $B$ | Ordinary baseline (§12) |
+
+**Implementation.** `extrapolation/nonlinear/bow_contact_model.py::fit_bow_contact_effect` and `BowContactFit.predict`.
+
+**Assumptions.**
+
+- The multiplicative log-ratio structure is the primary modelling choice; if $g_t$ is not identified, only $\alpha_t$ is retained.
+- The technique-level intercept is either estimated from the log-ratios of observed data or drawn from the prior when no observations exist.
+
+**Status:** **IMPLEMENTED**.
+
+### 16.2 Register-shape identification
+
+`shape_mode` is chosen from the `selected_model_id`:
+
+- `constant_technique_effect_over_smoothed_baseline` $\rightarrow$ `constant`
+- `regularized_linear_register_trend` $\rightarrow$ `linear`
+- `penalized_register_spline` $\rightarrow$ `spline`
+
+`register_shape_identified` is true only for `linear` or `spline`.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 17. Hierarchical model — implemented approximation vs planned Bayesian model
+
+### 17.1 Planned hierarchical model
+
+The **REFERENCE_MODEL** (target formulation) is a hierarchical Bayesian model where technique intercepts and shape terms share partial pooling across instruments and dynamics, with priors:
+
+- $\alpha_t \sim \mathcal{N}(\mu_t^{(\mathrm{prior})}, \sigma_t^{(\mathrm{prior})\,2})$
+- Spline coefficients $\boldsymbol{\beta}$ under an RW2 penalty (RW2-style prior).
+- $\sigma \sim \mathrm{HalfNormal}(1)$ residual scales for technique and baseline.
+
+Priors are loaded from `configs/extrapolation_priors.yaml`. The `M3_hierarchical_instrument_dynamic` rung is `enabled: false` in the model-selection config.
+
+**Status:** **PLANNED** (hierarchical rung is disabled).
+
+### 17.2 Implemented approximation
+
+What is actually shipped is:
+
+- OLS baseline fit with a second-difference penalty ($\S 12$--$13$).
+- Ridge-regularized linear fit on the log-ratio (`_fit_ridge_linear` with $\lambda = 2$).
+- Penalized B-spline fit on the log-ratio.
+- Optional Bayesian log-ratio spline (see §23), only when PyMC/ArviZ are installed.
+
+**Status:** **IMPLEMENTED_FALLBACK** for the non-Bayesian pathway.
+
+---
+
+## 18. Bow-contact model
+
+Bow-contact techniques (`sul_tasto`, `sul_ponticello`) use the register-dependent multiplicative log-ratio (§16).
+
+### 18.1 Alpha priors (assumptions)
+
+From `configs/extrapolation_priors.yaml`:
+
+- `alpha_t_sul_tasto`: $\mathcal{N}(\text{mean}=-0.12,\ \text{sd}=0.50)$, `activation_status: active`, `source: regularization_assumption`.
+- `alpha_t_sul_ponticello`: $\mathcal{N}(\text{mean}=+0.20,\ \text{sd}=0.55)$, `activation_status: active`, `source: regularization_assumption`.
+- `sigma_technique_residual`: `HalfNormal(sd=1.0)`.
+- `sigma_spline_smooth`: `HalfNormal(sd=1.0)`.
+
+**Assumption identifiers surfaced in exports:**
+
+- `ASSUMP_SUL_TASTO_ALPHA_MINUS_012`
+- `ASSUMP_SUL_PONTICELLO_ALPHA_PLUS_020`
+- `sul_tasto_and_sul_ponticello_are_not_inverse_transforms`
+
+**Status:** **ASSUMPTION**.
+
+> **Warning.** These centres are **regularization assumptions**, not empirical fits. `sul_tasto` and `sul_ponticello` are **not** inverse transforms of one another (magnitudes deliberately differ).
+
+### 18.2 Fitting logic
+
+`fit_bow_contact_effect` (`extrapolation/nonlinear/bow_contact_model.py`) picks a shape mode from the selected model id:
+
+- If `shape_mode = constant` or no observations exist: $\hat{\alpha}_t$ is the prior mean (`prior_dominated = True`) or the empirical mean log-ratio (`prior_dominated = False` when observations exist).
+- If `shape_mode = linear`: ridge-regularized linear trend on the log-ratio.
+- If `shape_mode = spline`: penalized cubic B-spline on the log-ratio.
+
+Total log-ratio uncertainty:
+
+$$
+\sigma_{\log R} \;=\; \sqrt{\sigma_{\alpha}^{2} + \sigma_{\mathrm{res}}^{2}}
+$$
+
+**Status:** **IMPLEMENTED**.
+
+### 18.3 Interval semantics for bow-contact predictions
+
+- When `prior_dominated = True`: `interval_type = assumption_distribution_interval`.
+- When `prior_dominated = False`: `interval_type = approximate_predictive_interval_logR`.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 19. Mute model
+
+The mute submodel (`extrapolation/nonlinear/mute_model.py`) applies a log-ratio effect $\alpha_{\mathrm{mute}}$ (optionally with a shape term) to the ordinary baseline.
+
+### 19.1 Formula — dB to log-ratio mapping
+
+**Equation.**
+
+$$
+\alpha_{\mathrm{mute}} \;=\; \log\!\bigl(10^{\,-\Delta_{\mathrm{dB}}/10}\bigr)
+$$
+
+With the ASSUMPTION `EWSD proportional to power` (`ASSUMP_EWSD_PROPORTIONAL_TO_POWER`), a $\Delta_{\mathrm{dB}}$ dB power reduction on ordinary $\rightarrow$ muted maps to the log-ratio above.
+
+Reference constants (priors, `configs/extrapolation_priors.yaml`):
+
+- Violin: $\Delta_{\mathrm{dB}} \approx 6$ dB $\Rightarrow \alpha_{\mathrm{mute, vln}} \approx \log(10^{-0.6}) \approx -0.691$; prior `alpha_mute_vln` centred at $-0.691151$, sd $= 0.35$.
+- Viola: $\Delta_{\mathrm{dB}} \approx 4$ dB $\Rightarrow \alpha_{\mathrm{mute, vla}} \approx -0.461$; prior `alpha_mute_vla` centred at $-0.460517$, sd $= 0.35$.
+- Generic (cello/contrabass fallback): `alpha_mute_generic` centred at $-0.25$, sd $= 0.90$, `activation_status: fallback_only`.
+
+**Assumption identifiers surfaced in exports:**
+
+- `ASSUMP_MUTE_ATTENUATION_6DB` (violin)
+- `ASSUMP_MUTE_ATTENUATION_4DB` (viola)
+- `ASSUMP_MUTE_GENERIC_ALPHA`
+- `ASSUMP_EWSD_PROPORTIONAL_TO_POWER`
+
+**Status:** **ASSUMPTION** for the mapping; **IMPLEMENTED_FALLBACK** for how it is applied.
+
+### 19.2 Fitting modes
+
+`fit_mute_effect` selects a `shape_mode` from the model id:
+
+- `qualitative` (`qualitative_or_na_mute`),
+- `constant` (`constant_assumption_fallback`),
+- `linear` (`scalar_descriptor_approximation_linear`),
+- `spline` (`scalar_descriptor_approximation_spline`),
+- `spectral` (`spectral_transfer_model`).
+
+Heavy-mute markers (e.g. `heavy_practice`, `weighted`, `sordino_pesado`) are refused from the `standard_performance_orchestral` path.
+
+**Status:** **IMPLEMENTED** for scalar and constant fallbacks; the `spectral_transfer_model` rung requires spectra/LTAS to be present (only accepted, no numerical spectral transfer is coded yet — see §23).
+
+### 19.3 Interval semantics
+
+Same rules as §18.3: prior-dominated mute predictions are labelled `assumption_distribution_interval`.
+
+---
+
+## 20. Harmonic register generator
+
+The harmonic register generator (`extrapolation/nonlinear/harmonic_register.py`) produces sounding pitches from string $\times$ order geometry. **It does not** produce EWSD numbers for those pitches; those cells are `unavailable` (see §21).
+
+### 20.1 Natural harmonics
+
+**Formula.**
+
+$$
+f_n \;=\; n \cdot f_{\mathrm{open}}
+$$
+
+$$
+m_n \;=\; 69 \;+\; 12 \log_{2}\!\left(\frac{f_n}{440}\right)
+$$
+
+**Symbols.**
+
+| Symbol | Definition |
+|---|---|
+| $f_{\mathrm{open}}$ | Sounding frequency of the open string |
+| $n$ | Harmonic order (integer $\ge 2$) |
+| $f_n$ | Physical partial frequency |
+| $m_n$ | Sounding MIDI (floating-point; cents deviation reported) |
+
+**Configuration.** `configs/extrapolation_harmonic_ranges.yaml`:
+
+- `vln`, `vla`: natural orders $\{2, 3, 4, 5, 6, 7, 8\}$; artificial order $4$.
+- `vlc`: natural orders $\{2, \dots, 10\}$.
+- `cb`: natural orders $\{2, \dots, 12\}$.
+- `maximum_sounding_pitch: C8`, `maximum_sounding_midi: 108`.
+- `selection_mode: configured_physically_plausible_harmonics`.
+- `order_selection_reason: practical_analysis_scope`.
+
+**Status:** **IMPLEMENTED**.
+
+### 20.2 Artificial harmonics
+
+Default order $= 4$, touch interval $= P4$; sounding pitch is approximately $\text{stopped} + 24$ semitones for order $4$:
+
+$$
+m_{\mathrm{sounding}} \;=\; m_{\mathrm{stopped}} + \bigl\lfloor 12 \log_{2}(n) + 0.5 \bigr\rfloor,
+\quad n = 4 \Rightarrow +24 \text{ semitones}
+$$
+
+Configuration policy: `canonical_single_string_assignment` (one canonical stopped–touched pair per sounding pitch; other equivalents are considered redundant for auditing purposes).
+
+**Status:** **IMPLEMENTED**.
+
+### 20.3 Domains
+
+Three explicit domains are surfaced on every harmonic target row and must not be conflated:
+
+1. `physical_harmonic_range` — open strings $\times$ configured orders (computed).
+2. `instrument_harmonic_analysis_range` — optional research window per instrument.
+3. `user_requested_output_range` — per-run GUI/CLI filter.
+
+**Status:** **IMPLEMENTED**.
+
+### 20.4 Ordinary baseline distance annotation
+
+`annotate_baseline_extrapolation` marks each harmonic sounding pitch as inside/outside the ordinary baseline domain and, if outside, applies a semitone-distance policy:
+
+- Up to `limited_extrapolation_semitones = 3` semitones outside: `limited_out_of_domain_uncertainty_inflated`.
+- Up to `physical_or_assumption_semitones = 12`: `requires_physical_spectral_or_explicit_assumption`.
+- Beyond that: `default_unavailable_beyond_12_semitones`.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 21. Harmonic model-selection audit
+
+Because the acoustic calibration for harmonics is not implemented, harmonic cells always resolve to one of two gate states:
+
+- `harmonic_modal_metadata_gate`: `selection_reason = insufficient_harmonic_metadata`, `assumption_ids = [ASSUMP_HARMONIC_REQUIRES_MODAL_METADATA]`.
+- `harmonic_modal_acoustic_model_unavailable`: `selection_reason = no_harmonic_acoustic_calibration_data`, `assumption_ids = [ASSUMP_HARMONIC_DESCRIPTOR_MODEL_NOT_IMPLEMENTED]`, `model_status = modal_frequencies_generated_acoustic_values_unavailable`.
+
+In both cases:
+
+- `value_kind = unavailable`,
+- `fallback_level = no_numeric_fallback`,
+- `estimate_mean`, `estimate_median`, `interval_low`, `interval_high` are `None`.
+
+> **Warning.** Harmonic sounding pitches are generated numerically, but their acoustic EWSD values are **not** predicted numerically. Do not read pitch tables as timbre tables.
+
+**Status:** **IMPLEMENTED** for the audit and reporting; the numeric harmonic model is **PLANNED**.
+
+---
+
+## 22. Uncertainty and intervals
+
+### 22.1 Multiplicative log-ratio interval
+
+**Formula.**
+
+$$
+L \;=\; B \cdot \exp\!\bigl(\mu_{\log R} - z\,\sigma_{\log R}\bigr),
+\qquad
+U \;=\; B \cdot \exp\!\bigl(\mu_{\log R} + z\,\sigma_{\log R}\bigr)
+$$
+
+with $z = 1.959963984540054$ for a nominal 95 percent level.
+
+**Symbols.**
+
+| Symbol | Definition | Unit |
+|---|---|---|
+| $B$ | Baseline mean at the target pitch | same as $D$ |
+| $\mu_{\log R}$ | Mean of the log-ratio at the target pitch | dimensionless |
+| $\sigma_{\log R}$ | Standard deviation of the log-ratio | dimensionless |
+| $L, U$ | Interval endpoints on the original scale | same as $D$ |
+| $z$ | Standard normal quantile for the requested level | dimensionless |
+
+**Implementation.** `extrapolation/nonlinear/posterior.py::summarize_log_ratio_multiplicative`.
+
+**Status:** **IMPLEMENTED**.
+
+### 22.2 Neutral estimate fields
+
+Every result row carries:
+
+- `estimate_mean`, `estimate_median`, `estimate_sd`;
+- `interval_low`, `interval_high`;
+- `interval_type` in `{assumption_distribution_interval, approximate_predictive_interval_logR, bayesian_hdi_from_arviz, approximate_additive_interval_original_scale}`.
+
+Bayesian columns (`posterior_mean`, `credible_interval_*`, ...) are **populated only when `bayesian_backend_used = True`**. Otherwise they are `None` in exports.
+
+**Status:** **IMPLEMENTED**.
+
+### 22.3 Assumption distribution interval
+
+When `prior_dominated = True` (typically zero observations and priors carrying the effect), the interval reported is an **assumption distribution interval**, not a classical confidence interval and not a posterior credible interval.
+
+> **Warning.** Assumption distribution intervals reflect the width of the user-supplied prior for $\alpha$, not statistical uncertainty from data. Never label them as posteriors or as confidence intervals.
+
+**Status:** **IMPLEMENTED**.
+
+### 22.4 Legacy additive interval
+
+For non-log paths (constant M0 legacy), the routine emits an additive interval
+
+$$
+L \;=\; \mu - z\,\sigma,
+\qquad
+U \;=\; \mu + z\,\sigma
+$$
+
+on the original scale. This is retained for backward compatibility with older audit workbooks; it is **not** the preferred form for log-ratio submodels.
+
+**Status:** **IMPLEMENTED_FALLBACK**.
+
+---
+
+## 23. Optional Bayesian backend
+
+### 23.1 Backend availability
+
+`extrapolation/nonlinear/bayesian_backend.py::check_backend` probes `pymc` and `arviz`. When absent it returns `capability_status = bayesian_backend_unavailable` and the pipeline never fabricates posteriors.
+
+**Status:** **OPTIONAL_BACKEND**.
+
+### 23.2 Bayesian log-ratio spline model
+
+When the backend is available (`pip install -e ".[bayes]"`), the fitted PyMC model is:
+
+$$
+\begin{aligned}
+\alpha \;&\sim\; \mathcal{N}(0, 1) \\
+\boldsymbol{\beta} \;&\sim\; \mathcal{N}\!\Bigl(0,\; \tfrac{1}{\sigma_{\mathrm{smooth}}}\Bigr) \text{ per basis} \\
+\text{Potential} \;&\propto\; -\tfrac{1}{2} \bigl\lVert \mathbf{L}\boldsymbol{\beta} \bigr\rVert_{2}^{2} \text{ with } \mathbf{L}\mathbf{L}^{\top} = \mathbf{D}_2^{\top}\mathbf{D}_2 + \varepsilon \mathbf{I} \\
+\sigma \;&\sim\; \mathrm{HalfNormal}(1) \\
+\mathbf{y} \mid \boldsymbol{\beta}, \alpha, \sigma \;&\sim\; \mathcal{N}\!\bigl(\alpha + \mathbf{B}\boldsymbol{\beta},\; \sigma\bigr)
+\end{aligned}
+$$
+
+**Status:** **OPTIONAL_BACKEND** (`extrapolation/nonlinear/bayesian_backend.py::fit_bayesian_log_ratio_spline`).
+
+### 23.3 Consequences of an unavailable backend
+
+- `interval_type` remains `approximate_predictive_interval_logR` or `assumption_distribution_interval`.
+- `bayesian_backend_used = False`.
+- `posterior_*` and `credible_interval_*` fields are set to `None` in exports.
+- `Diagnostics` sheet reports `capability_status = bayesian_backend_unavailable`.
+
+> **Warning.** Missing PyMC does not silently degrade to a fake posterior. It degrades to an approximate predictive log-ratio interval that is **explicitly labelled** as such.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 24. Evidence framework
+
+Every predicted cell is tagged with an evidence tier:
+
+| Tier | Meaning |
+|---|---|
+| `LEVEL_0_UNSUPPORTED` | Technique/family not admissible or no numeric model. |
+| `LEVEL_1_ASSUMPTION_ONLY` | Numeric value comes from a user assumption. |
+| `LEVEL_1_BIBLIOGRAPHIC_QUALITATIVE` | Qualitative literature attachment; no numeric value. |
+| `LEVEL_2_METADATA_CONSTRAINED` | Numeric value constrained by metadata only. |
+| `LEVEL_3_PARTIAL_EMPIRICAL` | Numeric value from partial technique observations. |
+| `LEVEL_4_MATCHED_EMPIRICAL` | Numeric value from matched empirical observations. |
+
+Assignment logic lives in `extrapolation/nonlinear/model_selection.py::select_model` and in the technique-model fits (bow-contact and mute). Zero observations plus prior-dominated $\alpha \Rightarrow$ `LEVEL_1_ASSUMPTION_ONLY`; six or more observations with an admissible spline $\Rightarrow$ `LEVEL_4_MATCHED_EMPIRICAL`.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 25. Provenance framework
+
+Every result row carries provenance:
+
+- `data_status`: measured / synthetic / mixed / manual entry / unknown.
+- `scientific_use`: `prohibited_for_doctoral_evidence` for synthetic rows.
+- `source_workbook_path`, `source_workbook_hash`, `source_sheet`, `import_run_id`, `source_row_ids` (list of raw record identifiers).
+- `assumption_ids`: `ASSUMP_*` identifiers only. Explanatory strings live in `assumptions_trace`.
+- `baseline_record_ids`, `baseline_n_observations`, `baseline_midi_min`, `baseline_midi_max`, `baseline_penalty_lambda`, `baseline_spline_degree`, `baseline_n_knots`.
+- `warnings`, `calculation_trace`.
+- `sensitivity_status` in `{stable, prior_sensitive, data_limited, outside_baseline_range, not_evaluated}`.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 26. GUI
+
+`string-technique-gui` launches the manual register application (`gui_metadata/extrapolator_app.py`). The GUI enforces a **manual register $\rightarrow$ technique requests** workflow. It is not a browser over legacy metadata tables.
+
+### 26.1 Workflow
+
+1. **Step 1 — Measured register.** Build a note column from `From` to `To` pitches; paste values into the column (European comma accepted). Notes may be edited directly.
+2. **Step 2 — Requests.** Tick techniques from `con_sordino`, `sul_tasto`, `sul_ponticello`, `artificial_harmonic`, `natural_harmonic`; optionally set the harmonic sounding range with a `configured_physically_plausible_harmonics` mode; press `Generate from filled register` to produce one request per (note $\times$ technique).
+3. **Step 3 — Results.** Press `Run requests`. Results are grouped by technique in the order: `con_sordino`, `sul_tasto`, `sul_ponticello`, harmonics. Export to Excel.
+
+### 26.2 Method combobox
+
+The extrapolation method combobox exposes four values:
+
+- `hierarchical_spline` $\rightarrow$ mapped to `requested_method = automatic` at export.
+- `constant` $\rightarrow$ constant-effect fallback (§15).
+- `physical_informed_bayesian` $\rightarrow$ Bayesian log-ratio spline when the backend is available; otherwise the approximate log-ratio interval.
+- `evidence_only` $\rightarrow$ qualitative-only output (no numeric extrapolation).
+
+### 26.3 Harmonic controls
+
+- `Use physically available harmonic range` checkbox.
+- `From` / `To` sounding pitch entries.
+- `Mode` combobox with values `configured_physically_plausible_harmonics`, `upper_register_only`, `custom_sounding_range`, `selected_harmonic_orders`.
+- Default upper bound: `C8`.
+
+### 26.4 Return to start
+
+A dedicated `Return to start` button in the top bar and in the results tab resets the workflow while preserving the register and the request set for edit-and-re-run cycles.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 27. CLI
+
+Top-level command surface (from `python -m string_technique_model --help`):
+
+```
+run, estimate, lookup, gui, collection, baseline, literature,
+predict, assumptions, extrapolate, request, nonlinear, stress-test
 ```
 
-**Example matched:** violin, `con_sordino`, mute type within param’s `applicable_mute_type`.  
-**Example rejected:** heavy-practice mute query against orchestral-only parameter (`mute_type_mismatch` in literature activation layer).
+Selected subcommands (see `src/string_technique_model/cli/`):
 
----
+- `run`, `estimate`, `lookup` — legacy estimation entry points.
+- `gui` — launches the manual register GUI.
+- `collection register|inspect|validate|import|list|compare` — collection registry.
+- `baseline build|inspect|validate|compare-methods` — ordinary baseline utilities.
+- `literature inventory|validate|matrix|ledger|scan-corpus|register-source|add-extract|...` — literature layer.
+- `predict build|from-ordinary|validate-context|inspect-parameters|explain|sensitivity|validation-status` — legacy evidence-gated prediction.
+- `assumptions list|validate|show|activate|deactivate|applicable|audit` — user assumptions.
+- `extrapolate grid|fit-baseline|fit-technique|predict|compare|diagnose|export` — the primary extrapolation surface (spline + optional Bayes).
+- `request` — note-level requests (measured notes $\rightarrow$ needed notes $\times$ technique).
+- `nonlinear fit-baseline|fit-technique|predict|compare|diagnose` — the nonlinear hierarchical extrapolation stack (Phase 1).
+- `stress-test acoustics --tier fast|extended|benchmark|all` — scientific acoustics stress runs.
 
-## 18. Qualitative constraint engine
-
-**Config:** `configs/qualitative_acoustic_constraints.yaml`  
-**Engine:** `constraints/engine.py::QualitativeConstraintEngine`
-
-Tendencies: `increase`, `decrease`, `redistribute`, `variable`, …  
-Strengths: `mechanism`, `recurrent_tendency`, `context_dependent`, `instrument_specific_tendency`.  
-All constraints: `numerical_prediction_allowed: false`.
-
-`evaluate(..., request_density_prediction=True)` $\rightarrow$ status `numerical_prediction_not_allowed`.  
-**A qualitative constraint does not generate an EWSD number.**
-
----
-
-## 19. Evidence and literature ingestion
-
-Workflow:
-
-1. Locate PDF under archive / `literature/corpus/`.
-2. Hash (SHA-256).
-3. Read internal title/author/year/DOI/ISBN (not filename).
-4. Detect duplicates by hash.
-5. Assign `validation_status` in `configs/source_identity_validation.yaml`.
-6. Register `LiteratureSource` if ingestible.
-7. Add page-located `EvidenceExtract` (curator-validated).
-8. Rebuild matrix/ledger; activation gate decides density usability.
-
-Statuses: `verified_identity`, `partial_identity_match`, `duplicate_file`, `rejected_file_identity_mismatch`, `insufficient_metadata`.
-
-Filename identity alone is **insufficient** (`reject_filename_only_claim`).
-
----
-
-## 20. Evidence activation rules
-
-`literature/activation.py::evaluate_parameter_activation` requires (all):
-
-- verified local source + validated extract with location;
-- complete operation/scale/unit;
-- non-prohibited status;
-- non-dB-as-multiplier;
-- density mapping in activating set;
-- applicability `matched`;
-- curator `active_for_density_prediction: true`;
-- no transfer without equation.
-
-**Current package:** zero active density parameters.  
-Secondary synthesis numerics (SOA PDF) remain inactive pending primary verification.
-
----
-
-## 21. User numerical assumptions
-
-**Config:** `configs/user_assumptions.yaml` (registry currently **empty**).  
-**Models:** `assumptions/models.py::UserAssumption`  
-**Modes:** `prediction/modes.py` — default `evidence_only`.
-
-Dual gate:
-
-1. Run mode `evidence_plus_user_assumptions` **or** `--activate-user-assumptions`.
-2. Entry `active_for_density_prediction: true` with non-null `reported_value`.
-
-Outputs labelled `assumption_based`; never `literature_validated`.  
-Conflicts among overlapping active assumptions: `AssumptionConflictError` (explicit failure).
-
-### YAML schema example (inactive template)
-
-```yaml
-assumption_id: UA_EXAMPLE_VLN_SUL_PONT_MF_RATIO
-name: example_violin_sul_ponticello_mf_ratio
-instrument: vln
-technique: sul_ponticello
-operation_type: multiplicative_ratio
-reported_value: 1.2
-unit: dimensionless_ratio
-numerical_scale: density_ratio
-compatible_links: [log, identity]
-source_space: density
-target_space: density
-uncertainty_sd: 0.1
-applicable_dynamic: mf
-active_for_density_prediction: false
-literature_validated: false
-citation_or_rationale: "User-supplied example only"
-```
-
----
-
-## 22. Uncertainty
-
-**Module:** `prediction/uncertainty.py` (no separate `uncertainty/` package).
-
-**Baseline sampling:**
-
-- if `baseline_sd>0`: $D^{(i)} \sim \mathcal{N}(\mu, \sigma)$
-- else if `baseline_se>0`: $D^{(i)} \sim \mathcal{N}(\mu, \mathrm{SE})$
-- else point mass at $\mu$
-
-**Parameter draws:** normal / lognormal / uniform / point mass from ledger fields.
-
-**Transfer noise (only if configured $\sigma_t>0$):**
-
-$$
-\eta^{(i)} \leftarrow \eta^{(i)} + \varepsilon^{(i)},\quad \varepsilon^{(i)}\sim\mathcal{N}(0,\sigma_t)
-$$
-
-Currently `transfers.uncertainty_sd: null` in prediction config — transfer UQ inactive.
-
-**Analytical delta-method formulas:** Not currently implemented (Monte Carlo only).  
-Missing uncertainty $\Rightarrow$ point mass (no hidden default SD such as $0.1$ for transfers).
-
----
-
-## 23. Prediction pipeline
-
-**Entry points:** `prediction/pipeline.py::build_predictions`, `prediction/from_ordinary.py::predict_from_ordinary`.
-
-```mermaid
-sequenceDiagram
-  participant U as Caller/CLI
-  participant M as Mode gate
-  participant R as Request/context
-  participant A as Applicability
-  participant E as Evidence activation
-  participant S as User assumptions
-  participant O as Ops+Links
-  participant Q as MC UQ
-  participant C as Constraints
-  participant Out as Outputs
-  U->>M: evidence_only or plus_assumptions
-  U->>R: validate PredictionRequest / baseline
-  R->>A: resolve_applicability
-  R->>E: evaluate_parameter_activation
-  M->>S: resolve_user_assumptions (optional)
-  alt active params exist
-    E->>O: apply_operation chain
-    O->>Q: propagate_metric_only
-    Q->>Out: density summary
-  else none active
-    Out->>Out: NA numerical EWSD
-  end
-  R->>C: qualitative matches
-  C->>Out: tendencies + provenance labels
-```
-
-Default `n_draws=5000`, seed from config/CLI.  
-Complete ordinary→technique path often ends in **NA** + qualitative CSV + `README_RESULT_BASIS`.
-
----
-
-## 24. Capability reporting
-
-`models/capabilities.py` / spectrum backend statuses include:
-
-- `unavailable`
-- `schema_only`
-- `qualitative_constraints_only`
-- `numerical_transform_available` — **not** currently true for spectrum path
-
-Descriptor extraction capability: **unavailable**.  
-Descriptor extraction $\neq$ transformed-audio generation.
-
----
-
-## 25. Spectrum-aware processing
-
-**Accepted keys (validation only):** `audio`, `fft`, `psd`, `stft`, `partial_amplitudes`, `band_energy`.  
-**Numerical spectrum $\rightarrow$ density transform:** unavailable (`prediction.yaml`).  
-`TechniqueModel.transform_spectrum` returns qualitative-only result with `ewsd_value=None`.
-
-Do not read “spectrum-aware” as implying implemented spectral EWSD prediction.
-
----
-
-## 26. Collections and data ingestion
-
-Supported tabular paths via adapters: CSV, Parquet (optional engine), JSON/YAML configs.  
-`io/parquet_preflight.py` checks engine availability; Parquet is **not** universally mandatory — preflight fails clearly if required and missing.  
-Ordinary baselines: e.g. `data/baselines/violin_ordinary_cdm.json`.  
-Missingness preserved; no silent zero-fills for density.
-
----
-
-## 27. Manual entry and CLI
-
-**Entry:** `python -m string_technique_model` (`cli/__init__.py`).
-
-### Metadata-entry GUI
-
-`python -m string_technique_model gui` launches a **table-first metadata application** (`gui_metadata/`).  
-One row = one recording / file / excerpt / analysis unit. Core workflow: open/create → enter → validate → save/export.
-
-- Pitch modes: `single_note`, `pitch_range`, `multiple_notes`, `open_string`, `unpitched_or_noise`, `unknown`.
-- Full chromatic registry MIDI 0–127 (`pitch/registry.py`); instrument-range filter optional.
-- Written and sounding pitch stored separately; derivations recorded.
-- Technique combination: left-hand + bow-contact + mute + articulation (+ additional).
-- Import/export: CSV, JSON, Parquet (when available); schema `metadata_entry_v1`.
-- Prediction, literature, descriptors, and stress tools are under **Tools → Advanced** (`gui_legacy.py`), not on the main screen.
-
-User guide: `docs/METADATA_ENTRY_GUI.md`.
-
-| Command | Purpose |
-|---------|---------|
-| `run` / `estimate` / `lookup` | Legacy/high-level estimate paths |
-| `gui` | Metadata-entry GUI (advanced tools via menu) |
-| `collection …` | register/inspect/validate/import/list/compare |
-| `baseline build\|inspect\|validate\|compare-methods` | Ordinary baseline construction |
-| `literature …` | inventory, validate, matrix, ledger, corpus scan, register-source, add-extract, … |
-| `predict build` | Predictions from baseline table |
-| `predict from-ordinary` | CDM JSON → technique forecast |
-| `predict validate-context` | Context validation |
-| `predict inspect-parameters` | Parameter inspection |
-| `predict explain` | Explain prediction id |
-| `predict sensitivity` | Sensitivity scaffolding |
-| `predict validation-status` | Status |
-| `assumptions list\|validate\|show\|activate\|deactivate\|applicable\|audit` | Assumption registry |
-
-### Examples
+Representative invocations:
 
 ```bash
-python -m string_technique_model predict from-ordinary --instrument vln --dynamic mf
-python -m string_technique_model predict from-ordinary --instrument vln --dynamic mf --mode evidence-plus-user-assumptions --activate-user-assumptions
-python -m string_technique_model assumptions audit --output reports/assumption_audit.md
-python -m string_technique_model literature scan-corpus
-```
+python -m string_technique_model nonlinear diagnose
+python -m string_technique_model nonlinear predict \
+  --technique sul_ponticello --instrument vln --dynamic pp \
+  --research-excel data/research/violin_ordinary.xlsx \
+  --export-xlsx outputs/nonlinear_extrapolation_results.xlsx
 
----
-
-## 28. Configuration files
-
-See Appendix B. Dependency sketch:
-
-```mermaid
-flowchart TB
-  ONT[technique_ontology.yaml] --> PROD[production validation]
-  DESC[acoustic_descriptors.yaml] --> REG[descriptor registry]
-  QC[qualitative_acoustic_constraints.yaml] --> ENG[constraint engine]
-  SRC[literature_sources.yaml] --> LIT[literature layer]
-  EV[literature_evidence_extracts.yaml] --> LIT
-  PAR[literature_parameters.yaml] --> ACT[activation]
-  MAP[literature_density_mappings.yaml] --> ACT
-  ID[source_identity_validation.yaml] --> IDR[identity registry]
-  DM[density_metric.yaml] --> PHI[DensityMetric]
-  ML[model_links.yaml] --> LINK[links.py]
-  PR[prediction.yaml] --> PIPE[prediction pipeline]
-  UA[user_assumptions.yaml] --> ASS[assumptions]
-  MD[measurement_domains.yaml] --> MDR[domains registry]
-```
-
----
-
-## 29. Validation and error handling
-
-| Condition | Result |
-|-----------|--------|
-| `speaking_length_m <= 0` | `ValueError` in `compute_beta` |
-| $\beta$ vs lengths disagree by $>\tau$ | validation errors list |
-| Interval/order inconsistency | `ValidationResult` errors |
-| Bare mute mass without unit | `mute_mass_g=null` + warning |
-| dB density op | `OperationError` |
-| Log link with nonpositive $D$ | floor safeguard / domain error paths |
-| Conflicting active assumptions | `AssumptionConflictError` |
-| Invalid instrument/technique on request | Pydantic `ValueError` |
-| Unverified source for activation | `source_not_verified` reason |
-| Missing Parquet engine when required | preflight failure |
-| Filename-only identity | rejected / not ingestible |
-
----
-
-## 30. Reproducibility and provenance
-
-Recorded artefacts include: source_id, evidence_id, page range, DOI/ISBN, file SHA-256, config versions, assumption_ids_used, `result_basis`, `literature_validated`, `evidence_based`, run seed / `n_draws`, calculation mode.  
-Corpus manifest: `literature/corpus/metadata/corpus_manifest.yaml`.  
-Prediction manifests via `prediction/manifest.py`.
-
----
-
-## 31. Testing strategy
-
-| Requirement | Test file | Expected |
-|-------------|-----------|----------|
-| Source identity mismatch | `test_source_identity_validation.py` | reject Berio/Hann/Rimsky |
-| Duplicate PDF hash | same | Fallowfield 2009=2020 |
-| DOI present for articles | same | Schoonderwaldt/Evangelista/… |
-| Meyer verified local | same | `verified_local_source` |
-| Beta / harmonics / flautando | `test_pdf_soa_integration.py` | validation rules |
-| Multiphonic distinct | `test_multiphonics_measurement_recognition.py` | helper rejects conflation |
-| Measurement domains | same | required IDs load |
-| Evangelista no mass law | `test_primary_source_ingestion.py` | extracts + no EWSD |
-| Assumptions inactive default | `test_user_assumptions_and_from_ordinary.py` | evidence_only NA |
-| Modes / CLI assumptions | `test_prediction_modes_and_assumptions_cli.py` | dual gate |
-| Ops/links | `test_phase4_prediction_engine.py` | additive vs multiplicative |
-
-**Latest executed results (document generation context):**
-
-- `python -m pytest -q` → **253 passed**, 8 warnings  
-- `python -m ruff check src tests` → clean when last checked in session  
-- `python -m mypy src/string_technique_model` → **pre-existing errors** in `gui.py` / `cli/prediction.py` / `cli/literature.py` (not introduced by this guide)
-
----
-
-## 32. Worked end-to-end examples
-
-### Example 1 — Legacy migration
-
-**Input:** `{ "instrument":"vln", "technique":"artificial_harmonic", "touched_interval":"P4", "dynamic":"mf" }`  
-**Call:** `migrate_legacy_technique_record`  
-**Output:** `ProductionInstruction` with `left_hand.harmonic_order=4` when validation consistent; legacy label preserved.
-
-### Example 2 — Beta
-
-$$
-\beta = 0.03/0.60 = 0.05
-$$
-
-via `compute_beta(0.03, 0.60)`.
-
-### Example 3 — Evidence-only from ordinary
-
-```bash
-python -m string_technique_model predict from-ordinary --instrument vln --dynamic mf
-```
-
-**Result:** qualitative constraints may attach; numerical technique EWSD **NA**; `result_basis` not literature-validated numerical coefficients.
-
-### Example 4 — Assumptions mode
-
-Requires a user-authored active assumption (registry empty by default). Then:
-
-```bash
-python -m string_technique_model predict from-ordinary --instrument vln --dynamic mf \
-  --mode evidence-plus-user-assumptions --activate-user-assumptions
-```
-
-Labels: `assumption_based`; lists `assumption_ids_used`. Without both gates, behaves as evidence-only.
-
----
-
-## 33. Scientific limitations
-
-- No universal technique$\rightarrow$timbre map.
-- EWSD not recomputed; technique density params inactive.
-- Descriptors schema-only.
-- Violin-heavy evidence; limited vla/vlc/cb mute generality.
-- Multiphonics not predicted from first principles.
-- Descriptor domain non-equivalence (bridge/string vs radiated).
-- Incomplete corpus; rejected mislabelled archive files.
-- Performer/instrument/string/recording dependence unresolved numerically.
-- Textural inference stub.
-
----
-
-## 34. Maintainer workflow
-
-| Task | Steps |
-|------|-------|
-| New ontology label | Edit `technique_ontology.yaml`; update models Literal if needed; tests |
-| New descriptor | Add YAML entry with `implemented:false` until formula coded |
-| New source | Identity validate $\rightarrow$ deposit PDF $\rightarrow$ `literature_sources.yaml` $\rightarrow$ extracts |
-| New extract | `literature add-extract` / YAML; never activate density without gate |
-| New parameter | `literature_parameters.yaml`; keep inactive until complete |
-| New assumption | Edit `user_assumptions.yaml`; leave inactive until user activates |
-| New op/link | Implement in `operations.py`/`links.py` + YAML + tests |
-| Migration | Extend `migration.py` deterministically |
-| Reports | Regenerate identity/ingestion/assumption/test_status as needed |
-
----
-
-## 35. Glossary
-
-| Term | Repository meaning |
-|------|--------------------|
-| EWSD / CDM_TD | Precomputed acoustic-balanced density score; $\Phi(D)=D$ here |
-| Production instruction | Compositional physical/notational state |
-| Legacy technique | Flat label in 4×4 compatibility matrix |
-| $\beta$ | $d_b/L$ |
-| Evidence extract | Page-located claim record |
-| Activation | Permission for density prediction use |
-| User assumption | Non-literature numerical coefficient |
-| Qualitative constraint | Tendency without numeric EWSD |
-| Measurement domain | Signal class for a descriptor |
-| Secondary synthesis | SOA-type non-primary review |
-| Schema-only | Config/type present; formula absent |
-
----
-
-## Appendix A: Code-to-documentation traceability matrix
-
-| Guide section | Module | Symbol | Configuration | Tests |
-|---------------|--------|--------|---------------|-------|
-| 8 Beta | `production/bow_contact.py` | `compute_beta` | `technique_ontology.yaml` | pdf_soa / production tests |
-| 9 Harmonics | `production/harmonics.py` | `validate_harmonic_interval_order` | ontology interval map | pdf_soa |
-| 11 Mute mass | `production/mute.py` | `normalize_mute_mass` | — | multiphonics/primary |
-| 14 EWSD $\Phi$ | `density/metric.py` | `DensityMetric.phi` | `density_metric.yaml` | phase4 |
-| 15 Ops | `prediction/operations.py` | `apply_operation` | — | phase4 |
-| 16 Links | `prediction/links.py` | `link_forward`/`link_inverse` | `model_links.yaml` | phase4 |
-| 17 Applicability | `applicability/resolver.py` | `resolve_applicability` | — | phase3b |
-| 18 Constraints | `constraints/engine.py` | `QualitativeConstraintEngine` | qualitative YAML | pdf_soa |
-| 19–20 Literature | `literature/*.py` | activation/identity | literature_*.yaml | phase3 / identity |
-| 21 Assumptions | `assumptions/*.py` | `resolve_user_assumptions` | `user_assumptions.yaml` | assumptions tests |
-| 22 UQ | `prediction/uncertainty.py` | `propagate_metric_only` | `prediction.yaml` | phase4 |
-| 23 Pipeline | `prediction/pipeline.py` | `build_predictions` | `prediction.yaml` | phase4 |
-| 23 From ordinary | `prediction/from_ordinary.py` | `predict_from_ordinary` | — | from_ordinary tests |
-
----
-
-## Appendix B: Configuration registry
-
-| ID / file | Role | Notes |
-|-----------|------|-------|
-| `technique_ontology.yaml` | Ontology authority | |
-| `acoustic_descriptors.yaml` | Descriptor IDs | all unimplemented |
-| `qualitative_acoustic_constraints.yaml` | Constraints | numeric forbidden |
-| `literature_sources.yaml` | Sources | v0.4.0 archive |
-| `literature_evidence_extracts.yaml` | Extracts | |
-| `literature_parameters.yaml` | Candidates | inactive density |
-| `literature_density_mappings.yaml` | Mapping types | |
-| `literature_transfers.yaml` | Transfers | disabled |
-| `source_identity_validation.yaml` | PDF identity | |
-| `density_metric.yaml` | $\Phi(D)=D$ | |
-| `model_links.yaml` | Links | |
-| `prediction.yaml` | Run defaults | |
-| `user_assumptions.yaml` | Assumptions | empty list |
-| `measurement_domains.yaml` | Domains | |
-| `recognition_label_mappings.yaml` | MIR maps | |
-| `metric_definitions.yaml` / `metric_conversions.yaml` | Metric registry | |
-| `collections.yaml` + `configs/schemas/*` | Collection adapters | |
-| `datasets/evangelista_*` | Mute stubs | |
-| Orphan risk | Commented assumption examples | not active entries |
-
----
-
-## Appendix C: Scientific-source traceability
-
-| Claim / use | Source ID | Type | Numerical EWSD? | Code/config consequence |
-|-------------|-----------|------|-----------------|-------------------------|
-| $\beta$ definition; domain separation | `SRC_SCHOONDERWALDT_2009` | primary experimental | No | extracts + measurement domains |
-| Mute mass insufficient; no $A=f(m)$ | `SRC_EVANGELISTA_FREIRE_2025` | primary experimental | No | mute taxonomy + stubs |
-| Multiphonic definition / schema | `SRC_FALLOWFIELD_TEMPO_MULTIPHONICS` | performance-practice | No | `MultiphonicInstruction` |
-| Recognition labels only | `SRC_LOSTANLEN_ANDEN_LAGRANGE_2018` | secondary/MIR | No | `TechniqueRecognitionResult` |
-| Terminology | `SRC_STOWELL_CAMBRIDGE_TECHNIQUE_PERFORMING_PRACTICE` | historical | No | terminology extract |
-| Level/dynamic proxies | `MEYER_ACOUSTICS` | primary monograph (verified PDF) | No | indirect_proxy extracts |
-| Bowed-string physics | `SRC_FLETCHER_ROSSING_1991`, `SRC_ROSSING_SCIENCE_STRING_INSTRUMENTS_2010` | monographs | No | qualitative extracts |
-| Mechanism synthesis | `SRC_STRING_TIMBRAL_ARTICULATORY_STATE_OF_ART` | secondary synthesis | No | qualitative; numerics inactive |
-| Rejected archive claims | Berio/Hann/Rimsky/Messina/Fallowfield2009 dup | rejected/duplicate | — | identity registry |
-
----
-
-## 36. Acoustics stress testing
-
-**Dedicated guide:** [`docs/ACOUSTICS_STRESS_TESTING.md`](ACOUSTICS_STRESS_TESTING.md)
-
-### Run
-
-```bash
-python -m string_technique_model stress-test acoustics --tier fast
-python -m string_technique_model.testing.stress_runner --tier extended
-pytest tests/acoustics_stress -q -m "acoustics_stress and not slow"
-pytest -m benchmark -q
-```
-
-### Coverage honesty
-
-Implemented stress coverage includes $\beta$, interval/order validation, links/ops, mute-mass units, measurement-domain separation, assumption isolation, and explicit NA/unimplemented descriptor gates. The physics oracle
-
-$$
-f_{\mathrm{sounding}} = n\, f_{\mathrm{stopped}}
-$$
-
-is documented for alignment only; production does **not** auto-compute sounding frequency. Descriptor formulas remain **Not currently implemented.**
-
-### Reports
-
-`reports/acoustics_stress_test_plan.md`, `acoustics_stress_results.md`, `literature_alignment_matrix.md`, `acoustic_model_limitations.md`, `stress_test_failures.md`, `reproducibility_report.md`.
-
----
-
-## 37. Nonlinear hierarchical extrapolation (Phase 1)
-
-**Dedicated guide:** [`docs/NONLINEAR_EXTRAPOLATION.md`](NONLINEAR_EXTRAPOLATION.md)
-
-Primary prediction path for sul tasto / sul ponticello / standard con sordino is the **M1 log-ratio + penalized B-spline** family under `src/string_technique_model/extrapolation/nonlinear/`. Constant multipliers remain **M0** (`legacy_constant_factor_model`) only.
-
-```bash
 python -m string_technique_model extrapolate diagnose
-python -m string_technique_model extrapolate predict --technique sul_ponticello --instrument vln --dynamic pp
-pip install -e ".[bayes]"   # optional PyMC/ArviZ
+python -m string_technique_model extrapolate predict \
+  --technique sul_ponticello --instrument vln --dynamic pp
+
+python -m string_technique_model stress-test acoustics --tier fast
 ```
 
-Export: `outputs/nonlinear_extrapolation_results.xlsx`. Reports: `reports/*model*.md`, `reports/extrapolation_sensitivity.md`, `reports/scientific_limitations.md`.
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 28. Configuration
+
+Principal YAML files (`configs/`):
+
+| File | Role |
+|---|---|
+| `extrapolation_models.yaml` | Spline degree, basis count, penalty $\lambda$, quantity |
+| `extrapolation_priors.yaml` | Alpha priors, sigma priors, `sigma_spline_smooth` |
+| `extrapolation_model_selection.yaml` | Thresholds, ladder, families, gates, policy |
+| `extrapolation_harmonic_ranges.yaml` | Configured orders per instrument, `maximum_sounding_pitch: C8` |
+| `extrapolation_targets.yaml` | Target descriptor identifiers |
+| `extrapolation_diagnostics.yaml` | Diagnostics thresholds |
+| `density_metric.yaml` | Metric identity $\Phi(D)=D$ |
+| `model_links.yaml` | Available link functions |
+| `acoustic_descriptors.yaml` | Descriptor registry (implemented and unresolved) |
+| `analysis_profiles/default_descriptor_v1.yaml` | STFT parameters, weighting, band |
+| `technique_ontology.yaml` | Ontology authority |
+| `qualitative_acoustic_constraints.yaml` | Qualitative constraint engine |
+| `literature_sources.yaml`, `literature_evidence_extracts.yaml`, `literature_parameters.yaml`, `literature_density_mappings.yaml`, `literature_transfers.yaml`, `source_identity_validation.yaml`, `literature_benchmark_cases.yaml`, `literature_conflicts.yaml` | Literature layer |
+| `user_assumptions.yaml` | User numerical assumptions (registry empty by default) |
+| `measurement_domains.yaml`, `recognition_label_mappings.yaml`, `metric_definitions.yaml`, `metric_conversions.yaml` | Measurement / recognition / metric registries |
+| `collections.yaml`, `schemas/*` | Collection adapters |
+| `datasets/*` | Dataset stubs (mute datasets, ...) |
+| `prediction.yaml`, `prediction_requests.yaml` | Legacy prediction |
+| `physical_mechanisms.yaml` | Mechanism catalogue |
+| `stress_tolerances.yaml`, `acoustics_stress_tests.yaml` | Stress-test configuration |
+| `run.yaml` | Run defaults |
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 29. Excel output
+
+`export_nonlinear_workbook` (`extrapolation/nonlinear/export_nonlinear.py`) writes a multi-sheet workbook to `outputs/nonlinear_extrapolation_results.xlsx` by default.
+
+Sheets always present:
+
+| Sheet | Purpose |
+|---|---|
+| `Methodology` | Selection stages, ladder, config pointers, EWSD honesty statements |
+| `Posterior_Summary` | Full row per predicted cell (neutral estimate fields) |
+| `All_Results` | Alias of `Posterior_Summary` for GUI compatibility |
+| `Note_Level_Results` | Alias of `Posterior_Summary` for older audit filenames |
+| `Model_Selection` | Compact selection summary per technique cell |
+| `Model_Selection_Audit` | One row per candidate model + rejection reasons |
+| `Technique_Effects` | Alpha values, origins, effect kinds, assumption ids |
+| `By_Technique` | Cell counts per `technique x instrument x dynamic x model_id` |
+| `Diagnostics` | Per-row sigma origin, register-shape identification, prior-domination |
+| `Unavailable` | Rows with `value_kind = unavailable` |
+| `Run_Summary` | Requested method, exported UTC timestamp, number of assumption intervals, techniques |
+| `Model_Comparison` | Optional M0 vs M1 comparison (`compare_models`) |
+| `Priors_Used` | Prior specifications with activation status |
+| Per-technique sheets | One sheet per technique in the run (name truncated to 31 chars) |
+
+`requested_method = automatic` is written when the caller passes `hierarchical_spline`; the effective control is recorded as `gui_displayed_method` or `cli_method_control`.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 30. Testing and verification
+
+At the document snapshot, `python -m pytest --collect-only -q` reports **482 tests collected** (with `PYTHONPATH=src`). Test categories map to `pytest` markers declared in `pyproject.toml`:
+
+| Marker | Category |
+|---|---|
+| `mathematical_exact` | Exact algebraic and unit identities |
+| `unit_consistency` | Unit conversion consistency |
+| `domain_boundary` | Boundary and invalid domain handling |
+| `literature_bounded` | Verified literature ranges or categorical claims |
+| `literature_directional` | Directional literature claims |
+| `measurement_domain` | Measurement-domain separation |
+| `physical_plausibility` | Physical plausibility and scope |
+| `metamorphic` | Metamorphic relations |
+| `adversarial` | Adversarial and malformed inputs |
+| `regression` | Regression guards |
+| `performance` | Performance and scaling |
+| `reproducibility` | Deterministic and seed stability |
+| `provenance` | Provenance labelling |
+| `assumption_isolation` | User assumptions vs literature |
+| `unsupported_extrapolation` | Must refuse unsupported inference |
+| `benchmark` | Named benchmark cases |
+| `acoustics_stress` | Acoustics stress suite |
+| `slow` | Extended-runtime tests |
+
+Notable verification checks:
+
+- Log-exp round-trip identity for the multiplicative interval.
+- Interval scaling with baseline: doubling $B$ scales $L$ and $U$ by the same factor.
+- Spline recovery on synthetic smooth curves.
+- Outside-domain flagging for penalized B-splines.
+- Reproducibility across runs with a fixed seed.
+
+> **Warning.** Passing test count is a **software-verification** signal. It does not by itself establish **ecological acoustic validity** for extended-technique EWSD predictions.
+
+**Status:** **IMPLEMENTED**.
+
+---
+
+## 31. Scientific limitations
+
+1. **EWSD acoustic transfer $F(D_1, \dots, D_k)$ is not implemented.** All numeric EWSD outputs for extended techniques rely on either measured scalars (identity $\Phi$) or user-supplied log-ratio priors.
+2. **Sul tasto / sul ponticello priors are regularization assumptions**, not empirical fits. They are not inverse transforms.
+3. **Mute log-ratio priors assume EWSD proportional to power** and a specific dB attenuation (6 dB violin, 4 dB viola). This does not model spectral shape changes.
+4. **Harmonic EWSD values are not predicted.** The generator produces sounding pitches only.
+5. **No physical simulation** of the bowed string is provided (no Schelleng boundary, no Woodhouse dynamic model, no bridge admittance model).
+6. **No universal technique-to-timbre map** is claimed.
+7. **Descriptor coverage is limited.** Loudness, attack time, temporal modulation, bridge mobility, and inter-player variability are unresolved in code.
+8. **Instrument imbalance.** Priors are calibrated more tightly for violin/viola than for cello/contrabass; the cello/contrabass mute generic prior has larger sd.
+9. **Extrapolation beyond the ordinary baseline domain** is annotated but not silently permitted. Cells beyond 12 semitones of the baseline midi range default to `default_unavailable_beyond_12_semitones`.
+10. **Software verification $\ne$ acoustic validity.** Section 30 covers the former; the latter requires empirical calibration campaigns beyond the scope of this commit.
+
+---
+
+## 32. Worked examples (synthetic / illustrative)
+
+> **Warning.** All numbers below are **synthetic / illustrative** and are used only to demonstrate the API and unit handling. They are not measured EWSD values. Any use for doctoral evidence is prohibited (`scientific_use = prohibited_for_doctoral_evidence`).
+
+### 32.1 MIDI to frequency
+
+$$
+f(69) \;=\; 440 \cdot 2^{(69 - 69)/12} \;=\; 440 \text{ Hz}
+$$
+
+$$
+f(60) \;=\; 440 \cdot 2^{(60 - 69)/12} \;\approx\; 261.63 \text{ Hz}
+$$
+
+### 32.2 Frequency to MIDI
+
+$$
+m(220) \;=\; 69 + 12 \log_{2}(220 / 440) \;=\; 57
+$$
+
+### 32.3 Natural harmonic on the violin G string
+
+$G_3$ has $f_{\mathrm{open}} \approx 196.00$ Hz. For $n = 4$:
+
+$$
+f_4 \;=\; 4 \cdot 196.00 \;=\; 784.00 \text{ Hz},
+\qquad
+m_4 \;=\; 69 + 12 \log_{2}(784.00 / 440) \;\approx\; 79.00
+$$
+
+Nearest tempered pitch: $G_5$ (MIDI 79).
+
+### 32.4 Artificial harmonic order 4 (touch P4)
+
+Stopped $C_5$ (MIDI 72), touched $F_5$ (MIDI 77), order $= 4$:
+
+$$
+m_{\mathrm{sounding}} \;\approx\; 72 + 24 \;=\; 96 \quad (C_7)
+$$
+
+### 32.5 Ordinary baseline fit at $p^\star = 72$
+
+Given a fitted violin/mf baseline with intercept $\hat{\beta}_0 = 3.5$ and spline contribution $s(72) = 0.2$ (log-space):
+
+$$
+\hat{B}(72) \;=\; \exp(3.5 + 0.2) \;=\; \exp(3.7) \;\approx\; 40.45
+$$
+
+### 32.6 Constant-effect fallback for `sul_ponticello`
+
+Using the alpha prior mean $-0.20$... wait, actually the prior for `sul_ponticello` is $+0.20$. With baseline $\hat{B}(72) = 40.45$:
+
+$$
+\hat{Y}(72) \;=\; 40.45 \cdot \exp(0.20) \;\approx\; 40.45 \cdot 1.2214 \;\approx\; 49.41
+$$
+
+$\sigma_{\alpha} = 0.55$, $\sigma_{\mathrm{res}} = 0$, so $\sigma_{\log R} = 0.55$, $z = 1.95996$:
+
+$$
+L \;=\; 40.45 \cdot \exp(0.20 - 1.95996 \cdot 0.55) \;\approx\; 40.45 \cdot \exp(-0.8780) \;\approx\; 16.83
+$$
+
+$$
+U \;=\; 40.45 \cdot \exp(0.20 + 1.95996 \cdot 0.55) \;\approx\; 40.45 \cdot \exp(1.2780) \;\approx\; 145.11
+$$
+
+`interval_type = assumption_distribution_interval`.
+
+### 32.7 Constant-effect fallback for `con_sordino` on violin
+
+$\alpha_{\mathrm{mute, vln}} = \log(10^{-6/10}) \approx -0.691$. With the same baseline:
+
+$$
+\hat{Y}(72) \;\approx\; 40.45 \cdot \exp(-0.691) \;\approx\; 40.45 \cdot 0.2512 \;\approx\; 10.16
+$$
+
+`assumption_ids = [ASSUMP_MUTE_ATTENUATION_6DB, ASSUMP_EWSD_PROPORTIONAL_TO_POWER]`.
+
+### 32.8 Sul tasto with weak decrease prior
+
+$\alpha_{\mathrm{sul\_tasto}} = -0.12$. Baseline as above:
+
+$$
+\hat{Y}(72) \;\approx\; 40.45 \cdot \exp(-0.12) \;\approx\; 40.45 \cdot 0.8869 \;\approx\; 35.87
+$$
+
+### 32.9 Harmonic cell (unavailable)
+
+Request: `artificial_harmonic`, violin, pitch $C_7$ (MIDI 96).
+
+- `sounding_pitch = C7`, `sounding_midi = 96`, `harmonic_order = 4`, `string = D` (nearest playable stopped mapping).
+- `modal_metadata_status = complete`, `acoustic_calibration_status = unavailable`.
+- `selected_model_id = harmonic_modal_acoustic_model_unavailable`.
+- `value_kind = unavailable`, `na_reason = no_harmonic_acoustic_calibration_data`, `model_status = modal_frequencies_generated_acoustic_values_unavailable`.
+- Numeric fields (`estimate_mean`, `interval_low`, `interval_high`) are `None`.
+
+### 32.10 Model comparison
+
+`compare_models` builds an `M0_constant_legacy` vs `M1_hierarchical_spline` comparison (`extrapolation/nonlinear/comparison.py`). With a synthetic holdout of six rows, one may observe
+
+$$
+\mathrm{RMSE}_{M0} \;=\; 4.20, \qquad \mathrm{RMSE}_{M1} \;=\; 2.85 \Rightarrow \mathrm{preferred\_model} = M_1
+$$
+
+but the same numbers on a different holdout may prefer $M_0$. The comparison is descriptive, not authoritative.
+
+---
+
+## 33. Glossary and notation
+
+| Symbol / term | Definition |
+|---|---|
+| $A_4 = 440$ Hz | Reference pitch, hard-coded |
+| $m_{\mathrm{ref}} = 69$ | Reference MIDI, hard-coded |
+| $m$ | MIDI note number |
+| $f$ | Sounding frequency, Hz |
+| $c$ | Cents deviation from equal temperament |
+| $p$ | MIDI pitch used as covariate for spline fits |
+| $B_{i,d}(p)$ | Ordinary baseline function |
+| $s_{i,d}(p)$ | Penalized spline term of baseline |
+| $\beta_0$ | Baseline intercept (log-space) |
+| $\lambda$ | Penalty strength |
+| $\mathbf{P} = \mathbf{D}_2^{\top} \mathbf{D}_2$ | Second-difference penalty |
+| $\alpha_t$ | Constant log-ratio effect for technique $t$ |
+| $g_t(p)$ | Register-dependent shape term |
+| $\sigma_{\log R}$ | Log-ratio standard deviation |
+| $z$ | Standard normal quantile (about 1.95996 for 95 percent) |
+| $\Phi(D)$ | Density metric map, identity here |
+| $D$ | Precomputed EWSD acoustic-balanced scalar |
+| $D_1, \dots, D_k$ | Spectral descriptors (planned inputs to $F$) |
+| $F$ | Not-yet-implemented transfer function to EWSD |
+| $\mathrm{HNR}_{\mathrm{mask}}$ | Spectral-mask HNR |
+| $C$ | Spectral centroid |
+| $V_t(C)$ | Frame-level spectral variance |
+| $\mathrm{LTAS}$ | Long-term average power spectrum |
+| $\mathrm{dB}_{\mathrm{amp}}$ | Amplitude decibel $= 20 \log_{10}(A_2 / A_1)$ |
+| $\mathrm{dB}_{\mathrm{pow}}$ | Power decibel $= 10 \log_{10}(P_2 / P_1)$ |
+| EWSD | Precomputed acoustic-balanced density score |
+| CDM_TD | Historical short name for EWSD |
+| $\mathrm{ASSUMP}\_*$ | Named assumption identifiers surfaced in exports |
+| Assumption distribution interval | Interval reflecting user-supplied prior for $\alpha$, not a posterior or confidence interval |
+| Approximate predictive log-ratio interval | Interval from $\mu_{\log R}$ and $\sigma_{\log R}$ under normal approximation |
+| Register shape identified | True only when the technique effect carries a linear or spline term |
+| Prior-dominated | True when the effect is carried by the prior and not by data |
+| Software verification | Code computes what the specification says |
+| Ecological acoustic validity | Correspondence with real bowed-string acoustics |
+
+---
+
+## Appendix A: Formula inventory
+
+Every formula in the guide is inventoried below with its status tag and code location.
+
+| ID | Section | Formula | Status | Implementation |
+|---|---|---|---|---|
+| F1 | 8.1 | $f(m) = 440 \cdot 2^{(m-69)/12}$ | IMPLEMENTED | `manual_entry/pitch.py::midi_to_hz` |
+| F2 | 8.2 | $m(f) = 69 + 12 \log_2(f/440)$ | IMPLEMENTED | `manual_entry/pitch.py::hz_to_midi` |
+| F3 | 8.3 | $c = 1200 \log_2(f_n / f_{\mathrm{ET}})$ | IMPLEMENTED | `extrapolation/nonlinear/harmonic_register.py` |
+| F4 | 10.1 | $C = \sum f_k W_k / \sum W_k$ | IMPLEMENTED | `descriptors/centroid.py` |
+| F5 | 10.2 | $\hat{\beta}$ OLS on $10\log_{10}(P)$ vs $\log_{10}(f)$ | IMPLEMENTED | `descriptors/slope.py` |
+| F6 | 10.3 | $\mathrm{HNR}_{\mathrm{mask}} = 10\log_{10}(E_h/E_n)$ | IMPLEMENTED | `descriptors/hnr.py` |
+| F7 | 10.4 | Flux $L_1$ half-wave rectified | IMPLEMENTED | `descriptors/flux.py` |
+| F8 | 10.5 | $\mathrm{LTAS}(k) = \frac{1}{T}\sum_t P_t(k)$ | IMPLEMENTED | `descriptors/ltas.py` |
+| F9 | 10.6 | $V_t(C) = \frac{1}{T-1} \sum (C_t - \bar{C})^2$ | IMPLEMENTED | `descriptors/variance.py` |
+| F10 | 10.7 | $\mathrm{dB}_{\mathrm{amp}} = 20\log_{10}(A_2/A_1)$ | IMPLEMENTED | `descriptors/attenuation.py` |
+| F11 | 10.7 | $\mathrm{dB}_{\mathrm{pow}} = 10\log_{10}(P_2/P_1)$ | IMPLEMENTED | `descriptors/attenuation.py` |
+| F12 | 10.7 | $A_2/A_1 = 10^{\mathrm{dB}/20}$ | IMPLEMENTED | `descriptors/attenuation.py` |
+| F13 | 10.7 | $P_2/P_1 = 10^{\mathrm{dB}/10}$ | IMPLEMENTED | `descriptors/attenuation.py` |
+| F14 | 11.1 | $\Phi(D) = D$ | IMPLEMENTED_FALLBACK | `density/metric.py::DensityMetric.phi` |
+| F15 | 11.2 | $D \stackrel{?}{=} F(D_1, \dots, D_k)$ | REFERENCE_MODEL / PLANNED | not implemented; `_EWSD_TRANSFER_FUNCTIONS = {}` |
+| F16 | 12.1 | $\log B_{i,d}(p) = \beta_0 + s_{i,d}(p)$, $B = \exp(\cdot)$ | IMPLEMENTED | `extrapolation/nonlinear/baseline.py::fit_ordinary_baseline` |
+| F17 | 13.2 | $\hat{\boldsymbol{\beta}} = \arg\min \lVert \mathbf{y} - \mathbf{B}\boldsymbol{\beta} \rVert^2 + \lambda \boldsymbol{\beta}^\top \mathbf{P} \boldsymbol{\beta}$ | IMPLEMENTED | `extrapolation/nonlinear/splines.py::fit_penalized_bspline` |
+| F18 | 13.2 | $\mathbf{P} = \mathbf{D}_2^\top \mathbf{D}_2$ | IMPLEMENTED | `extrapolation/nonlinear/splines.py::second_difference_penalty_matrix` |
+| F19 | 15.1 | $Y = B \cdot \exp(\alpha_t)$ | IMPLEMENTED_FALLBACK | `bow_contact_model.py` constant branch |
+| F20 | 16.1 | $Y = B \cdot \exp(\alpha_t + g_t(p))$ | IMPLEMENTED | `bow_contact_model.py::BowContactFit.predict` |
+| F21 | 18.1 | $\alpha_{\mathrm{sul\_tasto}} = -0.12$ | ASSUMPTION | `configs/extrapolation_priors.yaml::alpha_t_sul_tasto` |
+| F22 | 18.1 | $\alpha_{\mathrm{sul\_pont}} = +0.20$ | ASSUMPTION | `configs/extrapolation_priors.yaml::alpha_t_sul_ponticello` |
+| F23 | 19.1 | $\alpha_{\mathrm{mute}} = \log(10^{-\Delta_{\mathrm{dB}}/10})$ | ASSUMPTION + IMPLEMENTED_FALLBACK | `mute_model.py::_db_to_log_ratio` |
+| F24 | 19.1 | $\alpha_{\mathrm{mute, vln}} \approx -0.691$ | ASSUMPTION | `configs/extrapolation_priors.yaml::alpha_mute_vln` |
+| F25 | 19.1 | $\alpha_{\mathrm{mute, vla}} \approx -0.461$ | ASSUMPTION | `configs/extrapolation_priors.yaml::alpha_mute_vla` |
+| F26 | 20.1 | $f_n = n \cdot f_{\mathrm{open}}$ | IMPLEMENTED | `extrapolation/nonlinear/harmonic_register.py` |
+| F27 | 20.1 | $m_n = 69 + 12 \log_2(f_n/440)$ | IMPLEMENTED | `extrapolation/nonlinear/harmonic_register.py` |
+| F28 | 20.2 | Artificial order-4 offset $\approx +24$ semitones | IMPLEMENTED | `extrapolation/nonlinear/harmonic_register.py` |
+| F29 | 22.1 | $L = B \exp(\mu - z\sigma)$, $U = B \exp(\mu + z\sigma)$, $z \approx 1.95996$ | IMPLEMENTED | `posterior.py::summarize_log_ratio_multiplicative` |
+| F30 | 22.4 | Additive interval $\mu \pm z\sigma$ | IMPLEMENTED_FALLBACK | `posterior.py::summarize_frequentist` |
+| F31 | 23.2 | Bayesian log-ratio spline: $\alpha, \boldsymbol{\beta}, \sigma$ priors + RW2 potential + Gaussian likelihood | OPTIONAL_BACKEND | `bayesian_backend.py::fit_bayesian_log_ratio_spline` |
+| F32 | 12.3 | $\hat{\sigma}_{\mathrm{res}} = \sqrt{\frac{1}{\nu}\sum (y - \hat{y})^2}$ | IMPLEMENTED | `extrapolation/nonlinear/baseline.py` |
+
+Formula count: **32** distinct entries.
+
+---
+
+## Appendix B: Code-to-documentation traceability matrix
+
+| Guide section | Module | Symbol / function | Configuration | Tests |
+|---|---|---|---|---|
+| 8 Pitch registry | `manual_entry/pitch.py` | `midi_to_hz`, `hz_to_midi` | — | `tests/manual_entry/test_pitch.py` |
+| 10 Descriptor backend | `descriptors/*.py` | `compute_spectral_centroid`, `compute_spectral_slope`, `compute_hnr`, `compute_flux`, `compute_ltas`, `compute_frame_spectral_variance`, `compute_partials` | `configs/acoustic_descriptors.yaml`, `configs/analysis_profiles/default_descriptor_v1.yaml` | `tests/descriptors/*` |
+| 10.7 Attenuation | `descriptors/attenuation.py` | `amplitude_ratio_to_db`, `power_ratio_to_db`, `db_to_amplitude_ratio`, `db_to_power_ratio` | — | `tests/descriptors/test_attenuation.py` |
+| 11 Density metric | `density/metric.py` | `DensityMetric.phi` | `configs/density_metric.yaml` | `tests/density/test_metric.py` |
+| 12 Baseline | `extrapolation/nonlinear/baseline.py` | `fit_ordinary_baseline`, `BaselineFit.predict` | `configs/extrapolation_models.yaml` | `tests/extrapolation/test_baseline.py` |
+| 13 Splines | `extrapolation/nonlinear/splines.py` | `fit_penalized_bspline`, `second_difference_penalty_matrix`, `predict_bspline`, `make_knots` | — | `tests/extrapolation/test_splines.py` |
+| 14 Model selection | `extrapolation/nonlinear/model_selection.py` | `assess_data_availability`, `select_model`, `select_register_model` | `configs/extrapolation_model_selection.yaml` | `tests/extrapolation/test_model_selection*.py` |
+| 15--16, 18 Bow contact | `extrapolation/nonlinear/bow_contact_model.py` | `fit_bow_contact_effect`, `BowContactFit.predict` | `configs/extrapolation_priors.yaml` | `tests/extrapolation/test_bow_contact*.py`, `tests/extrapolation/test_posterior.py` |
+| 19 Mute | `extrapolation/nonlinear/mute_model.py` | `fit_mute_effect`, `MuteFit.predict`, `_db_to_log_ratio` | `configs/extrapolation_priors.yaml` | `tests/extrapolation/test_mute_model.py` |
+| 20 Harmonic register | `extrapolation/nonlinear/harmonic_register.py` | `generate_natural_harmonic_targets`, `generate_artificial_harmonic_targets`, `annotate_baseline_extrapolation` | `configs/extrapolation_harmonic_ranges.yaml` | `tests/extrapolation/test_harmonic_*` |
+| 21 Harmonic gate | `extrapolation/nonlinear/model_selection.py` (harmonic branch), `prediction.py` | `harmonic_modal_metadata_gate`, `harmonic_modal_acoustic_model_unavailable` | `configs/extrapolation_model_selection.yaml` | `tests/extrapolation/test_model_selection_integration.py` |
+| 22 Intervals | `extrapolation/nonlinear/posterior.py` | `summarize_log_ratio_multiplicative`, `summarize_frequentist`, `apply_posterior_to_result` | — | `tests/extrapolation/test_posterior.py` |
+| 23 Bayesian backend | `extrapolation/nonlinear/bayesian_backend.py` | `check_backend`, `fit_bayesian_log_ratio_spline` | — (extra `[bayes]`) | `tests/extrapolation/test_bayesian_backend.py` |
+| 24 Evidence | `extrapolation/nonlinear/domain.py` (`EvidenceTier`), `model_selection.py` | tier assignment | — | `tests/extrapolation/test_model_selection*.py` |
+| 25 Provenance | `extrapolation/nonlinear/prediction.py::_provenance_from_rows`, `domain.py::ExtrapolationResult` | provenance fields | — | `tests/extrapolation/test_export_nonlinear.py` |
+| 26 GUI | `gui_metadata/extrapolator_app.py`, `register_grid.py`, `register_builder.py` | `NarrowExtrapolatorApp` | `configs/extrapolation/provisional_density_effects_v1.yaml`, harmonic ranges | manual test |
+| 27 CLI | `cli/__init__.py`, `cli/nonlinear.py`, `cli/extrapolation.py`, `cli/prediction.py` | `main`, `run_nonlinear_command`, `run_extrapolation_command` | — | `tests/cli/*` |
+| 29 Excel | `extrapolation/nonlinear/export_nonlinear.py` | `export_nonlinear_workbook` | — | `tests/extrapolation/test_export_nonlinear.py` |
+| 30 Testing | `tests/*` | pytest markers | `pyproject.toml [tool.pytest.ini_options]` | — |
+
+---
+
+## Appendix C: Cross-links to other documents
+
+- Metadata entry GUI: [`docs/METADATA_ENTRY_GUI.md`](METADATA_ENTRY_GUI.md).
+- Nonlinear extrapolation user guide: [`docs/NONLINEAR_EXTRAPOLATION.md`](NONLINEAR_EXTRAPOLATION.md).
+- Narrow extrapolation GUI notes: [`docs/NARROW_EXTRAPOLATION_GUI.md`](NARROW_EXTRAPOLATION_GUI.md).
+- Narrow extrapolation reference: [`docs/NARROW_EXTRAPOLATION.md`](NARROW_EXTRAPOLATION.md).
+- Note-level requests: [`docs/NOTE_LEVEL_REQUESTS.md`](NOTE_LEVEL_REQUESTS.md).
+- Acoustics stress testing: [`docs/ACOUSTICS_STRESS_TESTING.md`](ACOUSTICS_STRESS_TESTING.md).
+
+Mermaid sources: [`docs/technical_guide_assets/`](technical_guide_assets/).
+
+---
+
+## Appendix D: Production instructions, Phase-4 prediction, and literature sources
+
+This appendix documents companion packages that remain part of the repository but are
+**not** the primary nonlinear Excel pipeline documented in §§12–29.
+
+### D.1 Relative bow–bridge position $\beta$
+
+**Equation.**
+
+$$
+\beta = \frac{d_{\mathrm{bow-bridge}}}{L_{\mathrm{speaking}}}
+$$
+
+**Symbols.**
+
+| Symbol | Meaning | Unit |
+|---|---|---|
+| $d_{\mathrm{bow\text{-}bridge}}$ | Distance from bow contact to bridge | m |
+| $L_{\mathrm{speaking}}$ | Speaking length of the string | m |
+| $\beta$ | Relative contact position | dimensionless |
+
+**Implementation.** `production/bow_contact.py::compute_beta`.
+
+**Assumptions.** The technique label alone does **not** determine $\beta$, bow force, or bow velocity. Missing physical covariates must remain missing.
+
+**Status:** **IMPLEMENTED** as a production helper; **Not currently implemented** as an automatic covariate inference path into the nonlinear EWSD model (the M4 physical-informed rung remains gated on explicit covariates).
+
+### D.2 Compositional production and migration
+
+- `production/migration.py::migrate_legacy_technique_record` converts a flat `technique` string into a `ProductionInstruction`.
+- `production/harmonics.py::validate_harmonic_interval_order` validates allowed touch-interval $\leftrightarrow$ order pairs.
+- `production/mute.py::normalize_mute_mass` normalises mute-mass metadata without inventing a mass from the bare label `con sordino`.
+
+**Status:** **IMPLEMENTED**.
+
+### D.3 Phase-4 evidence-gated prediction helpers
+
+These APIs live under `prediction/` and operate on density scalars with explicit
+operation and link functions. They do **not** replace the nonlinear register
+extrapolator.
+
+| Symbol | Module | Role |
+|---|---|---|
+| `apply_operation` | `prediction/operations.py` | Multiplicative / additive / log-additive density operations; refuses silent dB-as-density shortcuts |
+| `link_forward` | `prediction/links.py` | Identity / log / logit / probit links |
+| `resolve_activate_user_assumptions` | `prediction/modes.py` | Separates `evidence_only` mode from assumption-authorised numeric mode |
+| `predict_from_ordinary` | `prediction/from_ordinary.py` | Ordinary $\rightarrow$ technique prediction under activated parameters |
+| `resolve_applicability` | `applicability/resolver.py` | Unified applicability resolution |
+| `QualitativeConstraintEngine` | `constraints/engine.py` | Qualitative-only constraints (no EWSD inventing) |
+| `resolve_user_assumptions` | `assumptions/activation.py` | User assumptions are not literature-validated evidence |
+| `load_source_identity_registry` | `literature/source_identity.py` | Source-identity validation |
+| `compute_descriptor` | `descriptors/engine.py` | Descriptor dispatch |
+| `DensityMetric` | `density/metric.py` | Identity $\Phi(D)=D$ |
+
+Configuration files referenced by this layer include `prediction.yaml`,
+`model_links.yaml`, `user_assumptions.yaml`, `qualitative_acoustic_constraints.yaml`,
+`literature_sources.yaml`, `literature_evidence_extracts.yaml`,
+`source_identity_validation.yaml`, and `measurement_domains.yaml`.
+
+Numerical technique-to-EWSD literature parameters remain **inactive**
+(`n_active_density_parameters == 0`). Absence of a local extract must not be read
+as absence of specialised literature.
+
+**Status:** **IMPLEMENTED** as infrastructure; density-parameter activation remains inactive by design.
+
+### D.4 Literature source identifiers (examples)
+
+Curated identifiers in `configs/literature_sources.yaml` include, among others:
+
+- `MEYER_ACOUSTICS`
+- `SRC_SCHOONDERWALDT_2009`
+- `SRC_EVANGELISTA_FREIRE_2025`
+
+These identifiers are provenance handles. They do **not** by themselves activate
+numeric EWSD transforms.
+
+### D.5 Value-kind vocabulary (reminder)
+
+Excel and result rows use `value_kind` values such as
+`assumption_based_extrapolation`, `extrapolated`, `unavailable`, and
+`qualitative_only`. Assumption-based numeric cells must remain labelled as
+assumption-based; they are never re-labelled as matched empirical evidence.
 
 ---
 

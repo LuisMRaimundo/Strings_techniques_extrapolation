@@ -1,10 +1,49 @@
 flowchart LR
-  IN[Ingestion] --> PI[ProductionInstruction]
-  PI --> ONT[Ontology]
-  PI --> APP[Applicability]
-  PI --> QC[Qualitative constraints]
-  PDF[Corpus PDFs] --> ID[Identity] --> SRC[Sources/Extracts] --> ACT[Activation]
-  ACT --> PRED[Prediction]
-  UA[User assumptions] --> PRED
-  APP --> PRED
-  PRED --> OUT[Exports/Reports]
+  subgraph IN["Ingestion"]
+    GUI[Manual register GUI]
+    XLS[Research Excel / Orchidea manifests]
+    CFG[YAML configs]
+  end
+  subgraph PITCH["Pitch registry"]
+    PR[MIDI to Hz / Hz to MIDI / pitch names]
+  end
+  subgraph BL["Ordinary baseline"]
+    BSPL[log-linear penalized B-spline on MIDI]
+    BFIT[BaselineFitCollection per instrument x dynamic]
+  end
+  subgraph SEL["Model selection"]
+    DA[DataAvailability audit]
+    LADDER[complexity ladder M0..M5]
+    DECIS[ModelSelectionDecision]
+  end
+  subgraph TECH["Technique submodels"]
+    BOW[bow_contact_model: log-ratio alpha_t + optional g_t]
+    MUTE[mute_transfer_model: alpha_mute log-ratio]
+    HARM[harmonic_register: sounding pitches from strings x orders]
+    NA[unavailable/qualitative-only fallback]
+  end
+  subgraph EWSD["Density metric"]
+    PHI[Phi(D)=D identity on precomputed EWSD scalar]
+  end
+  subgraph POST["Uncertainty and intervals"]
+    LOGR[multiplicative logR interval]
+    ADI[assumption_distribution_interval when prior_dominated]
+    BAY[optional Bayesian backend PyMC/ArviZ]
+  end
+  subgraph OUT["Outputs"]
+    XLSX[nonlinear_extrapolation_results.xlsx]
+    REP[Excel sheets: Methodology, Model_Selection, Diagnostics, ...]
+    PROV[provenance fields: data_status, source_workbook_hash, ...]
+  end
+  GUI --> PITCH --> BSPL
+  XLS --> BSPL
+  CFG --> SEL
+  CFG --> TECH
+  CFG --> PHI
+  BSPL --> BFIT --> TECH
+  BFIT --> DA --> LADDER --> DECIS --> TECH
+  TECH --> POST --> OUT
+  PHI --> TECH
+  HARM --> DECIS
+  DECIS --> NA
+  NA --> OUT

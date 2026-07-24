@@ -1,9 +1,18 @@
-# Metadata Entry GUI (legacy sheet)
+# Metadata Entry GUI (LEGACY / SECONDARY)
 
-> **Note:** The main `python -m string_technique_model gui` entry now opens the
-> **[Narrow Extrapolator — numerical metadata](NARROW_EXTRAPOLATION_GUI.md)** window.
-> The recording/metadata sheet below is secondary (Tools → Legacy recording metadata sheet…).
-> It is not needed for the ST/SP/sordino numerical extrapolation workflow, and it is not an audio analyser.
+> **LEGACY / SECONDARY.** The primary GUI is
+> `Manual register → technique requests` — see
+> [GUI_REFERENCE.md](GUI_REFERENCE.md). The recording / metadata sheet
+> described below is a secondary tool retained for backward compatibility
+> only. It is not required for the sul tasto / sul ponticello / con
+> sordino / harmonic workflows, and the obsolete claim (below) that the
+> `python -m string_technique_model gui` command opens the Narrow
+> Extrapolator window no longer holds — the current entry launches the
+> primary GUI.
+>
+> Older obsolete statements in this document are preserved so that
+> historical references remain interpretable; they are not the current
+> behaviour.
 
 ## Launch (legacy sheet only)
 

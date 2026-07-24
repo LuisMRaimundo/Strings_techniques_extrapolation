@@ -1,5 +1,14 @@
 # Narrow extrapolator (priority 1)
 
+> **Status.** This document describes the **legacy narrow grid** pipeline
+> (`string-technique-model extrapolate grid`). Harmonic register generation and
+> the nonlinear hierarchical extrapolator are documented in
+> [NONLINEAR_EXTRAPOLATION.md](NONLINEAR_EXTRAPOLATION.md) and
+> [TECHNICAL_GUIDE.md](TECHNICAL_GUIDE.md). The statement below that harmonics
+> are “deferred” applies **only** to this legacy grid path; the primary GUI and
+> nonlinear package generate modal harmonic targets (acoustic EWSD for harmonics
+> remains unavailable).
+
 Auditable pipeline for missing technique×instrument×dynamic acoustic metadata,
 using measured ordinary baselines plus a curated literature-evidence table.
 

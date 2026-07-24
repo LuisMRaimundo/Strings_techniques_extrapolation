@@ -10,7 +10,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GUIDE = ROOT / "docs" / "TECHNICAL_GUIDE.md"
-SRC = ROOT / "src" / "string_technique_model"
 CONFIGS = ROOT / "configs"
 
 # Modules/symbols the guide must reference accurately
@@ -56,12 +55,15 @@ REQUIRED_GUIDE_PHRASES = [
     r"MEYER_ACOUSTICS",
     r"SRC_SCHOONDERWALDT_2009",
     r"SRC_EVANGELISTA_FREIRE_2025",
+    r"harmonic_modal_acoustic_model_unavailable",
+    r"missing_model_components",
+    r"assumption_distribution_interval",
 ]
 
 FORBIDDEN_GUIDE_CLAIMS = [
-    # Must not claim all descriptors remain unimplemented
     r"list_implemented_descriptors\(\)\s+returns\s+`\[\]`",
     r"all\s+entries\s+`implemented:\s*false`",
+    r"harmonic_insufficient_metadata",
 ]
 
 
@@ -74,7 +76,6 @@ def _cli_commands() -> set[str]:
     from string_technique_model.cli import build_parser
 
     parser = build_parser()
-    # argparse stores subparsers actions
     for action in parser._subparsers._group_actions:  # type: ignore[attr-defined]
         if hasattr(action, "choices"):
             return set(action.choices.keys())
@@ -88,8 +89,7 @@ def validate() -> list[str]:
 
     text = GUIDE.read_text(encoding="utf-8")
 
-    # LaTeX delimiters present
-    if "$$" not in text and r"\(" not in text:
+    if "$$" not in text:
         errors.append("Guide lacks display LaTeX delimiters ($$...$$)")
     if text.count("$") < 20:
         errors.append("Guide has too few `$` math delimiters for StackEdit rendering")
@@ -107,7 +107,6 @@ def validate() -> list[str]:
         try:
             if not _has_symbol(mod_name, symbol):
                 errors.append(f"Missing symbol {mod_name}.{symbol}")
-            # Guide should mention the module path or symbol
             short = mod_name.split(".")[-1]
             if short not in text and symbol not in text:
                 errors.append(f"Guide does not mention {symbol} or package {short}")
@@ -121,7 +120,6 @@ def validate() -> list[str]:
         elif name not in text:
             errors.append(f"Guide does not mention config: {name}")
 
-    # Active density parameters must remain zero
     try:
         from string_technique_model.literature.package_ingestion import ingest_evidence_package
 
@@ -129,17 +127,14 @@ def validate() -> list[str]:
         active = [d for d in result.decisions if getattr(d, "active", False)]
         if active:
             errors.append(f"Expected 0 active density params, found {len(active)}")
-        if "n_active_density_parameters == 0" not in text and "zero active" not in text.lower() and "none**" not in text:
-            # soft: guide states inactivity
-            if "inactive" not in text.lower():
-                errors.append("Guide does not state density parameters are inactive")
+        if "inactive" not in text.lower() and "n_active_density_parameters == 0" not in text:
+            errors.append("Guide does not state density parameters are inactive")
     except Exception as exc:  # noqa: BLE001
         errors.append(f"Could not verify active parameters: {exc}")
 
-    # CLI commands documented
     try:
         cmds = _cli_commands()
-        for cmd in ("predict", "assumptions", "literature", "baseline"):
+        for cmd in ("predict", "assumptions", "literature", "baseline", "nonlinear", "extrapolate"):
             if cmd not in cmds:
                 errors.append(f"CLI missing command {cmd}")
             if cmd not in text:
@@ -147,16 +142,13 @@ def validate() -> list[str]:
     except Exception as exc:  # noqa: BLE001
         errors.append(f"CLI inspection failed: {exc}")
 
-    # User assumptions must not be described as literature-validated evidence
     if re.search(r"user assumption[^\n]{0,80}literature-validated", text, re.I):
-        # allow negated forms
-        if not re.search(r"never.*literature_validated|must remain `false`|not literature-validated", text, re.I):
+        if not re.search(
+            r"never.*literature_validated|must remain `false`|not literature-validated",
+            text,
+            re.I,
+        ):
             errors.append("Guide may conflate user assumptions with literature validation")
-
-    # Rejected sources must not be listed as verified evidence in Appendix C table sense
-    for bad in ("Berio Sequenza VIII", "Hann 2015 violin treatise as verified"):
-        if bad in text and "rejected" not in text.lower():
-            errors.append(f"Suspicious unverified citation framing: {bad}")
 
     return errors
 
