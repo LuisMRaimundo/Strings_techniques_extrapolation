@@ -123,7 +123,7 @@ families:
       # Metadata present, but no calibrated EWSD/descriptor transfer yet
       - model_id: harmonic_modal_acoustic_model_unavailable
         complexity: not_applicable
-        requires: { harmonic_metadata_complete: true }
+        requires: { harmonic_metadata_complete: true, has_calibrated_descriptor_model: false }
         value_kind: unavailable
         fallback_level: no_numeric_fallback
         selection_reason_if_chosen: no_harmonic_acoustic_calibration_data
@@ -132,8 +132,9 @@ families:
       - model_id: harmonic_modal_frequency_with_descriptor_priors
         complexity: M5_spectral_or_modal_specific
         requires: { harmonic_metadata_complete: true, has_calibrated_descriptor_model: true }
-        enabled: false  # Phase 2 numerics
+        enabled: true
         role: numeric_descriptor_model
+        selection_reason_if_chosen: calibrated_harmonic_descriptor_table_available
 
   multiphonic_component_model:
     techniques: [multiphonics, multiphonic]

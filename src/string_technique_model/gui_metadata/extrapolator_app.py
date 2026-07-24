@@ -38,9 +38,24 @@ def _adapt_nonlinear_result_for_grid(r: Any) -> dict[str, Any]:
     # Aliases expected by the results grid / older note-level sheets
     row["request_technique"] = r.technique
     row["request_note"] = r.pitch
-    row["value"] = r.posterior_median if r.posterior_median is not None else r.posterior_mean
-    row["lower_bound"] = r.credible_interval_low
-    row["upper_bound"] = r.credible_interval_high
+    # Prefer frequentist estimate_* / interval_* (production path). Bayesian
+    # posterior_* / credible_interval_* stay None unless a Bayesian backend ran.
+    value = (
+        r.estimate_median
+        if getattr(r, "estimate_median", None) is not None
+        else getattr(r, "estimate_mean", None)
+    )
+    if value is None:
+        value = r.posterior_median if r.posterior_median is not None else r.posterior_mean
+    low = getattr(r, "interval_low", None)
+    if low is None:
+        low = r.credible_interval_low
+    high = getattr(r, "interval_high", None)
+    if high is None:
+        high = r.credible_interval_high
+    row["value"] = value
+    row["lower_bound"] = low
+    row["upper_bound"] = high
     row["extrapolation_method"] = r.selected_model_id or r.model_id
     # Keep list fields as lists for export_note_level_workbook join; to_row already joined strings
     if hasattr(r, "assumptions_used"):

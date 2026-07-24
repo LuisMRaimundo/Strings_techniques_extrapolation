@@ -24,3 +24,7 @@ literature/corpus/**/*.pdf
 
 # Local inventory dumps
 all_files.txt
+
+# Harmonic calibration: keep measured tables + catalogs; exclude staged audio and SSA worktrees
+data/harmonic_calibration/batches/
+data/harmonic_calibration/ssa_outputs/

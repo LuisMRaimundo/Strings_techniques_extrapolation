@@ -116,19 +116,16 @@ def test_predict_register_harmonic_fields_and_fallback() -> None:
         include_low_harmonics=True,
     )
     assert out
-    assert all(r.value_kind.value == "unavailable" for r in out)
-    assert all(r.shape_source == "not_applicable" for r in out)
-    assert all(r.fallback_level == "no_numeric_fallback" for r in out)
-    assert all(r.complexity_level == "not_applicable" for r in out)
     assert all(r.harmonic_order is not None for r in out)
-    assert all(r.model_status == "modal_frequencies_generated_acoustic_values_unavailable" for r in out)
+    assert all(r.selected_model_id == "harmonic_modal_frequency_with_descriptor_priors" for r in out)
+    assert all(r.modal_metadata_status == "complete" for r in out)
+    assert all(r.acoustic_calibration_status == "available" for r in out)
     assert all(
-        r.assumption_ids and "ASSUMP_HARMONIC_DESCRIPTOR_MODEL_NOT_IMPLEMENTED" in r.assumption_ids
-        for r in out
+        "calibrated_harmonic_descriptor_model" not in (r.missing_model_components or []) for r in out
     )
-    assert all(a.startswith("ASSUMP_") for a in out[0].assumptions_used)
-    assert out[0].selected_model_id == "harmonic_modal_acoustic_model_unavailable"
-    assert out[0].na_reason == "no_harmonic_acoustic_calibration_data"
+    numeric = [r for r in out if r.estimate_mean is not None and r.value_kind.value != "unavailable"]
+    assert numeric
+    assert all(r.model_status == "calibrated_descriptor_lookup" for r in numeric)
     assert out[0].data_status == "synthetic_integration_test"
     assert out[0].scientific_use == "prohibited_for_doctoral_evidence"
     assert out[0].physical_range_min
@@ -137,9 +134,6 @@ def test_predict_register_harmonic_fields_and_fallback() -> None:
     assert out[0].order_selection_reason == "practical_analysis_scope"
     assert "string" in (out[0].available_covariates or []) or out[0].string_name
     assert not (out[0].missing_covariates or [])
-    assert "calibrated_harmonic_descriptor_model" in (out[0].missing_model_components or [])
-    assert out[0].modal_metadata_status == "complete"
-    assert out[0].acoustic_calibration_status == "unavailable"
 
 
 def test_harmonic_selection_covariates_not_bow() -> None:

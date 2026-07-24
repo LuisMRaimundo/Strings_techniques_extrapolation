@@ -303,9 +303,14 @@ def assess_data_availability(
             or fam_cfg.get("required_for_numeric_prediction")
             or []
         )
+        from string_technique_model.extrapolation.nonlinear.harmonic_calibration_table import (
+            has_calibrated_harmonic_coverage,
+        )
+
         has_calibrated = bool(
             _col_present(obs, "calibrated_harmonic_descriptor_model")
             or _col_present(enrich, "calibrated_harmonic_descriptor_model")
+            or has_calibrated_harmonic_coverage(inst, tech)
         )
         missing = modal_missing  # never put model components into missing_covariates
         missing_model_components = [

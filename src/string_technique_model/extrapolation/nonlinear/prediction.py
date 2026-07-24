@@ -416,7 +416,9 @@ def _result_from_prediction(
         source_pages=list(prediction.get("source_pages") or []),
         evidence_tier=prediction.get("evidence_tier", EvidenceTier.LEVEL_1_ASSUMPTION_ONLY),
         extrapolation_distance=extrap_dist,
-        measured_or_extrapolated="extrapolated",
+        measured_or_extrapolated=str(
+            prediction.get("measured_or_extrapolated") or "extrapolated"
+        ),
         value_kind=prediction.get("value_kind", ValueKind.EXTRAPOLATED),
         warnings=list(prediction.get("warnings") or []),
         diagnostics_status=from_frequentist_flags(
@@ -680,16 +682,101 @@ def predict_register(
                 limited_semitones=limited_st,
                 physical_semitones=physical_st,
             )
-            stub = predict_harmonic_register(
+            sounding = str(annotated.get("sounding_pitch") or note)
+            ordinary_by_dynamic: dict[str, float] = {}
+            if not ordinary_df.empty:
+                inst_ord = ordinary_df[
+                    ordinary_df["instrument"].astype(str).str.lower() == inst
+                ]
+                if not inst_ord.empty and "dynamic" in inst_ord.columns and "value" in inst_ord.columns:
+                    for d_name, g in inst_ord.groupby(inst_ord["dynamic"].astype(str).str.lower()):
+                        ordinary_by_dynamic[str(d_name)] = float(g["value"].astype(float).mean())
+
+            pred = predict_harmonic_register(
                 technique=tech,
                 instrument=inst,
                 dynamic=dyn,
-                pitch=note,
+                pitch=sounding,
                 midi=midi,
                 baseline_semantics=str(annotated.get("baseline_semantics") or "unresolved"),
                 target_quantity=target_quantity,
+                ordinary_by_dynamic=ordinary_by_dynamic or None,
             )
-            na_reason = decision.selection_reason or stub.get("na_reason")
+
+            use_numeric = (
+                decision.selected_model_id == "harmonic_modal_frequency_with_descriptor_priors"
+                and pred.get("mean") is not None
+                and not pred.get("na_reason")
+            )
+            if use_numeric:
+                result = _result_from_prediction(
+                    pitch=note,
+                    midi=midi,
+                    instrument=inst,
+                    technique=tech,
+                    dynamic=dyn,
+                    target_quantity=target_quantity,
+                    prediction=pred,
+                    model_id=decision.selected_model_id,
+                    submodel_id=str(pred.get("submodel_id") or "calibrated_harmonic_descriptor_lookup"),
+                    baseline_fit=baseline,
+                    data_status=data_status,
+                    decision=decision,
+                )
+                result.model_status = "calibrated_descriptor_lookup"
+                result.string_name = annotated.get("string")
+                result.harmonic_type = annotated.get("harmonic_type") or tech
+                result.harmonic_order = annotated.get("harmonic_order")
+                result.production_pitch = annotated.get("production_pitch")
+                result.stopped_pitch = annotated.get("stopped_pitch")
+                result.touched_pitch = annotated.get("touched_pitch")
+                result.open_string_pitch = annotated.get("open_string_pitch")
+                result.sounding_pitch = sounding
+                result.sounding_midi = annotated.get("sounding_midi") or midi
+                result.sounding_midi_float = annotated.get("sounding_midi_float")
+                result.sounding_frequency_hz = annotated.get("sounding_frequency_hz")
+                result.nearest_tempered_pitch = annotated.get("nearest_tempered_pitch")
+                result.cents_deviation = annotated.get("cents_deviation")
+                result.target_range_min = annotated.get("target_range_min")
+                result.target_range_max = annotated.get("target_range_max")
+                result.within_harmonic_analysis_range = annotated.get(
+                    "within_harmonic_analysis_range"
+                )
+                result.within_ordinary_baseline_range = annotated.get(
+                    "within_ordinary_baseline_range"
+                )
+                result.outside_ordinary_baseline_range = annotated.get(
+                    "outside_ordinary_baseline_range"
+                )
+                result.baseline_extrapolation_semitones = annotated.get(
+                    "baseline_extrapolation_semitones"
+                )
+                result.feasibility_status = annotated.get("feasibility_status")
+                result.pitch_generation_method = annotated.get("pitch_generation_method")
+                result.target_status = annotated.get("target_status")
+                result.baseline_support_policy = annotated.get("baseline_support_policy")
+                result.physical_range_min = annotated.get("physical_range_min")
+                result.physical_range_max = annotated.get("physical_range_max")
+                result.analysis_range_min = annotated.get("analysis_range_min")
+                result.analysis_range_max = annotated.get("analysis_range_max")
+                result.included_by_physical_model = annotated.get("included_by_physical_model")
+                result.included_by_analysis_filter = annotated.get("included_by_analysis_filter")
+                result.excluded_reason = annotated.get("excluded_reason")
+                result.selection_mode = annotated.get("selection_mode")
+                result.configuration_policy = annotated.get("configuration_policy")
+                result.configured_order_min = annotated.get("configured_order_min")
+                result.configured_order_max = annotated.get("configured_order_max")
+                result.order_selection_reason = annotated.get("order_selection_reason")
+                result.source_workbook_path = provenance.get("source_workbook_path")
+                result.source_workbook_hash = provenance.get("source_workbook_hash")
+                result.source_sheet = provenance.get("source_sheet")
+                result.import_run_id = provenance.get("import_run_id")
+                result.scientific_use = provenance.get("scientific_use")
+                result.source_row_ids = list(provenance.get("source_row_ids") or [])
+                results.append(result)
+                continue
+
+            na_reason = decision.selection_reason or pred.get("na_reason")
             if annotated.get("target_status") in {
                 "excluded_by_analysis_range",
                 "excluded_by_analysis_scope",
@@ -699,11 +786,15 @@ def predict_register(
                 na_reason = "no_harmonic_acoustic_calibration_data"
             elif decision.selected_model_id == "harmonic_modal_metadata_gate":
                 na_reason = "insufficient_harmonic_metadata"
+            elif pred.get("na_reason"):
+                na_reason = str(pred.get("na_reason"))
 
             if decision.selected_model_id == "harmonic_modal_acoustic_model_unavailable":
                 model_status = "modal_frequencies_generated_acoustic_values_unavailable"
             elif decision.selected_model_id == "harmonic_modal_metadata_gate":
                 model_status = "unavailable_before_modal_estimation"
+            elif decision.selected_model_id == "harmonic_modal_frequency_with_descriptor_priors":
+                model_status = "calibrated_model_selected_target_value_unavailable"
             else:
                 model_status = "modal_frequencies_generated_acoustic_values_unavailable"
 
@@ -716,23 +807,23 @@ def predict_register(
                 midi=midi,
                 target_quantity=target_quantity,
                 model_id=decision.selected_model_id,
-                submodel_id=stub.get("submodel_id"),
+                submodel_id=pred.get("submodel_id"),
                 evidence_tier=EvidenceTier.LEVEL_0_UNSUPPORTED,
                 measured_or_extrapolated="unavailable",
                 value_kind=ValueKind.UNAVAILABLE
                 if decision.value_kind_hint == "unavailable"
                 else ValueKind.QUALITATIVE_ONLY,
-                warnings=list(stub.get("warnings") or [])
+                warnings=list(pred.get("warnings") or [])
                 + [
                     f"selection_reason={decision.selection_reason}",
                     f"pitch_generation_method={annotated.get('pitch_generation_method')}",
                     f"baseline_support_policy={annotated.get('baseline_support_policy')}",
                     "modal_frequencies_known_but_descriptor_amplitudes_unavailable",
                 ],
-                assumption_ids=list(decision.assumption_ids or stub.get("assumption_ids") or []),
-                assumptions_used=list(decision.assumption_ids or stub.get("assumption_ids") or []),
-                assumptions_trace=list(stub.get("assumptions_trace") or [])
-                + ["harmonic_descriptor_model_not_implemented"],
+                assumption_ids=list(decision.assumption_ids or pred.get("assumption_ids") or []),
+                assumptions_used=list(decision.assumption_ids or pred.get("assumption_ids") or []),
+                assumptions_trace=list(pred.get("assumptions_trace") or [])
+                + ["harmonic_descriptor_lookup_miss_or_gate"],
                 na_reason=str(na_reason),
                 convergence_status=ConvergenceStatus.NOT_APPLICABLE,
                 diagnostics_status=ConvergenceStatus.NOT_APPLICABLE,
