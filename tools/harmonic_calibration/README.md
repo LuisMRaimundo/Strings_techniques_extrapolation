@@ -81,10 +81,31 @@ Generator: `tools/harmonic_calibration/catalog_viola_harmonic_sources.py`
 
 **Gaps vs violin:** no McGill natural-harmonic folder; Philharmonia harmonics are **mf-only** (no p/pp harmonic takes); Orchidea has artificial only.
 
+## Cello audio inventory (catalogued 2026-07-24)
+
+| Collection | Path |
+|---|---|
+| McGill artificial | `...\VIOLONCELO\McGill\CELLO ARTIFICIAL HARMONICS` |
+| McGill ordinario | `...\VIOLONCELO\McGill\CELLO` |
+| Orchidea ordinario / art harm | `...\Orchidea_Vlc\Violoncello\...` |
+| Philharmonia harmonic + ordinario | `...\Phillarmonia\cello\...` |
+
+| Collection | Technique | Dynamics | Unique notes |
+|---|---|---|---|
+| Orchidea | artificial_harmonic | mf | (see catalog) |
+| McGill | artificial_harmonic | mf | 13 |
+| Philharmonia | natural_harmonic\* | mf | 16 |
+| Orchidea / Philharmonia | ordinario | pp…ff | baseline |
+
+\*Philharmonia cello labels files `arco-harmonic` (no art/nat split) → catalogued as `natural_harmonic`.
+
+Catalog: `data/harmonic_calibration/cello_harmonic_audio_catalog.csv`  
+Generator: `tools/harmonic_calibration/catalog_cello_harmonic_sources.py`
+
 ## Next STE / TD steps
 
-1. Stage + SSA viola harmonic batches → `measured/viola_*.csv` (or instrument-tagged rows).
-2. Extend STE calibrated lookup to `vla` coverage; export Viola Excel; regenerate TD `viola_art_harm` / `viola_nat_harm`.
+1. Stage + SSA viola/cello harmonic batches → `measured/*_*.csv`.
+2. Extend STE calibrated lookup to `vla` / `vlc`; export Excel; regenerate TD harmonic modules.
 
 ## Provenance policy
 
